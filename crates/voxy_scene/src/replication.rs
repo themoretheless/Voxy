@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, VecDeque};
 use std::io::{self, Read, Write};
-use voxy_core::crc32c;
 
 /// Canonical tick-stamped scene snapshot with a deterministic `CRC-32C` state digest.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -26,9 +25,10 @@ impl TickSnapshot {
     /// # Errors
     /// Propagates [`DocumentError`] if `document` fails canonical JSON serialization.
     pub fn from_document(tick: u64, mut document: SceneDocument) -> Result<Self, DocumentError> {
-        document.objects.sort_by(|a, b| a.id.cmp(&b.id));
-        let canonical = document.to_json()?;
-        let state_crc32c = crc32c(canonical.as_bytes());
+        if !document.objects.is_sorted_by(|a, b| a.id <= b.id) {
+            document.objects.sort_by(|a, b| a.id.cmp(&b.id));
+        }
+        let state_crc32c = document.canonical_json_crc32c()?;
         Ok(Self {
             tick,
             state_crc32c,
@@ -92,7 +92,7 @@ impl TickSnapshot {
                 "invalid canonical scene snapshot".into(),
             ));
         }
-        if crc32c(self.document.to_json()?.as_bytes()) != self.state_crc32c {
+        if self.document.canonical_json_crc32c()? != self.state_crc32c {
             return Err(DocumentError::Invalid("scene snapshot CRC mismatch".into()));
         }
         Ok(())
@@ -146,6 +146,93 @@ fn read_payload(
     bytes.resize(len, 0);
     reader.read_exact(&mut bytes)?;
     Ok(bytes)
+}
+
+fn is_strictly_sorted_by_id(objects: &[SceneObject]) -> bool {
+    objects.windows(2).all(|pair| pair[0].id < pair[1].id)
+}
+
+fn diff_sorted(base: &[SceneObject], target: &[SceneObject]) -> (Vec<SceneObject>, Vec<ObjectId>) {
+    let mut upserted = Vec::new();
+    let mut removed = Vec::new();
+    let (mut i, mut j) = (0_usize, 0_usize);
+    while i < base.len() && j < target.len() {
+        match base[i].id.cmp(&target[j].id) {
+            std::cmp::Ordering::Less => {
+                removed.push(base[i].id.clone());
+                i += 1;
+            }
+            std::cmp::Ordering::Greater => {
+                upserted.push(target[j].clone());
+                j += 1;
+            }
+            std::cmp::Ordering::Equal => {
+                if base[i] != target[j] {
+                    upserted.push(target[j].clone());
+                }
+                i += 1;
+                j += 1;
+            }
+        }
+    }
+    while i < base.len() {
+        removed.push(base[i].id.clone());
+        i += 1;
+    }
+    while j < target.len() {
+        upserted.push(target[j].clone());
+        j += 1;
+    }
+    (upserted, removed)
+}
+
+fn apply_sorted(
+    base: &[SceneObject],
+    removed: &[ObjectId],
+    upserted: &[SceneObject],
+) -> Vec<SceneObject> {
+    let mut removed_refs: Vec<&ObjectId> = removed.iter().collect();
+    removed_refs.sort_unstable();
+    let mut upserted_refs: Vec<&SceneObject> = upserted.iter().collect();
+    upserted_refs.sort_by(|a, b| a.id.cmp(&b.id));
+    let mut out = Vec::with_capacity(base.len() + upserted_refs.len());
+    let (mut b, mut r, mut u) = (0_usize, 0_usize, 0_usize);
+    while b < base.len() || u < upserted_refs.len() {
+        while u + 1 < upserted_refs.len() && upserted_refs[u].id == upserted_refs[u + 1].id {
+            u += 1;
+        }
+        let take_upsert = match (base.get(b), upserted_refs.get(u)) {
+            (_, None) => false,
+            (None, Some(_)) => true,
+            (Some(base_obj), Some(ups_obj)) => ups_obj.id <= base_obj.id,
+        };
+        if take_upsert {
+            let ups_obj = upserted_refs[u];
+            if base
+                .get(b)
+                .is_some_and(|base_obj| base_obj.id == ups_obj.id)
+            {
+                b += 1;
+            }
+            while r < removed_refs.len() && *removed_refs[r] <= ups_obj.id {
+                r += 1;
+            }
+            out.push(ups_obj.clone());
+            u += 1;
+        } else {
+            let base_obj = &base[b];
+            while r < removed_refs.len() && *removed_refs[r] < base_obj.id {
+                r += 1;
+            }
+            if r < removed_refs.len() && *removed_refs[r] == base_obj.id {
+                r += 1;
+            } else {
+                out.push(base_obj.clone());
+            }
+            b += 1;
+        }
+    }
+    out
 }
 
 impl SceneSnapshotDelta {
@@ -242,23 +329,27 @@ impl SceneSnapshotDelta {
     /// Computes the minimal object-level delta from `base` to `target`.
     #[must_use]
     pub fn diff(base: &TickSnapshot, target: &TickSnapshot) -> Self {
-        let base_map: BTreeMap<&ObjectId, &SceneObject> =
-            base.document.objects.iter().map(|o| (&o.id, o)).collect();
-        let target_map: BTreeMap<&ObjectId, &SceneObject> =
-            target.document.objects.iter().map(|o| (&o.id, o)).collect();
-
-        let mut upserted = Vec::new();
-        for (id, obj) in &target_map {
-            if base_map.get(id) != Some(obj) {
-                upserted.push((*obj).clone());
-            }
-        }
-        let mut removed = Vec::new();
-        for id in base_map.keys() {
-            if !target_map.contains_key(id) {
-                removed.push((*id).clone());
-            }
-        }
+        let (upserted, removed) = if is_strictly_sorted_by_id(&base.document.objects)
+            && is_strictly_sorted_by_id(&target.document.objects)
+        {
+            diff_sorted(&base.document.objects, &target.document.objects)
+        } else {
+            let base_map: BTreeMap<&ObjectId, &SceneObject> =
+                base.document.objects.iter().map(|o| (&o.id, o)).collect();
+            let target_map: BTreeMap<&ObjectId, &SceneObject> =
+                target.document.objects.iter().map(|o| (&o.id, o)).collect();
+            let upserted = target_map
+                .iter()
+                .filter(|(id, obj)| base_map.get(*id) != Some(obj))
+                .map(|(_, obj)| (*obj).clone())
+                .collect();
+            let removed = base_map
+                .keys()
+                .filter(|id| !target_map.contains_key(*id))
+                .map(|id| (*id).clone())
+                .collect();
+            (upserted, removed)
+        };
 
         Self {
             base_tick: base.tick,
@@ -279,22 +370,27 @@ impl SceneSnapshotDelta {
                 self.base_tick, base.tick
             )));
         }
-        let mut objects: BTreeMap<ObjectId, SceneObject> = base
-            .document
-            .objects
-            .iter()
-            .cloned()
-            .map(|o| (o.id.clone(), o))
-            .collect();
-        for id in &self.removed {
-            objects.remove(id);
-        }
-        for obj in &self.upserted {
-            objects.insert(obj.id.clone(), obj.clone());
-        }
+        let objects = if is_strictly_sorted_by_id(&base.document.objects) {
+            apply_sorted(&base.document.objects, &self.removed, &self.upserted)
+        } else {
+            let mut objects: BTreeMap<ObjectId, SceneObject> = base
+                .document
+                .objects
+                .iter()
+                .cloned()
+                .map(|o| (o.id.clone(), o))
+                .collect();
+            for id in &self.removed {
+                objects.remove(id);
+            }
+            for obj in &self.upserted {
+                objects.insert(obj.id.clone(), obj.clone());
+            }
+            objects.into_values().collect()
+        };
         let doc = SceneDocument {
             version: base.document.version,
-            objects: objects.into_values().collect(),
+            objects,
         };
         let reconstructed = TickSnapshot::from_document(self.target_tick, doc)?;
         if reconstructed.state_crc32c != self.target_crc32c {

@@ -20,5 +20,6 @@ pub use coordinates::{
 };
 pub use hash::{
     DeterministicRng, FastHashBuilder, FastHasher, SeededFastHashBuilder, crc32c, crc32c_append,
+    crc32c_combine,
 };
 pub use ids::{GenerationalId, NonMaxU32, NonMaxU64, SlotMap, TickId, WorldEpoch};

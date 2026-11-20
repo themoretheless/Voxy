@@ -1,6 +1,48 @@
 //! Velocity, acceleration and jerk of a clipped support-patch vertex, from the active slab constraints.
 use super::*;
 
+#[derive(Clone, Copy)]
+enum CoincidentCheck {
+    None,
+    Strict,
+    SupportNormal { normal: DVec3, max_drift: f64 },
+}
+
+impl CoincidentCheck {
+    fn admits(self, constraints: &[(DVec3, f64)], velocity: DVec3, guard: f64) -> bool {
+        match self {
+            Self::None => true,
+            Self::Strict => constraints
+                .iter()
+                .all(|&(n, r)| (n.dot(velocity) - r).abs() <= guard),
+            Self::SupportNormal { normal, max_drift } => constraints.iter().all(|&(n, r)| {
+                let err = (n.dot(velocity) - r).abs();
+                err <= guard || (n.cross(normal).length() <= 1e-6 && err <= max_drift)
+            }),
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+struct PointPair {
+    first: ContactBody,
+    first_shape: AffineBox,
+    second: Option<ContactBody>,
+    second_shape: AffineBox,
+}
+
+fn validate_wrench(load: physics::contact::ContactWrench) -> Result<(), Error> {
+    if load
+        .force
+        .iter()
+        .chain(&load.torque)
+        .any(|x| !x.is_finite())
+    {
+        return Err(Error::InvalidCollision);
+    }
+    Ok(())
+}
+
 /// Differentiate the active slab constraints defining a clipped patch vertex.
 /// Coincident constraints must agree; topology kinks are not assigned an
 /// arbitrary material owner. Shapes are principal-body templates, except fixed
@@ -13,16 +55,75 @@ pub(in crate::liquid_runtime) fn point_velocity(
     point: [f64; 3],
     tolerance_m: f64,
 ) -> Result<[f64; 3], Error> {
-    solve_point_constraints(
+    let pair = PointPair {
         first,
         first_shape,
         second,
         second_shape,
+    };
+    solve_point_constraints_with_drift(
+        pair,
         point,
         tolerance_m,
-        true,
+        CoincidentCheck::Strict,
         |_, body, _, velocity| Ok(body.map_or(0., |_| velocity)),
     )
+}
+
+/// Differentiate clipped support-patch vertex kinematics once with strict
+/// active-plane coincidence, reusing velocity for acceleration and jerk.
+pub(in crate::liquid_runtime) fn support_point_kinematics(
+    first: ContactBody,
+    first_shape: AffineBox,
+    second: Option<ContactBody>,
+    second_shape: AffineBox,
+    geometry: physics::liquid::RigidSupportPoint,
+    loads: [physics::contact::ContactWrench; 2],
+    rates: [physics::contact::ContactWrench; 2],
+) -> Result<physics::liquid::RigidSupportPointMotion, Error> {
+    let pair = PointPair {
+        first,
+        first_shape,
+        second,
+        second_shape,
+    };
+    let point = geometry.support.contact.point;
+    let tolerance_m = geometry.tolerance_m + geometry.admission_error_m;
+    let velocity = match solve_point_constraints_with_drift(
+        pair,
+        point,
+        tolerance_m,
+        CoincidentCheck::Strict,
+        |_, body, _, v| Ok(body.map_or(0., |_| v)),
+    ) {
+        Ok(velocity) => velocity,
+        Err(Error::CollisionBackend) => solve_point_constraints_with_drift(
+            pair,
+            point,
+            tolerance_m,
+            CoincidentCheck::SupportNormal {
+                normal: DVec3::from_array(geometry.support.contact.normal),
+                max_drift: 1e-7,
+            },
+            |_, body, _, v| Ok(body.map_or(0., |_| v)),
+        )?,
+        Err(err) => return Err(err),
+    };
+    let vel_vec = DVec3::from_array(velocity);
+    let acceleration = point_acceleration_with_velocity(pair, point, tolerance_m, loads, vel_vec)?;
+    let jerk = point_jerk_with_derivatives(
+        pair,
+        point,
+        tolerance_m,
+        loads,
+        rates,
+        [vel_vec, DVec3::from_array(acceleration)],
+    )?;
+    Ok(physics::liquid::RigidSupportPointMotion {
+        velocity,
+        acceleration,
+        jerk,
+    })
 }
 
 /// Candidate second derivative from the same independent active-plane basis.
@@ -38,14 +139,12 @@ pub(in crate::liquid_runtime) fn point_acceleration(
     tolerance_m: f64,
     loads: [physics::contact::ContactWrench; 2],
 ) -> Result<[f64; 3], Error> {
-    if loads.iter().any(|load| {
-        load.force
-            .iter()
-            .chain(&load.torque)
-            .any(|x| !x.is_finite())
-    }) {
-        return Err(Error::InvalidCollision);
-    }
+    let pair = PointPair {
+        first,
+        first_shape,
+        second,
+        second_shape,
+    };
     let velocity = DVec3::from_array(point_velocity(
         first,
         first_shape,
@@ -54,16 +153,25 @@ pub(in crate::liquid_runtime) fn point_acceleration(
         point,
         tolerance_m,
     )?);
+    point_acceleration_with_velocity(pair, point, tolerance_m, loads, velocity)
+}
+
+fn point_acceleration_with_velocity(
+    pair: PointPair,
+    point: [f64; 3],
+    tolerance_m: f64,
+    loads: [physics::contact::ContactWrench; 2],
+    velocity: DVec3,
+) -> Result<[f64; 3], Error> {
+    validate_wrench(loads[0])?;
+    validate_wrench(loads[1])?;
     let p = DVec3::from_array(point);
     // Each shape contributes all its active planes through one load owner.
-    solve_point_constraints(
-        first,
-        first_shape,
-        second,
-        second_shape,
+    solve_point_constraints_with_drift(
+        pair,
         point,
         tolerance_m,
-        false,
+        CoincidentCheck::None,
         |owner, body, normal, _| {
             let load = loads[owner];
             let Some(body) = body else {
@@ -120,14 +228,16 @@ pub(in crate::liquid_runtime) fn point_jerk(
     loads: [physics::contact::ContactWrench; 2],
     rates: [physics::contact::ContactWrench; 2],
 ) -> Result<[f64; 3], Error> {
-    if rates.iter().any(|load| {
-        load.force
-            .iter()
-            .chain(&load.torque)
-            .any(|v| !v.is_finite())
-    }) {
-        return Err(Error::InvalidCollision);
-    }
+    let pair = PointPair {
+        first,
+        first_shape,
+        second,
+        second_shape,
+    };
+    validate_wrench(loads[0])?;
+    validate_wrench(loads[1])?;
+    validate_wrench(rates[0])?;
+    validate_wrench(rates[1])?;
     let velocity = DVec3::from_array(point_velocity(
         first,
         first_shape,
@@ -136,24 +246,40 @@ pub(in crate::liquid_runtime) fn point_jerk(
         point,
         tolerance_m,
     )?);
-    let acceleration = DVec3::from_array(point_acceleration(
-        first,
-        first_shape,
-        second,
-        second_shape,
+    let acceleration = DVec3::from_array(point_acceleration_with_velocity(
+        pair,
         point,
         tolerance_m,
         loads,
+        velocity,
     )?);
-    let p = DVec3::from_array(point);
-    solve_point_constraints(
-        first,
-        first_shape,
-        second,
-        second_shape,
+    point_jerk_with_derivatives(
+        pair,
         point,
         tolerance_m,
-        false,
+        loads,
+        rates,
+        [velocity, acceleration],
+    )
+}
+
+fn point_jerk_with_derivatives(
+    pair: PointPair,
+    point: [f64; 3],
+    tolerance_m: f64,
+    loads: [physics::contact::ContactWrench; 2],
+    rates: [physics::contact::ContactWrench; 2],
+    derivatives: [DVec3; 2],
+) -> Result<[f64; 3], Error> {
+    validate_wrench(rates[0])?;
+    validate_wrench(rates[1])?;
+    let [velocity, acceleration] = derivatives;
+    let p = DVec3::from_array(point);
+    solve_point_constraints_with_drift(
+        pair,
+        point,
+        tolerance_m,
+        CoincidentCheck::None,
         |owner, body, normal, _| {
             let Some(body) = body else {
                 return Ok(0.);
@@ -199,22 +325,15 @@ pub(in crate::liquid_runtime) fn point_jerk(
     )
 }
 
-#[expect(
-    clippy::too_many_arguments,
-    reason = "predates the function-size ratchet (docs/PLAN.md R1)"
-)]
-fn solve_point_constraints(
-    first: ContactBody,
-    first_shape: AffineBox,
-    second: Option<ContactBody>,
-    second_shape: AffineBox,
+fn solve_point_constraints_with_drift(
+    pair: PointPair,
     point: [f64; 3],
     tolerance_m: f64,
-    require_coincident_rates: bool,
+    coincident: CoincidentCheck,
     mut rate: impl FnMut(usize, Option<ContactBody>, DVec3, f64) -> Result<f64, Error>,
 ) -> Result<[f64; 3], Error> {
-    first.energy().map_err(|_| Error::InvalidCollision)?;
-    if let Some(second) = second {
+    pair.first.energy().map_err(|_| Error::InvalidCollision)?;
+    if let Some(second) = pair.second {
         second.energy().map_err(|_| Error::InvalidCollision)?;
     }
     let point = DVec3::from_array(point);
@@ -222,9 +341,12 @@ fn solve_point_constraints(
         return Err(Error::InvalidCollision);
     }
     let mut constraints = Vec::with_capacity(6);
-    for (owner, (body, shape)) in [(Some(first), first_shape), (second, second_shape)]
-        .into_iter()
-        .enumerate()
+    for (owner, (body, shape)) in [
+        (Some(pair.first), pair.first_shape),
+        (pair.second, pair.second_shape),
+    ]
+    .into_iter()
+    .enumerate()
     {
         let q = body
             .and_then(|b| b.spin)
@@ -275,12 +397,7 @@ fn solve_point_constraints(
                 let velocity = matrix.inverse()
                     * DVec3::new(constraints[i].1, constraints[j].1, constraints[k].1);
                 let guard = 4096. * f64::EPSILON * (1. + velocity.length()) / determinant;
-                if velocity.is_finite()
-                    && (!require_coincident_rates
-                        || constraints
-                            .iter()
-                            .all(|(normal, rate)| (normal.dot(velocity) - rate).abs() <= guard))
-                {
+                if velocity.is_finite() && coincident.admits(&constraints, velocity, guard) {
                     return Ok(velocity.to_array());
                 }
             }

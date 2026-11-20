@@ -126,8 +126,8 @@ impl DeterministicRng {
     }
 }
 
-const CRC32C_TABLE: [u32; 256] = {
-    let mut table = [0_u32; 256];
+const CRC32C_TABLES: [[u32; 256]; 8] = {
+    let mut tables = [[0_u32; 256]; 8];
     let mut i = 0;
     while i < 256 {
         let mut crc = i as u32;
@@ -137,10 +137,60 @@ const CRC32C_TABLE: [u32; 256] = {
             crc = (crc >> 1) ^ (0x82F6_3B78 & mask);
             bit += 1;
         }
-        table[i] = crc;
+        tables[0][i] = crc;
         i += 1;
     }
-    table
+    let mut k = 1;
+    while k < 8 {
+        let mut i = 0;
+        while i < 256 {
+            let c = tables[k - 1][i];
+            tables[k][i] = (c >> 8) ^ tables[0][(c & 0xFF) as usize];
+            i += 1;
+        }
+        k += 1;
+    }
+    tables
+};
+
+#[inline]
+const fn gf2_mul(mat: &[u32; 32], mut vec: u32) -> u32 {
+    let mut sum = 0_u32;
+    let mut i = 0;
+    while vec != 0 {
+        if (vec & 1) != 0 {
+            sum ^= mat[i];
+        }
+        vec >>= 1;
+        i += 1;
+    }
+    sum
+}
+
+const CRC32C_ZERO_BYTE_OPS: [[u32; 32]; 64] = {
+    let mut ops = [[0_u32; 32]; 64];
+    let mut b = 0;
+    while b < 32 {
+        let mut x = 1_u32 << b;
+        let mut bit = 0;
+        while bit < 8 {
+            let mask = (x & 1).wrapping_neg();
+            x = (x >> 1) ^ (0x82F6_3B78 & mask);
+            bit += 1;
+        }
+        ops[0][b] = x;
+        b += 1;
+    }
+    let mut k = 1;
+    while k < 64 {
+        let mut i = 0;
+        while i < 32 {
+            ops[k][i] = gf2_mul(&ops[k - 1], ops[k - 1][i]);
+            i += 1;
+        }
+        k += 1;
+    }
+    ops
 };
 
 /// Castagnoli CRC-32C checksum for verifying region frames and WAL records.
@@ -150,18 +200,59 @@ pub const fn crc32c(bytes: &[u8]) -> u32 {
     crc32c_append(0, bytes)
 }
 
-/// Incrementally updates a Castagnoli CRC-32C checksum over `bytes` using a 256-entry table.
+/// Incrementally updates a Castagnoli CRC-32C checksum over `bytes` using slice-by-8 lookup tables.
 #[inline]
 #[must_use]
 pub const fn crc32c_append(previous: u32, bytes: &[u8]) -> u32 {
     let mut crc = !previous;
     let mut i = 0;
+    while i + 8 <= bytes.len() {
+        let w = u64::from_le_bytes([
+            bytes[i],
+            bytes[i + 1],
+            bytes[i + 2],
+            bytes[i + 3],
+            bytes[i + 4],
+            bytes[i + 5],
+            bytes[i + 6],
+            bytes[i + 7],
+        ]) ^ (crc as u64);
+        crc = CRC32C_TABLES[7][(w & 0xFF) as usize]
+            ^ CRC32C_TABLES[6][((w >> 8) & 0xFF) as usize]
+            ^ CRC32C_TABLES[5][((w >> 16) & 0xFF) as usize]
+            ^ CRC32C_TABLES[4][((w >> 24) & 0xFF) as usize]
+            ^ CRC32C_TABLES[3][((w >> 32) & 0xFF) as usize]
+            ^ CRC32C_TABLES[2][((w >> 40) & 0xFF) as usize]
+            ^ CRC32C_TABLES[1][((w >> 48) & 0xFF) as usize]
+            ^ CRC32C_TABLES[0][((w >> 56) & 0xFF) as usize];
+        i += 8;
+    }
     while i < bytes.len() {
         let idx = ((crc ^ (bytes[i] as u32)) & 0xFF) as usize;
-        crc = (crc >> 8) ^ CRC32C_TABLE[idx];
+        crc = (crc >> 8) ^ CRC32C_TABLES[0][idx];
         i += 1;
     }
     !crc
+}
+
+/// Combines two independent Castagnoli CRC-32C checksums (`crc1` over `a`, `crc2` over `b` of
+/// byte length `len2`) into `crc32c(&[a, b].concat())` in $O(\log(\text{len2}))$ GF(2) steps.
+#[inline]
+#[must_use]
+pub const fn crc32c_combine(mut crc1: u32, crc2: u32, len2: usize) -> u32 {
+    if len2 == 0 {
+        return crc1;
+    }
+    let mut n = len2 as u64;
+    let mut bit = 0;
+    while n != 0 {
+        if (n & 1) != 0 {
+            crc1 = gf2_mul(&CRC32C_ZERO_BYTE_OPS[bit], crc1);
+        }
+        n >>= 1;
+        bit += 1;
+    }
+    crc1 ^ crc2
 }
 
 #[cfg(test)]
@@ -209,5 +300,28 @@ mod tests {
         let folded = folded ^ (folded >> 31);
         let folded = folded.wrapping_mul(0x94D0_49BB_1331_11EB);
         assert_eq!(zero_seeded, folded ^ (folded >> 29));
+    }
+
+    #[test]
+    fn slice_by_8_and_combine_match_byte_oracle() {
+        fn byte_oracle(bytes: &[u8]) -> u32 {
+            let mut crc = !0_u32;
+            for &b in bytes {
+                crc = (crc >> 8) ^ CRC32C_TABLES[0][((crc ^ u32::from(b)) & 0xFF) as usize];
+            }
+            !crc
+        }
+        for la in [0_usize, 1, 7, 8, 13, 129, 1024] {
+            for lb in [0_usize, 1, 7, 8, 19, 1024, 65_537] {
+                let a: Vec<u8> = (0..la).map(|i| ((i * 37 + 11) & 0xFF) as u8).collect();
+                let b: Vec<u8> = (0..lb).map(|i| ((i * 91 + 5) & 0xFF) as u8).collect();
+                let mut joined = a.clone();
+                joined.extend_from_slice(&b);
+                let oracle = byte_oracle(&joined);
+                assert_eq!(crc32c(&joined), oracle);
+                assert_eq!(crc32c_append(crc32c(&a), &b), oracle);
+                assert_eq!(crc32c_combine(crc32c(&a), crc32c(&b), b.len()), oracle);
+            }
+        }
     }
 }

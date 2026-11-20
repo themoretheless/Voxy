@@ -54,7 +54,7 @@ Windows и Linux требуют собственных запусков. Web, mo
 | ENG-09 | Большой мир и воксели | ENG-03–06 | частично | Оконный стресс большого мира: стриминг, разрушение, очереди, пиковая память, стабильность публикации |
 | ENG-10 | Контрольные игры и настольный выпуск | ENG-01–09 | частично | Три полноценные контрольные игры (3D action, разрушаемый воксельный мир, невоксельная интерактивная сцена); Developer ID и нотариализация на чистой macOS; нативная Windows; Linux на физическом GPU |
 | ENG-11 | Web, mobile, XR | стабильные ENG-02, 03, 05 | частично | Только Chrome/WebGPU проверен. Остаются другие браузеры, физические геймпады, перенос поворотного root motion и morph targets между скелетами, запуск на реальных iOS, Android и XR-устройствах, suspend/resume |
-| ENG-12 | Сетевой runtime | версионированные ENG-02, 04, 06, 07 | частично | Авторизованные удалённые сессии, повтор всего игрового состояния, проверки под задержками, потерями и reconnect; `SceneSnapshotDelta::apply` ради CRC сериализует весь документ в JSON на каждое применение, замер 2026-11-14 (`cargo run --release -p voxy_scene --example delta_apply_cost`, дельта с одним изменённым объектом): около 1,4 мс на 1000 объектов и 36 мс на 10 000; для крупных сцен нужен инкрементальный хеш или бинарный канон, то есть смена определения контрольной суммы в протоколе |
+| ENG-12 | Сетевой runtime | версионированные ENG-02, 04, 06, 07 | частично | Авторизованные удалённые сессии, повтор всего игрового состояния, проверки под задержками, потерями и reconnect; `SceneSnapshotDelta::apply` / `canonical_json_crc32c` ускорены через Slice-by-8 `crc32c` + `crc32c_combine`, параллельное хеширование объектов и линейный отсортированный путь диффа/применения (замер 2026-11-20 на `crates/voxy_scene/examples/delta_apply_cost.rs`, `100 000` объектов, 5 пар A/B: медиана `111.0 -> 15.0` мс, **7.38x**) |
 | ENG-13 | Scripting и расширения | стабильный API ENG-06 | запланировано | Версионированный контракт расширений, жизненный цикл, команды и события, диагностика, лимиты, отмена; язык выбирается отдельным ADR |
 
 ## 4. Ближайшие результаты
@@ -173,14 +173,13 @@ ENG-12 и ENG-13 до закрытия ENG-02, 04, 06, 07 не расширят�
 Волны 0–6 выполнены: граф крейтов ацикличен, слои `physics` ацикличны, файлов длиннее 1500 прод-строк нет,
 всё это держат ratchet-тесты `voxy_depgraph`. Открыто:
 
-- **R1. Длинные функции.** `too_many_lines` (100 строк) и `too_many_arguments` (7) включены как ratchet: 1143
+- **R1. Длинные функции.** `too_many_lines` (100 строк) и `too_many_arguments` (7) включены как ratchet: 1124
   старых нарушения помечены `#[expect(..., reason = "predates the function-size ratchet (docs/PLAN.md R1)")]`.
   Сокращать по мере правок: исправленная функция требует снять `#[expect]`. Самые длинные:
-  `material_sides_audit::run`, `ArchiveSceneRenderer::new_with_environment`, `solve_contact` (по 1100–1200 строк).
+  `solve_contact` (1282), `material_sides_audit::run` (1194), `ArchiveSceneRenderer::new_with_environment` (1137).
   `voxy_cuda`, `voxy_vulkan`, `voxy_streamline` держат `#![allow]` на уровне крейта, потому что их Windows-код
   на macOS не линтуется.
-- **R3. Замер после разделения `physics`.** Гейты и бенчи в `refactor/BASELINE.md` не перемерялись после выноса
-  `physics_bio` и `physics_astro`. Запускать, когда на машине нет чужих замеров производительности.
+- Закрытые пункты рефакторинга (бывшие R2, R3, R4) перенесены в раздел «Принятые решения».
 
 ## 6. CI и выпуск
 
@@ -212,8 +211,8 @@ ENG-12 и ENG-13 до закрытия ENG-02, 04, 06, 07 не расширят�
 | --- | --- | --- |
 | ENG-01 | `cargo test -p voxy_editor --lib project::` | 20 |
 | ENG-02 | `cargo test -p voxy_editor --lib headless_game` и `... --lib play_session` | 5 и 8 |
-| ENG-03 | `cargo test -p voxy_assets --lib`; `cargo test -p voxy_editor --lib import::`; `... --lib project_prefab_tests` | 70; 16; 11 |
-| ENG-04 | `cargo test -p voxy_gameplay --lib`; `cargo test -p voxy_editor --lib game_host_tests`; `... --lib joint_authoring_tests` | 261; 27; 9 |
+| ENG-03 | `cargo test -p voxy_assets --lib`; `cargo test -p voxy_editor --lib import::`; `... --lib project_prefab_tests` | 72; 16; 11 |
+| ENG-04 | `cargo test -p voxy_gameplay --lib`; `cargo test -p voxy_editor --lib game_host_tests`; `... --lib joint_authoring_tests` | 262; 28; 9 |
 | ENG-05 | нет: все проверки требуют GPU и окна | 0 |
 | ENG-06 | `cargo test -p voxy_editor --lib animation_runtime`; `... --lib locomotion_tests`; `... --lib foot_placement` | 36; 11; 32 |
 | ENG-07 | `cargo test -p voxy_navigation --lib`; `cargo test -p voxy_editor --lib ui_live`; `... --lib game_ui_input`; `... --lib audio_` | 8; 22; 8; 21 (ещё 6 под `ignore`) |
@@ -221,7 +220,7 @@ ENG-12 и ENG-13 до закрытия ENG-02, 04, 06, 07 не расширят�
 | ENG-09 | `cargo test -p voxy_world -p voxy_storage -p voxy_lighting -p voxy_mesher --lib` | 61 |
 | ENG-10 | `cargo test -p voxy_player --lib`; `cargo test -p voxy_editor --lib packaged_game` | 1; 1 |
 | ENG-11 | `cargo check -p voxy_web --target wasm32-unknown-unknown` (только сборка, по правилу 2 это не квалификация) | 0 |
-| ENG-12 | `cargo test -p voxy_scene --lib replication`; `cargo test -p voxy_editor --lib packaged_game_replicates_authoritative_fixed_ticks_over_tcp` | 9; 1 |
+| ENG-12 | `cargo test -p voxy_scene --lib replication`; `cargo test -p voxy_editor --lib packaged_game_replicates_authoritative_fixed_ticks_over_tcp` | 10; 1 |
 | ENG-13 | нет | 0 |
 
 ## 8. Принятые решения
@@ -245,6 +244,9 @@ ENG-12 и ENG-13 до закрытия ENG-02, 04, 06, 07 не расширят�
   2000 сравнений в тестах. Новое ветвление по тексту ошибки нужно сразу заводить так же.
 - Обоснование разделения `physics` (бывший R4) записано в [ADR 0005](adr/0005-physics-crate-split.md) с
   замером сборки: правка в `physics_bio` пересобирается за 12–28 с против 41–81 с при правке в `physics`.
+- Повторный замер после разделения `physics` (бывший R3) закрыт 2026-11-20: пересчитаны
+  [`refactor/functions.tsv`](refactor/functions.tsv) и [`refactor/BASELINE.md`](refactor/BASELINE.md) (`393 312` прод-строк,
+  `0` сирот, `0` прод-файлов > 1500 строк), пройдены гейты воркспейса и 5-парные A/B-замеры целевых оптимизаций.
 
 ## 9. Что нельзя закрыть на этой машине
 

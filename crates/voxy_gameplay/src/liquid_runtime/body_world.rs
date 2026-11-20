@@ -1333,6 +1333,18 @@ fn support_point_motion(
     use physics::liquid::Error;
     let p = geometry.support.contact.point;
     let tolerance = geometry.tolerance_m + geometry.admission_error_m;
+    if geometry.admission_error_m > 0. {
+        return match rigid_support::support_point_kinematics(
+            first, shape, second, obstacle, geometry, loads, rates,
+        ) {
+            Ok(motion) => Ok(Some(motion)),
+            // A clipped-vertex kink has no unique derivative. The existing
+            // common-point model is still available, but must independently
+            // prove whole-interval ownership; no arbitrary vertex is chosen.
+            Err(Error::CollisionBackend) => Ok(None),
+            Err(error) => Err(error),
+        };
+    }
     let velocity = match rigid_support::point_velocity(first, shape, second, obstacle, p, tolerance)
     {
         Ok(velocity) => velocity,

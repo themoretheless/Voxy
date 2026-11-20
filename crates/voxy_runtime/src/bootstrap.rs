@@ -4,7 +4,7 @@ use std::sync::Arc;
 use voxy_core::{CancelToken, ChunkPos, LocalPos, WorldEpoch};
 use voxy_lighting::{
     LightStamp, LightVolume, LightingBudget, LightingError, LightingInput, LightingScratch,
-    build_light_with_neighbor_volumes, build_light_with_scratch,
+    build_light_with_neighbor_volumes,
 };
 use voxy_mesher::{ChunkMesh, HALO_OFFSETS, MeshError, MeshStamp, MeshingInput, build_mesh};
 use voxy_world::{
@@ -13,6 +13,8 @@ use voxy_world::{
     Occlusion, ProceduralTerrainGenerator, RegistryError, RenderKind, ResourceKey,
     SimpleTerrainGenerator, TerrainPalette, VoxelView, World, WorldLimits, WorldSeed,
 };
+
+mod parallel_derive;
 
 /// Largest supported horizontal radius for generated startup scenes.
 pub const MAX_BOOTSTRAP_RADIUS: i32 = 8;
@@ -236,42 +238,13 @@ impl GeneratedTerrainWindow {
         let mut world = world.clone();
         let evicted = world.replace_resident_generated_chunks(&evict, &restore, generate)?;
         let registry = world.registry_handle();
-        let mut scratch = LightingScratch::new();
-        let mut chunks = Vec::with_capacity(self.visible.len());
-        let mut reused_chunks = 0;
-        for &pos in &self.visible {
-            if token.is_cancelled() {
-                return Err(GenerationError::Cancelled.into());
-            }
-            let center = world
-                .chunk(pos)
-                .ok_or(BootstrapError::MissingGeneratedChunk)?;
-            let mut fetch = |neighbor| world.chunk(neighbor);
-            let stamp = local_mesh_stamp(pos, center.revision, derivation_epoch, &mut fetch);
-            if let Some(chunk) = existing.get(&pos)
-                && let Some(previous) = &chunk.local_mesh_stamp
-                && previous.center == stamp.center
-                && previous.halo == stamp.halo
-                && previous.registry_epoch == stamp.registry_epoch
-            {
-                let mut chunk = chunk.clone();
-                chunk.local_mesh_stamp = Some(stamp);
-                chunk.light.stamp.lighting_epoch = derivation_epoch;
-                chunks.push(chunk);
-                reused_chunks += 1;
-            } else {
-                chunks.push(derive_bootstrap_chunk(
-                    pos,
-                    center,
-                    &registry,
-                    derivation_epoch,
-                    token,
-                    &mut scratch,
-                    fetch,
-                )?);
-            }
-        }
-        chunks.sort_by_key(|chunk| chunk.pos);
+        let ctx = parallel_derive::DeriveContext {
+            registry: &registry,
+            derivation_epoch,
+            token,
+        };
+        let (chunks, reused_chunks) =
+            parallel_derive::derive_window_reusing(&self.visible, existing, &world, ctx)?;
         Ok(PreparedTerrainWindow {
             world,
             chunks,
@@ -569,27 +542,13 @@ fn build_scene_using_generator(
             }
         }
     }
-    let mut chunks = Vec::with_capacity(((2 * radius + 1) * (2 * radius + 1)) as usize);
-    let mut light_scratch = LightingScratch::new();
+    let mut visible_positions = Vec::with_capacity(((2 * radius + 1) * (2 * radius + 1)) as usize);
     for z in -radius..=radius {
         for x in -radius..=radius {
-            let pos = ChunkPos { x, y: 0, z };
-            let center = snapshots
-                .get(&pos)
-                .cloned()
-                .ok_or(BootstrapError::MissingGeneratedChunk)?;
-            chunks.push(derive_bootstrap_chunk(
-                pos,
-                center,
-                &registry,
-                1,
-                &token,
-                &mut light_scratch,
-                |neighbor| snapshots.get(&neighbor).cloned(),
-            )?);
+            visible_positions.push(ChunkPos { x, y: 0, z });
         }
     }
-    chunks.sort_by_key(|chunk| chunk.pos);
+    let chunks = rebuild_chunks_from_snapshots(&registry, &snapshots, &visible_positions, 1)?;
     let mut world = World::new(
         WorldEpoch::new(1).ok_or(BootstrapError::InvalidWorldEpoch)?,
         registry,
@@ -662,24 +621,12 @@ pub fn rebuild_bootstrap_chunks(
 ) -> Result<Vec<BootstrapChunk>, BootstrapError> {
     let registry = world.registry_handle();
     let token = CancelToken::new();
-    let mut chunks = Vec::with_capacity(positions.len());
-    let mut light_scratch = LightingScratch::new();
-    for &pos in positions {
-        let center = world
-            .chunk(pos)
-            .ok_or(BootstrapError::MissingGeneratedChunk)?;
-        chunks.push(derive_bootstrap_chunk(
-            pos,
-            center,
-            &registry,
-            derivation_epoch,
-            &token,
-            &mut light_scratch,
-            |neighbor| world.chunk(neighbor),
-        )?);
-    }
-    chunks.sort_by_key(|chunk| chunk.pos);
-    Ok(chunks)
+    let ctx = parallel_derive::DeriveContext {
+        registry: &registry,
+        derivation_epoch,
+        token: &token,
+    };
+    parallel_derive::derive_positions_parallel(positions, ctx, |neighbor| world.chunk(neighbor))
 }
 
 /// Extracts only `positions` and their 26-neighbor halos (`Arc`-cheap `ChunkSnapshot` clones)
@@ -727,25 +674,14 @@ pub fn rebuild_chunks_from_snapshots(
     derivation_epoch: u64,
 ) -> Result<Vec<BootstrapChunk>, BootstrapError> {
     let token = CancelToken::new();
-    let mut chunks = Vec::with_capacity(positions.len());
-    let mut light_scratch = LightingScratch::new();
-    for &pos in positions {
-        let center = snapshots
-            .get(&pos)
-            .cloned()
-            .ok_or(BootstrapError::MissingGeneratedChunk)?;
-        chunks.push(derive_bootstrap_chunk(
-            pos,
-            center,
-            registry,
-            derivation_epoch,
-            &token,
-            &mut light_scratch,
-            |neighbor| snapshots.get(&neighbor).cloned(),
-        )?);
-    }
-    chunks.sort_by_key(|chunk| chunk.pos);
-    Ok(chunks)
+    let ctx = parallel_derive::DeriveContext {
+        registry,
+        derivation_epoch,
+        token: &token,
+    };
+    parallel_derive::derive_positions_parallel(positions, ctx, |neighbor| {
+        snapshots.get(&neighbor).cloned()
+    })
 }
 
 /// Rebuilds a multi-layer vertical column/grid of chunks with top-down sky propagation
@@ -890,115 +826,6 @@ pub fn rebuild_vertical_chunks_from_snapshots(
     }
     chunks.sort_by_key(|chunk| chunk.pos);
     Ok(chunks)
-}
-
-fn halo_position(pos: ChunkPos, index: usize) -> ChunkPos {
-    let offset = HALO_OFFSETS[index];
-    ChunkPos {
-        x: pos.x + i64::from(offset.dx),
-        y: pos.y + i64::from(offset.dy),
-        z: pos.z + i64::from(offset.dz),
-    }
-}
-
-fn local_mesh_stamp(
-    pos: ChunkPos,
-    center: ChunkRevision,
-    epoch: u64,
-    fetch: &mut impl FnMut(ChunkPos) -> Option<ChunkSnapshot>,
-) -> MeshStamp {
-    MeshStamp {
-        center,
-        halo: std::array::from_fn(|index| {
-            fetch(halo_position(pos, index)).map(|chunk| chunk.revision)
-        }),
-        registry_epoch: 1,
-        mesher_epoch: epoch,
-    }
-}
-
-fn derive_bootstrap_chunk(
-    pos: ChunkPos,
-    center: ChunkSnapshot,
-    registry: &Arc<BlockRegistry>,
-    derivation_epoch: u64,
-    token: &CancelToken,
-    light_scratch: &mut LightingScratch,
-    mut fetch_chunk: impl FnMut(ChunkPos) -> Option<ChunkSnapshot>,
-) -> Result<BootstrapChunk, BootstrapError> {
-    let center_revision = center.revision;
-    let face_positions = [
-        ChunkPos {
-            x: pos.x - 1,
-            ..pos
-        },
-        ChunkPos {
-            x: pos.x + 1,
-            ..pos
-        },
-        ChunkPos {
-            y: pos.y - 1,
-            ..pos
-        },
-        ChunkPos {
-            y: pos.y + 1,
-            ..pos
-        },
-        ChunkPos {
-            z: pos.z - 1,
-            ..pos
-        },
-        ChunkPos {
-            z: pos.z + 1,
-            ..pos
-        },
-    ];
-    let light_neighbors = face_positions.map(&mut fetch_chunk);
-    let light_faces = light_neighbors
-        .each_ref()
-        .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision));
-    let light = build_light_with_scratch(
-        &LightingInput {
-            center: center.clone(),
-            neighbors: light_neighbors,
-            registry: Arc::clone(registry),
-            sky_from_above: true,
-            stamp: LightStamp {
-                center: center_revision,
-                faces: light_faces,
-                registry_epoch: 1,
-                lighting_epoch: derivation_epoch,
-            },
-        },
-        LightingBudget::default(),
-        token,
-        light_scratch,
-    )?;
-    let neighbors = std::array::from_fn(|index| fetch_chunk(halo_position(pos, index)));
-    let stamp = MeshStamp {
-        center: center_revision,
-        halo: neighbors
-            .each_ref()
-            .map(|snapshot| snapshot.as_ref().map(|snapshot| snapshot.revision)),
-        registry_epoch: 1,
-        mesher_epoch: derivation_epoch,
-    };
-    let mesh = build_mesh(
-        &MeshingInput {
-            center,
-            neighbors,
-            registry: Arc::clone(registry),
-            stamp: stamp.clone(),
-        },
-        token,
-    )
-    .map_err(BootstrapError::Mesh)?;
-    Ok(BootstrapChunk {
-        pos,
-        mesh,
-        light,
-        local_mesh_stamp: Some(stamp),
-    })
 }
 
 /// Chunks whose derived light or mesh can differ after `receipt` was committed.

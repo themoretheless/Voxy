@@ -77,6 +77,8 @@ impl From<SceneGraphError> for DocumentError {
 #[path = "allocation_checkpoint.rs"]
 mod allocation;
 pub use allocation::SceneAllocationCheckpoint;
+#[path = "document/canonical_crc.rs"]
+mod canonical_crc;
 
 type ReferenceVisitor = Arc<dyn Fn(&Component) -> Vec<ObjectId> + Send + Sync>;
 type ReferenceRemapper = Arc<
@@ -681,6 +683,14 @@ impl SceneDocument {
         Ok(serde_json::to_string_pretty(self)?)
     }
 
+    /// Computes `crc32c(self.to_json()?.as_bytes())` via zero-allocation streaming and
+    /// multi-threaded chunk combining without materializing a JSON `String`.
+    /// # Errors
+    /// Propagates transform validation or serialization failures.
+    pub fn canonical_json_crc32c(&self) -> Result<u32, DocumentError> {
+        canonical_crc::compute(self)
+    }
+
     /// Loads into a privately staged graph. Failure never changes an existing world.
     /// Order of objects in the file does not constrain parenting.
     /// # Errors
@@ -1044,6 +1054,37 @@ mod tests {
         assert!(loaded.identify(new, ObjectId("a".into())).is_err());
         loaded.identify(new, ObjectId("b".into())).unwrap();
         assert_eq!(loaded.capture(&registry).unwrap().objects.len(), 2);
+    }
+
+    #[test]
+    fn canonical_json_crc32c_matches_pretty_json_bytes_across_sizes() {
+        for count in [0_usize, 1, 2, 17, 600] {
+            let mut objects = Vec::with_capacity(count);
+            for i in 0..count {
+                let mut obj = object(&format!("obj-{i:04}"), (i > 0).then_some("obj-0000"));
+                obj.name = format!("Name \"line1\"\nline2\\end-{i}");
+                obj.translation = [i as f32 * 0.25, -1.5, 0.0];
+                if i % 5 == 0 {
+                    let precise = glam::DVec3::new(f64::from(obj.translation[0]), -1.5, 0.0);
+                    obj.precise_translation_bits = Some(precise.to_array().map(f64::to_bits));
+                }
+                obj.components.insert(
+                    "game.stats.v1".into(),
+                    serde_json::json!({"hp": i, "tags": ["a\nb", "c"], "nested": {"ok": true}}),
+                );
+                objects.push(obj);
+            }
+            let doc = SceneDocument {
+                version: 1,
+                objects,
+            };
+            let expected = voxy_core::crc32c(doc.to_json().unwrap().as_bytes());
+            assert_eq!(
+                doc.canonical_json_crc32c().unwrap(),
+                expected,
+                "count={count}"
+            );
+        }
     }
 }
 

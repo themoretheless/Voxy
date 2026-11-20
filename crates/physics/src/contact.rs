@@ -395,6 +395,173 @@ fn solve_normal_network_constraints(
     )
 }
 
+fn network_speed(states: &[ContactBody], indexed: NetworkContact, bias: f64) -> Result<f64, Error> {
+    let contact = indexed.contact;
+    let relative = sub(
+        states[indexed.first].validated_point_velocity(contact.point)?,
+        indexed.second.map_or(Ok([0.; 3]), |j| {
+            states[j].validated_point_velocity(contact.point)
+        })?,
+    );
+    let value = dot(relative, contact.normal) + bias;
+    if !value.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    Ok(value)
+}
+
+fn apply_network_impulse(
+    states: &mut [ContactBody],
+    indexed: NetworkContact,
+    delta: f64,
+) -> Result<(), Error> {
+    let impulse = indexed.contact.normal.map(|n| n * delta);
+    states[indexed.first].apply_impulse_to_validated_body(indexed.contact.point, impulse)?;
+    if let Some(j) = indexed.second {
+        states[j].apply_impulse_to_validated_body(indexed.contact.point, impulse.map(|v| -v))?;
+    }
+    Ok(())
+}
+
+struct DirectSubsetContext<'a> {
+    bodies: &'a [ContactBody],
+    points: &'a [NetworkContact],
+    inverse: &'a [f64],
+    cross_mass: &'a [f64],
+    biases: &'a [f64],
+    base: Vec<f64>,
+    lower_bounds: Option<&'a [f64]>,
+    tolerance: f64,
+}
+
+impl DirectSubsetContext<'_> {
+    fn lower(&self, index: usize) -> f64 {
+        self.lower_bounds.map_or(0., |bounds| bounds[index])
+    }
+
+    fn mass(&self, i: usize, j: usize) -> f64 {
+        let n = self.points.len();
+        if i == j {
+            self.inverse[i]
+        } else {
+            self.cross_mass[i.min(j) * n + i.max(j)]
+        }
+    }
+}
+
+fn subset_load(ids: &[usize], x: &[f64], row: usize) -> f64 {
+    ids.iter().position(|&r| r == row).map_or(0., |idx| x[idx])
+}
+
+fn linear_subset_error(ctx: &DirectSubsetContext<'_>, ids: &[usize], x: &[f64]) -> f64 {
+    let k = ids.len();
+    let mut lin_err = 0_f64;
+    for (row, &b) in ctx.base.iter().enumerate() {
+        let mut v_lin = b;
+        for (&col, &load) in ids.iter().zip(&x[..k]) {
+            v_lin += ctx.mass(row, col) * load;
+        }
+        let load = subset_load(ids, x, row);
+        lin_err = lin_err.max(if load > ctx.lower(row) {
+            v_lin.abs()
+        } else {
+            (-v_lin).max(0.)
+        });
+    }
+    lin_err
+}
+
+fn try_direct_subset(
+    ctx: &DirectSubsetContext<'_>,
+    ids: &[usize],
+    staged: &mut Vec<ContactBody>,
+    strengths: &mut [f64],
+    residual: &mut f64,
+) -> Result<bool, Error> {
+    let k = ids.len();
+    let mut a = [0.; 9];
+    let mut x = [0.; 3];
+    for (r, &row) in ids.iter().enumerate() {
+        x[r] = -ctx.base[row];
+        for (c, &col) in ids.iter().enumerate() {
+            a[r * k + c] = ctx.mass(row, col);
+        }
+    }
+    let pivot_tol = if ctx.lower_bounds.is_some() {
+        1e-8
+    } else {
+        1e-10
+    };
+    if !crate::math::gauss_pivoted_solve_in_place(&mut a[..k * k], &mut x[..k], k, pivot_tol)
+        || ids
+            .iter()
+            .zip(&x[..k])
+            .any(|(&r, &v)| !v.is_finite() || v <= ctx.lower(r))
+    {
+        return Ok(false);
+    }
+    let lin_err = linear_subset_error(ctx, ids, &x[..k]);
+    if !lin_err.is_finite() || lin_err > ctx.tolerance * 4.0 + 1e-14 {
+        return Ok(false);
+    }
+    let mut trial = ctx.bodies.to_vec();
+    for (&row, &load) in ids.iter().zip(&x[..k]) {
+        if load != 0. {
+            apply_network_impulse(&mut trial, ctx.points[row], load)?;
+        }
+    }
+    let mut error = 0_f64;
+    for (row, (&point, &bias)) in ctx.points.iter().zip(ctx.biases).enumerate() {
+        let v = network_speed(&trial, point, bias)?;
+        let load = subset_load(ids, &x[..k], row);
+        error = error.max(if load > ctx.lower(row) {
+            v.abs()
+        } else {
+            (-v).max(0.)
+        });
+    }
+    if error <= ctx.tolerance && error < *residual {
+        *staged = trial;
+        strengths.fill(0.);
+        for (&row, &load) in ids.iter().zip(&x[..k]) {
+            strengths[row] = load;
+        }
+        *residual = error;
+    }
+    Ok(*residual <= 16. * f64::EPSILON)
+}
+
+fn try_direct_active_subsets(
+    ctx: &DirectSubsetContext<'_>,
+    staged: &mut Vec<ContactBody>,
+    strengths: &mut [f64],
+    residual: &mut f64,
+) -> Result<(), Error> {
+    let n_points = ctx.points.len();
+    for i in 0..n_points {
+        if try_direct_subset(ctx, &[i], staged, strengths, residual)? {
+            return Ok(());
+        }
+    }
+    for i in 0..n_points {
+        for j in (i + 1)..n_points {
+            if try_direct_subset(ctx, &[i, j], staged, strengths, residual)? {
+                return Ok(());
+            }
+        }
+    }
+    for i in 0..n_points {
+        for j in (i + 1)..n_points {
+            for k in (j + 1)..n_points {
+                if try_direct_subset(ctx, &[i, j, k], staged, strengths, residual)? {
+                    return Ok(());
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Same indexed mass/inertia operator for nonnegative reactions and their
 /// signed tangent rates. A finite lower bound marks a unilateral rate branch;
 /// negative infinity marks an already loaded branch with a signed derivative.
@@ -577,7 +744,12 @@ fn solve_normal_network_constraints_with_bounds(
             }
             let correlation = correlation.clamp(-1., 1.);
             let determinant = 1. - correlation * correlation;
-            if determinant <= 256. * f64::EPSILON {
+            let min_det = if lower(i) < 0. && lower(j) < 0. {
+                1e-6
+            } else {
+                256. * f64::EPSILON
+            };
+            if determinant <= min_det {
                 continue;
             }
             pairs.push((i, j, correlation, determinant));
@@ -693,60 +865,32 @@ fn solve_normal_network_constraints_with_bounds(
             }
         }
         if !enforce_energy
-            && lower_bounds.is_none()
+            && config.max_sweeps >= 3
             && sweep == config.max_sweeps
             && residual > config.velocity_tolerance
             && n_points <= 32
+            && (0..n_points).all(|r| lower(r) <= 0.)
         {
             let base = points
                 .iter()
-                .copied()
-                .enumerate()
-                .map(|(i, p)| speed(bodies, p, i))
+                .zip(biases)
+                .map(|(&p, &bias)| network_speed(bodies, p, bias))
                 .collect::<Result<Vec<_>, _>>()?;
-            let mass = |i: usize, j: usize| {
-                if i == j {
-                    inverse[i]
-                } else {
-                    cross_mass[i.min(j) * n_points + i.max(j)]
-                }
-            };
-            for i in 0..n_points {
-                for j in i + 1..n_points {
-                    for k in j + 1..n_points {
-                        let ids = [i, j, k];
-                        let mut a: [f64; 9] =
-                            std::array::from_fn(|entry| mass(ids[entry / 3], ids[entry % 3]));
-                        let mut x = ids.map(|r| -base[r]);
-                        if !crate::math::gauss_pivoted_solve_in_place(&mut a, &mut x, 3, 1e-10)
-                            || x.iter().any(|&v| v <= 0.)
-                        {
-                            continue;
-                        }
-                        let mut trial = bodies.to_vec();
-                        for (&row, &load) in ids.iter().zip(&x) {
-                            apply(&mut trial, points[row], load)?;
-                        }
-                        let mut error = 0_f64;
-                        for (row, point) in points.iter().copied().enumerate() {
-                            let v = speed(&trial, point, row)?;
-                            error = error.max(if ids.contains(&row) {
-                                v.abs()
-                            } else {
-                                (-v).max(0.)
-                            });
-                        }
-                        if error <= config.velocity_tolerance && error < residual {
-                            staged = trial;
-                            strengths.fill(0.);
-                            for (&row, &load) in ids.iter().zip(&x) {
-                                strengths[row] = load;
-                            }
-                            residual = error;
-                        }
-                    }
-                }
-            }
+            try_direct_active_subsets(
+                &DirectSubsetContext {
+                    bodies,
+                    points: &points,
+                    inverse: &inverse,
+                    cross_mass: &cross_mass,
+                    biases,
+                    base,
+                    lower_bounds,
+                    tolerance: config.velocity_tolerance,
+                },
+                &mut staged,
+                &mut strengths,
+                &mut residual,
+            )?;
         }
         if residual <= config.velocity_tolerance {
             let after = energy(&staged)?;

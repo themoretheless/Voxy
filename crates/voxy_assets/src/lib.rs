@@ -1,5 +1,7 @@
 //! Single-writer asset publication with bounded pending jobs and immutable versions.
 mod artifact_cache;
+mod asset_cache;
+pub use asset_cache::AssetCache;
 mod change_token;
 pub use change_token::AssetChangeToken;
 mod catalog_checkpoint;
@@ -22,68 +24,15 @@ pub use package::{
 };
 
 mod streaming;
-pub use streaming::{
-    AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority, StreamingRequest,
-    streaming_mip_priority_score,
-};
-
-// === OPTIMIZATION #31-40: Asset caching system ===
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
-
-/// Global asset cache sharing loaded values by path.
-pub struct AssetCache {
-    /// In-memory cached assets (strong refs)
-    strong_cache: Mutex<HashMap<String, Arc<dyn std::any::Any + Send + Sync>>>,
-}
-
-impl std::fmt::Debug for AssetCache {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let entries = self.strong_cache.lock().map_or(0, |cache| cache.len());
-        f.debug_struct("AssetCache")
-            .field("entries", &entries)
-            .finish()
-    }
-}
-
-impl Default for AssetCache {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl AssetCache {
-    #[must_use]
-    pub fn new() -> Self {
-        Self {
-            strong_cache: Mutex::new(HashMap::new()),
-        }
-    }
-
-    /// Cache-lookup-then-load pattern for repeated assets
-    pub fn load_or_cache<T: 'static + Clone + Send + Sync>(
-        &self,
-        path: &str,
-        loader: impl FnOnce() -> Result<T, String>,
-    ) -> Result<T, String> {
-        let mut cache = self.strong_cache.lock().unwrap();
-        if let Some(cached) = cache.get(path) {
-            // Return cloned copy
-            return Ok(cached.downcast_ref::<T>().unwrap().clone());
-        }
-
-        // Load and cache
-        let value = loader()?;
-        let arc = Arc::new(value.clone());
-        cache.insert(path.to_string(), arc);
-        Ok(value)
-    }
-}
 pub use import_worker::{
     AssetImportWorker, DependencySnapshots, ImportCompletion, ImportWorkerError,
 };
 pub use locations::{AssetLocations, LocationError, SourcePath};
 pub use manifest::ManifestError;
+pub use streaming::{
+    AsyncAssetStreamer, LodStreamingPolicy, StreamingPriority, StreamingRequest,
+    streaming_mip_priority_score,
+};
 mod publication;
 mod rebuild;
 pub use rebuild::{RebuildClaim, RebuildError, RebuildPlan, RebuildStatus};
@@ -107,7 +56,10 @@ pub use watch_worker::{ObservedSourceScan, PollWorkerError, SourcePollWorker};
 
 use std::{
     collections::BTreeMap,
-    sync::atomic::{AtomicU64, Ordering},
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
 };
 static NEXT_CATALOG: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -71,6 +71,178 @@ fn face_ao_from_input(input: &MeshingInput, local: LocalPos, face: FaceDir) -> [
     ]
 }
 
+#[inline]
+fn is_full_cube(registry: &voxy_world::BlockRegistry, id: BlockStateId) -> bool {
+    registry
+        .get(id)
+        .is_some_and(|def| def.occlusion == Occlusion::FullCube)
+}
+
+#[inline]
+const fn halo_span(delta: i8) -> (std::ops::Range<usize>, usize) {
+    match delta {
+        -1 => (0..1_usize, 31_usize),
+        0 => (1..33_usize, 0_usize),
+        _ => (33..34_usize, 0_usize),
+    }
+}
+
+#[inline]
+fn read_packed_slot(words: &[u64], cell_index: usize, bits: usize) -> usize {
+    let bit_pos = cell_index * bits;
+    let word_idx = bit_pos >> 6;
+    let bit_off = bit_pos & 63;
+    let mask = u64::MAX >> (64 - bits);
+    let mut raw = words[word_idx] >> bit_off;
+    if bit_off + bits > 64 {
+        raw |= words[word_idx + 1] << (64 - bit_off);
+    }
+    (raw & mask) as usize
+}
+
+fn fill_halo_solid(
+    px_range: std::ops::Range<usize>,
+    py_range: std::ops::Range<usize>,
+    pz_range: &std::ops::Range<usize>,
+    padded: &mut [u8],
+) {
+    for py in py_range {
+        for pz in pz_range.clone() {
+            let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+            padded[row + px_range.start..row + px_range.end].fill(1);
+        }
+    }
+}
+
+#[inline]
+fn write_packed_halo_rows(
+    words: &[u64],
+    bits: usize,
+    offset: HaloOffset,
+    padded: &mut [u8],
+    slot_occ: impl Fn(usize) -> u8,
+) {
+    let (px_range, lx_base) = halo_span(offset.dx);
+    let (py_range, ly_base) = halo_span(offset.dy);
+    let (pz_range, lz_base) = halo_span(offset.dz);
+    for (iy, py) in py_range.enumerate() {
+        let y_base = (ly_base + iy) * 1024;
+        for (iz, pz) in pz_range.clone().enumerate() {
+            let cell_row = y_base + (lz_base + iz) * 32 + lx_base;
+            let pad_row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+            for (ix, px) in px_range.clone().enumerate() {
+                let slot = read_packed_slot(words, cell_row + ix, bits);
+                padded[pad_row + px] = slot_occ(slot);
+            }
+        }
+    }
+}
+
+fn fill_halo_packed(
+    registry: &voxy_world::BlockRegistry,
+    bits_per_index: u8,
+    palette: &[BlockStateId],
+    words: &[u64],
+    offset: HaloOffset,
+    padded: &mut [u8],
+) -> bool {
+    let bits = usize::from(bits_per_index);
+    if bits == 0 || bits > 64 || palette.is_empty() {
+        return false;
+    }
+    let (px_range, _) = halo_span(offset.dx);
+    let (py_range, _) = halo_span(offset.dy);
+    let (pz_range, _) = halo_span(offset.dz);
+
+    if palette.len() <= 64 {
+        let mut occ_mask = 0_u64;
+        for (slot, &id) in palette.iter().enumerate() {
+            if is_full_cube(registry, id) {
+                occ_mask |= 1_u64 << slot;
+            }
+        }
+        if occ_mask == 0 {
+            return true;
+        }
+        if occ_mask.count_ones() as usize == palette.len() {
+            fill_halo_solid(px_range, py_range, &pz_range, padded);
+            return true;
+        }
+        write_packed_halo_rows(words, bits, offset, padded, |slot| {
+            ((occ_mask >> slot) & 1) as u8
+        });
+        return true;
+    }
+
+    let mut occ_slots = Vec::with_capacity(palette.len());
+    let mut occ_count = 0_usize;
+    for &id in palette {
+        let occ = u8::from(is_full_cube(registry, id));
+        occ_count += usize::from(occ);
+        occ_slots.push(occ);
+    }
+    if occ_count == 0 {
+        return true;
+    }
+    if occ_count == palette.len() {
+        fill_halo_solid(px_range, py_range, &pz_range, padded);
+        return true;
+    }
+    write_packed_halo_rows(words, bits, offset, padded, |slot| occ_slots[slot]);
+    true
+}
+
+fn fill_neighbor_halo(
+    input: &MeshingInput,
+    halo_idx: usize,
+    offset: HaloOffset,
+    padded: &mut [u8],
+) {
+    let Some(neighbor) = &input.neighbors[halo_idx] else {
+        return;
+    };
+    let (px_range, lx_base) = halo_span(offset.dx);
+    let (py_range, ly_base) = halo_span(offset.dy);
+    let (pz_range, lz_base) = halo_span(offset.dz);
+    match &neighbor.data.blocks {
+        voxy_world::PalettedBlocks::Uniform(block) => {
+            if is_full_cube(&input.registry, *block) {
+                fill_halo_solid(px_range, py_range, &pz_range, padded);
+            }
+            return;
+        }
+        voxy_world::PalettedBlocks::Packed {
+            bits_per_index,
+            palette,
+            words,
+        } if fill_halo_packed(
+            &input.registry,
+            *bits_per_index,
+            palette,
+            words,
+            offset,
+            padded,
+        ) =>
+        {
+            return;
+        }
+        _ => {}
+    }
+    for (iy, py) in py_range.enumerate() {
+        let ly = (ly_base + iy) as u8;
+        for (iz, pz) in pz_range.clone().enumerate() {
+            let lz = (lz_base + iz) as u8;
+            let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
+            for (ix, px) in px_range.clone().enumerate() {
+                let lx = (lx_base + ix) as u8;
+                let local = LocalPos::new(lx, ly, lz).expect("halo local in 0..32");
+                let id = neighbor.data.blocks.get(local.index());
+                padded[row + px] = u8::from(is_full_cube(&input.registry, id));
+            }
+        }
+    }
+}
+
 fn fill_padded_occluding(
     input: &MeshingInput,
     classes: &[SlotClass],
@@ -88,61 +260,8 @@ fn fill_padded_occluding(
             }
         }
     }
-    for (halo_idx, offset) in HALO_OFFSETS.iter().enumerate() {
-        let Some(neighbor) = &input.neighbors[halo_idx] else {
-            continue;
-        };
-        let (px_range, lx_base) = match offset.dx {
-            -1 => (0..1_usize, 31_usize),
-            0 => (1..33_usize, 0_usize),
-            _ => (33..34_usize, 0_usize),
-        };
-        let (py_range, ly_base) = match offset.dy {
-            -1 => (0..1_usize, 31_usize),
-            0 => (1..33_usize, 0_usize),
-            _ => (33..34_usize, 0_usize),
-        };
-        let (pz_range, lz_base) = match offset.dz {
-            -1 => (0..1_usize, 31_usize),
-            0 => (1..33_usize, 0_usize),
-            _ => (33..34_usize, 0_usize),
-        };
-        if let voxy_world::PalettedBlocks::Uniform(block) = &neighbor.data.blocks {
-            let occ = u8::from(
-                input
-                    .registry
-                    .get(*block)
-                    .is_some_and(|def| def.occlusion == Occlusion::FullCube),
-            );
-            if occ == 0 {
-                continue;
-            }
-            for py in py_range {
-                for pz in pz_range.clone() {
-                    let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
-                    padded[row + px_range.start..row + px_range.end].fill(occ);
-                }
-            }
-            continue;
-        }
-        for (iy, py) in py_range.enumerate() {
-            let ly = (ly_base + iy) as u8;
-            for (iz, pz) in pz_range.clone().enumerate() {
-                let lz = (lz_base + iz) as u8;
-                let row = (py * PADDED_EDGE + pz) * PADDED_EDGE;
-                for (ix, px) in px_range.clone().enumerate() {
-                    let lx = (lx_base + ix) as u8;
-                    let local = LocalPos::new(lx, ly, lz).expect("halo local in 0..32");
-                    let id = neighbor.data.blocks.get(local.index());
-                    padded[row + px] = u8::from(
-                        input
-                            .registry
-                            .get(id)
-                            .is_some_and(|def| def.occlusion == Occlusion::FullCube),
-                    );
-                }
-            }
-        }
+    for (halo_idx, &offset) in HALO_OFFSETS.iter().enumerate() {
+        fill_neighbor_halo(input, halo_idx, offset, padded);
     }
 }
 

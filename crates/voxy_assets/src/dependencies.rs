@@ -17,6 +17,8 @@ impl std::error::Error for DependencyError {}
 #[derive(Debug)]
 pub struct AssetDependencies {
     edges: BTreeMap<AssetId, BTreeSet<AssetId>>,
+    dependents: BTreeMap<AssetId, BTreeSet<AssetId>>,
+    edge_count: usize,
     max_assets: usize,
     max_edges: usize,
 }
@@ -25,6 +27,8 @@ impl AssetDependencies {
     pub fn new(max_assets: usize, max_edges: usize) -> Self {
         Self {
             edges: BTreeMap::new(),
+            dependents: BTreeMap::new(),
+            edge_count: 0,
             max_assets,
             max_edges,
         }
@@ -39,7 +43,8 @@ impl AssetDependencies {
         if !self.edges.contains_key(&asset) && self.edges.len() >= self.max_assets {
             return Err(DependencyError::Capacity);
         }
-        self.edges.entry(asset).or_default();
+        self.edges.entry(asset.clone()).or_default();
+        self.dependents.entry(asset).or_default();
         Ok(())
     }
     /// Replaces dependencies atomically. All dependency IDs must be declared.
@@ -55,8 +60,8 @@ impl AssetDependencies {
             .get(asset)
             .ok_or_else(|| DependencyError::UnknownAsset(asset.clone()))?;
         let dependencies: BTreeSet<_> = dependencies.into_iter().collect();
-        let total: usize = self.edges.values().map(BTreeSet::len).sum();
-        if total - old.len() + dependencies.len() > self.max_edges {
+        let new_edge_count = self.edge_count - old.len() + dependencies.len();
+        if new_edge_count > self.max_edges {
             return Err(DependencyError::Capacity);
         }
         let mut pending: Vec<_> = dependencies.iter().cloned().collect();
@@ -73,6 +78,22 @@ impl AssetDependencies {
                 pending.extend(next.iter().cloned());
             }
         }
+        for prev_dep in old {
+            if !dependencies.contains(prev_dep)
+                && let Some(children) = self.dependents.get_mut(prev_dep)
+            {
+                children.remove(asset);
+            }
+        }
+        for dep in &dependencies {
+            if !old.contains(dep) {
+                self.dependents
+                    .entry(dep.clone())
+                    .or_default()
+                    .insert(asset.clone());
+            }
+        }
+        self.edge_count = new_edge_count;
         self.edges.insert(asset.clone(), dependencies);
         Ok(())
     }
@@ -90,48 +111,11 @@ impl AssetDependencies {
         &self,
         changed: impl IntoIterator<Item = AssetId>,
     ) -> Result<Vec<AssetId>, DependencyError> {
-        let mut affected: BTreeSet<_> = changed.into_iter().collect();
-        for asset in &affected {
-            if !self.edges.contains_key(asset) {
-                return Err(DependencyError::UnknownAsset(asset.clone()));
-            }
-        }
-        loop {
-            let additions: Vec<_> = self
-                .edges
-                .iter()
-                .filter(|(asset, deps)| {
-                    !affected.contains(*asset) && deps.iter().any(|dep| affected.contains(dep))
-                })
-                .map(|(asset, _)| asset.clone())
-                .collect();
-            if additions.is_empty() {
-                break;
-            }
-            affected.extend(additions);
-        }
-        let mut result = Vec::with_capacity(affected.len());
-        let mut completed = BTreeSet::new();
-        while !affected.is_empty() {
-            let ready: Vec<_> = affected
-                .iter()
-                .filter(|asset| {
-                    self.edges[*asset]
-                        .iter()
-                        .all(|dep| !affected.contains(dep) || completed.contains(dep))
-                })
-                .cloned()
-                .collect();
-            if ready.is_empty() {
-                return Err(DependencyError::Cycle);
-            }
-            for asset in ready {
-                affected.remove(&asset);
-                completed.insert(asset.clone());
-                result.push(asset);
-            }
-        }
-        Ok(result)
+        Ok(self
+            .wavefront_layers(changed)?
+            .into_iter()
+            .flatten()
+            .collect())
     }
 
     /// Computes wavefront parallel execution layers for the affected rebuild subgraph.
@@ -142,31 +126,62 @@ impl AssetDependencies {
         &self,
         changed: impl IntoIterator<Item = AssetId>,
     ) -> Result<Vec<Vec<AssetId>>, DependencyError> {
-        let ordered = self.affected(changed)?;
-        if ordered.is_empty() {
+        let mut affected = BTreeSet::new();
+        let mut stack = Vec::new();
+        for asset in changed {
+            if !self.edges.contains_key(&asset) {
+                return Err(DependencyError::UnknownAsset(asset));
+            }
+            if affected.insert(asset.clone()) {
+                stack.push(asset);
+            }
+        }
+        if affected.is_empty() {
             return Ok(Vec::new());
         }
-        let mut remaining: BTreeSet<_> = ordered.into_iter().collect();
-        let mut completed = BTreeSet::new();
-        let mut layers = Vec::new();
-        while !remaining.is_empty() {
-            let ready: Vec<_> = remaining
+        while let Some(node) = stack.pop() {
+            if let Some(children) = self.dependents.get(&node) {
+                for child in children {
+                    if affected.insert(child.clone()) {
+                        stack.push(child.clone());
+                    }
+                }
+            }
+        }
+        let mut in_degree: BTreeMap<AssetId, usize> = BTreeMap::new();
+        let mut ready = BTreeSet::new();
+        for asset in &affected {
+            let deg = self.edges[asset]
                 .iter()
-                .filter(|asset| {
-                    self.edges[*asset]
-                        .iter()
-                        .all(|dep| !remaining.contains(dep) || completed.contains(dep))
-                })
-                .cloned()
-                .collect();
-            if ready.is_empty() {
-                return Err(DependencyError::Cycle);
+                .filter(|dep| affected.contains(*dep))
+                .count();
+            if deg == 0 {
+                ready.insert(asset.clone());
             }
-            for asset in &ready {
-                remaining.remove(asset);
-                completed.insert(asset.clone());
+            in_degree.insert(asset.clone(), deg);
+        }
+        let mut processed = 0_usize;
+        let mut layers = Vec::new();
+        while !ready.is_empty() {
+            let layer: Vec<AssetId> = ready.iter().cloned().collect();
+            ready.clear();
+            processed += layer.len();
+            for asset in &layer {
+                if let Some(children) = self.dependents.get(asset) {
+                    for child in children {
+                        if let Some(deg) = in_degree.get_mut(child) {
+                            *deg -= 1;
+                            if *deg == 0 {
+                                ready.insert(child.clone());
+                            }
+                        }
+                    }
+                }
             }
-            layers.push(ready);
+            layers.push(layer);
+        }
+        if processed != affected.len() {
+            return Err(DependencyError::Cycle);
         }
         Ok(layers)
     }

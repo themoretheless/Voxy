@@ -130,6 +130,63 @@ impl AffineBox {
     ) -> Result<Vec<(AffineContact, AxisFeature)>, super::PhysicsError> {
         self.support_contacts_with_error(other, 0.)
     }
+    fn patch_supports_feature(
+        &self,
+        edge_axis: Option<usize>,
+        normal: DVec3,
+        points: &[DVec3],
+        limit: f64,
+    ) -> bool {
+        let inv = glam::DMat3::from_cols(self.edges[0], self.edges[1], self.edges[2]).inverse();
+        if !inv.is_finite() {
+            return false;
+        }
+        let rows = inv.transpose().to_cols_array_2d();
+        points.iter().any(|&p| {
+            let local = inv * (p - self.center);
+            let mut active_count = 0_usize;
+            let mut transverse_active = 0_usize;
+            let mut single_normal = DVec3::ZERO;
+            for (k, row) in rows.iter().enumerate() {
+                let row_vec = DVec3::from_array(*row);
+                let row_len = row_vec.length();
+                if row_len > 0. && ((local[k].abs() - 1.).abs() / row_len) <= limit {
+                    active_count += 1;
+                    if Some(k) != edge_axis {
+                        transverse_active += 1;
+                    }
+                    single_normal = row_vec / row_len;
+                }
+            }
+            let primary_match = match edge_axis {
+                Some(_) => transverse_active == 2,
+                None => active_count >= 2,
+            };
+            primary_match
+                || (active_count == 1 && single_normal.cross(normal).length() <= 16. * f64::EPSILON)
+        })
+    }
+
+    fn branch_supported_by_patch(
+        &self,
+        shifted_other: &Self,
+        feature: AxisFeature,
+        normal: DVec3,
+        points: &[DVec3],
+        limit: f64,
+    ) -> bool {
+        match feature {
+            AxisFeature::ObstacleFace(_) => {
+                shifted_other.patch_supports_feature(None, normal, points, limit)
+            }
+            AxisFeature::BodyFace(_) => self.patch_supports_feature(None, normal, points, limit),
+            AxisFeature::Edges(i, j) => {
+                self.patch_supports_feature(Some(j as usize), normal, points, limit)
+                    && shifted_other.patch_supports_feature(Some(i as usize), normal, points, limit)
+            }
+        }
+    }
+
     pub(crate) fn support_contacts_with_error(
         &self,
         other: &AffineBox,
@@ -181,27 +238,42 @@ impl AffineBox {
             center: relative,
             edges: other.edges,
         };
-        branches
-            .into_iter()
-            .map(|(normal, feature, gap)| {
-                let projected = AffineBox {
-                    center: moved.center - normal * gap,
-                    ..moved
-                };
-                let (point, _, tolerance) =
-                    self.contact_patch_and_center_relative_with_error(&projected, normal, error_m)?;
-                let tolerance = tolerance + gap.abs();
-                Ok((
-                    AffineContact {
-                        fraction: 0.,
-                        normal,
-                        point,
-                        tolerance,
-                    },
-                    feature,
-                ))
-            })
-            .collect()
+        let mut contacts = Vec::with_capacity(branches.len());
+        for (normal, feature, gap) in branches {
+            let projected = AffineBox {
+                center: moved.center - normal * gap,
+                ..moved
+            };
+            let (point, points, tolerance) =
+                self.contact_patch_and_center_relative_with_error(&projected, normal, error_m)?;
+            let tolerance = tolerance + gap.abs();
+            let shifted_other = Self {
+                center: self.center + projected.center,
+                edges: projected.edges,
+            };
+            if !self.branch_supported_by_patch(
+                &shifted_other,
+                feature,
+                normal,
+                &points,
+                tolerance * 2.,
+            ) {
+                continue;
+            }
+            contacts.push((
+                AffineContact {
+                    fraction: 0.,
+                    normal,
+                    point,
+                    tolerance,
+                },
+                feature,
+            ));
+        }
+        if contacts.is_empty() {
+            return Err(super::PhysicsError::InitialOverlap);
+        }
+        Ok(contacts)
     }
     /// Translation sweep plus a point on both admitted contact surfaces.
     /// The obstacle is stationary; relative-frame callers must transport the point
@@ -360,13 +432,16 @@ impl AffineBox {
         if !plane.is_finite() || (other_plane - plane).abs() > tolerance {
             return Err(PhysicsError::ContactWitness);
         }
-        let mut points = Vec::with_capacity(160);
-        let mut admit = |point: DVec3| {
-            if point.is_finite()
+        let in_patch = |point: DVec3| {
+            point.is_finite()
                 && (normal.dot(point) - plane).abs() <= tolerance
                 && (normal.dot(point) - other_plane).abs() <= tolerance
                 && contains(point, &a, &planes_a)
                 && contains(point, &b, &planes_b)
+        };
+        let mut points = Vec::with_capacity(160);
+        let mut admit = |point: DVec3| {
+            if in_patch(point)
                 && !points
                     .iter()
                     .any(|old: &DVec3| (*old - point).abs().max_element() <= tolerance)
@@ -384,8 +459,17 @@ impl AffineBox {
                         continue;
                     }
                     let start = vertices[bits];
-                    let delta = vertices[bits | (1 << k)] - start;
+                    let end = vertices[bits | (1 << k)];
+                    if in_patch(start) && in_patch(end) {
+                        continue;
+                    }
+                    let delta = end - start;
                     for (axis, half) in planes {
+                        if axis.dot(start - obstacle.center).abs() <= half + tolerance
+                            && axis.dot(end - obstacle.center).abs() <= half + tolerance
+                        {
+                            continue;
+                        }
                         let speed = axis.dot(delta);
                         if speed == 0. {
                             continue;

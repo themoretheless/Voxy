@@ -829,19 +829,29 @@ fn edge_gap_range(
                 + v.length() * h
                 + acc.length() * h.powi(2) / 2.
                 + jerk.length() * h.powi(3) / 6.;
-            let radius = shape
-                .edges
-                .iter()
-                .chain(&obstacle.edges)
-                .map(|edge| edge.length())
-                .sum::<f64>();
-            let gap_error =
-                direction_error * (rr + shape.center.length() + obstacle.center.length() + radius);
+            let transverse_radius = |template: AffineBox, cross_edge: usize| {
+                template
+                    .edges
+                    .iter()
+                    .enumerate()
+                    .filter(|(k, _)| *k != cross_edge)
+                    .map(|(_, edge)| edge.length())
+                    .sum::<f64>()
+            };
+            let radius =
+                transverse_radius(shape, i as usize) + transverse_radius(obstacle, j as usize);
+            let cross_roundoff = 8.
+                * f64::EPSILON
+                * (shape.edges[i as usize].length() + obstacle.edges[j as usize].length());
+            let gap_error = direction_error
+                * (rr + shape.center.length() + obstacle.center.length() + radius)
+                + cross_roundoff;
             let (mut rl, mut rh) =
                 rotating_cubic_dot_range(normal, DVec3::ZERO, r, v, acc, jerk, h)?;
-            for (rotation, omega, template, owner_sign) in
-                [(qa, wa, shape, 1.), (qb, wb, obstacle, -1.)]
-            {
+            for (rotation, omega, template, cross_edge, owner_sign) in [
+                (qa, wa, shape, i as usize, 1.),
+                (qb, wb, obstacle, j as usize, -1.),
+            ] {
                 let (cl, ch) = rotating_pair_dot_range(
                     normal,
                     DVec3::ZERO,
@@ -856,7 +866,10 @@ fn edge_gap_range(
                     rl -= ch;
                     rh -= cl;
                 }
-                for edge in template.edges {
+                for (k, edge) in template.edges.into_iter().enumerate() {
+                    if k == cross_edge {
+                        continue;
+                    }
                     let (el, eh) = rotating_pair_dot_range(
                         normal,
                         DVec3::ZERO,
@@ -1679,7 +1692,9 @@ mod projected_rotation_tests {
 }
 
 mod point_kinematics;
-pub(super) use point_kinematics::{point_acceleration, point_jerk, point_velocity};
+pub(super) use point_kinematics::{
+    point_acceleration, point_jerk, point_velocity, support_point_kinematics,
+};
 
 #[cfg(test)]
 mod point_interval_tests {
