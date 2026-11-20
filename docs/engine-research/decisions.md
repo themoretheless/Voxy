@@ -290,7 +290,7 @@ The [pinned animation source review](mechanisms/stride-animation/review.md) exam
 
 ## Architectural synthesis: rig animation, GPU/CUDA parity, sopromat, destruction & coupled media
 
-Building on the 500-repository corpus (`corpus.tsv`, `taxonomy.md`, `report.md`) and the UE5/Stride3D/Unity3D/Godot capability audit (`../unity-godot-coverage.md`), Voxy adopts the following domain boundaries without importing OOP scene-graph coupling or black-box middleware state:
+Building on the 500-repository corpus (`corpus.tsv`, `taxonomy.md`, `report.md`) and the UE5/Stride3D/Unity3D/Godot capability audit (`../PLAN.md`), Voxy adopts the following domain boundaries without importing OOP scene-graph coupling or black-box middleware state:
 
 1. **Enforced Parallel Scene Scheduling (`voxy_scene::schedule`)**:
    - `SchedulePlan::run_parallel` and `SchedulePlan::run_scene_parallel` execute topological batches across `std::thread::scope` workers while passing per-system `ScopedSystemAccess` and `ParallelSceneSystemAccess` grants that reject undeclared resource reads/writes at runtime (`ScheduleError::UndeclaredRead` / `UndeclaredWrite`) and enforce exclusive post-batch barriers for `SceneCommands`.

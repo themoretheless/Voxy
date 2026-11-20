@@ -108,8 +108,8 @@ Both runs completed three captures and passed movement/grounding/guide checks.
 
 Labrador muzzle width and feline head carriage were revised. The nasal plane
 also clips the whisker-pad union behind the visible nose. Anatomy and detailed
-ears/paws remain inadequate; the goal is active. See `realism-acceptance.md` for
-the unchanged full acceptance scope.
+ears/paws remain inadequate; the goal is active. See [`../PLAN.md`](../PLAN.md) for
+the open acceptance scope.
 
 ## Authored pinnae and digital paws
 

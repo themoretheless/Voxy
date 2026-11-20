@@ -1105,11 +1105,9 @@ Rebase — frame-atomic protocol. Renderer держит double/triple-buffered `
 - Device loss инициирует пересоздание GPU replica. Canonical chunks остаются в runtime; CPU mesh cache используется в пределах budget либо meshes пересчитываются.
 - Out-of-memory — контролируемое завершение renderer/app после попытки безопасного budget reduction, без порчи save.
 
-### 11.8 Lighting и LOD roadmap
+### 11.8 Инварианты освещения и дальнего LOD
 
-Lighting после V1 — отдельная derived pipeline с `LightStamp`, dirty propagation budget и cancellation. Оно не должно блокировать canonical edit commit; до готовности новой light field renderer использует предыдущую либо fallback.
-
-Far-world LOD не кодируется в canonical chunks. После профиля возможна отдельная hierarchy/macro-chunk cache с transition band/skirts. Sparse voxel octree не выбирается canonical representation только потому, что мир «воксельный»: mutable 32³ palette chunks проще для edits, persistence и streaming.
+Освещение не должно блокировать канонический commit правок чанка; до готовности нового светового поля рендерер использует предыдущее либо fallback. Дальний LOD мира никогда не кодируется в канонические 32³ palette-чанки (mutable 32³ палитры сохраняются для правок, хранения и стриминга). Открытые работы по фоновому свету и дальнему LOD ведутся в [`PLAN.md`](PLAN.md) (`ENG-09`).
 
 ## 12. Simulation, interaction и future networking
 

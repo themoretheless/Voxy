@@ -23,7 +23,7 @@ cargo run -p voxy_render --example gpu_probe -- metal
 
 Целевые платформы: Windows, Linux, macOS, iOS, Android, браузер и VR (OpenXR,
 включая Meta Quest). Мобильные и VR-пути ещё требуют реализации и проверки.
-Состояние backend’ов и оставшиеся этапы — [docs/engine-development.md](docs/engine-development.md).
+Журнал backend’ов — [docs/engine-development.md](docs/engine-development.md); единый план открытых работ — [docs/PLAN.md](docs/PLAN.md).
 
 ## Браузер: WebGPU / WebGL2
 
@@ -81,6 +81,7 @@ cargo run -p voxy_app --example pinball -- --smoke
 - `H` — лечить, `C` — убрать;
 - `R` — переключить режим транспорта.
 
+- [План открытых работ](docs/PLAN.md)
 - [Архитектура](docs/architecture.md)
 - [ADR 0001: фундамент движка](docs/adr/0001-engine-foundation.md)
 

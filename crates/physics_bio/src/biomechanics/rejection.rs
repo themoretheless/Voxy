@@ -1,7 +1,7 @@
 //! Trial-step rejections that the inertial solvers recover from by refining time
 //! or quadrature.
 //!
-//! The public API keeps `&'static str` errors (`docs/PLAN.md` R2). This enum is
+//! The public API keeps `&'static str` errors (`docs/refactor/ARCHITECTURE.md`). This enum is
 //! the only source of these messages and the retry policies match on it, so a
 //! producer and a policy cannot drift apart through a mistyped string.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

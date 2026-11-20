@@ -568,7 +568,6 @@ fn supported_material_point_yaw_is_sustained_over_one_second() {
 }
 
 #[test]
-#[ignore = "Long-running 640-step full rotation qualification"]
 fn supported_material_point_yaw_is_sustained_over_a_full_rotation() {
     check_supported_material_point_yaw(640, std::f64::consts::TAU);
 }
