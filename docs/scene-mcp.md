@@ -1,8 +1,7 @@
 # MCP сцен Voxy
 
-`scene_mcp` — проектный companion существующего `model_mcp`.
-Оба используют общий `tools/mcp_stdio.rs`: локальный newline-delimited
-JSON-RPC по stdin/stdout, протоколы 2024-11-05, 2025-03-26, 2025-06-18.
+`scene_mcp` — проектный companion существующего `model_mcp`, а полный движковый сервер находится в `voxy_mcp`.
+Оба используют общий крейт `crates/voxy_mcp` (протоколы `2024-11-05`, `2025-03-26`, `2025-06-18`) с поддержкой `stdio` и локального `Streamable HTTP` (`--http 127.0.0.1:<port>`), включая Resources/Templates/Subscriptions, Prompts, Completions, Logging, Progress, Cancellation и Pagination.
 stdout содержит только MCP; сообщения рендера идут в stderr.
 Существующие 13 инструментов параметрической модели сохранены.
 

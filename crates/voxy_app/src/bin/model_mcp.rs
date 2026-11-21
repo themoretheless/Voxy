@@ -1,13 +1,14 @@
-//! Local stdio MCP bridge for the imported body model; stdout is protocol only.
+//! Dual-transport MCP bridge (`stdio` + loopback `Streamable HTTP`) for the imported body model.
 use serde_json::{Value, json};
 use std::io::Write as _;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use voxy_demos::body_parameters::BodyParameters;
-
-#[path = "../../../../tools/mcp_stdio.rs"]
-mod mcp_stdio;
-
-const PROTOCOL: &str = "2025-06-18";
+use voxy_mcp::{
+    CallToolResult, CompleteParams, CompletionValues, ContentBlock, GetPromptResult,
+    MutableMcpHandler, MutexMcpHandler, PromptArgument, PromptDef, PromptMessage, RequestContext,
+    ResourceContents, ResourceDef, RpcError, ServerConfig, ToolDef, parse_transport_args, serve,
+};
 fn parameter_schema() -> Value {
     let mut properties = serde_json::Map::new();
     for (key, value) in BodyParameters::default().to_json().as_object().unwrap() {
@@ -44,7 +45,7 @@ fn parameter_schema() -> Value {
     }
     json!({"type":"object","properties":properties,"additionalProperties":false})
 }
-fn tools() -> Value {
+fn tools() -> Vec<ToolDef> {
     let empty = json!({"type":"object","properties":{},"additionalProperties":false});
     let mut tools = Vec::new();
     for (name, description) in [
@@ -90,36 +91,48 @@ fn tools() -> Value {
         } else {
             empty.clone()
         };
-        tools.push(json!({"name":name,"description":description,"inputSchema":schema}));
+        tools.push(ToolDef::new(name, description, schema));
     }
-    tools.push(json!({"name":"view_update","description":"Save surface mode; compare measurements.view with saved settings in a fresh presented frame","inputSchema":{"type":"object","properties":{"settings":{"type":"object","properties":{"mode":{"type":"string","enum":["material","displacement","strain"]}},"additionalProperties":false}},"required":["settings"],"additionalProperties":false}}));
-    tools.push(json!({"name":"model_update","description":"Atomically apply partial body proportions; unspecified fields are preserved. A preview watching this file reloads on its next simulation advance.","inputSchema":{"type":"object","properties":{"parameters":parameter_schema()},"required":["parameters"],"additionalProperties":false}}));
-    tools.push(json!({"name":"film_update","description":"Set film physical properties and independent demo source rate; enabled film preview watches this sidecar. Density editing conserves existing mass.","inputSchema":{"type":"object","properties":{"settings":{"type":"object","properties":{
-        "self_contact_enabled":{"type":"boolean","description":"Same-body film exchange; static contact, no tissue collision resolution"},
-        "self_contact_max_gap_m":{"type":"number","minimum":1e-6,"maximum":0.01,"description":"metres; films must span actual gap"},
-        "self_contact_transfer_speed_m_s":{"type":"number","minimum":0,"maximum":0.1,"description":"phenomenological transfer speed in m/s, not calibrated physiology"},
-        "precursor_wetting_enabled":{"type":"boolean","description":"Enable small-angle wetting potential without depositing precursor liquid"},
-        "contact_angle_rad":{"type":"number","minimum":0,"maximum":0.5,"description":"radians; long-wave model validity limit"},
-        "precursor_thickness_m":{"type":"number","minimum":1e-9,"maximum":1e-5,"description":"metres; regularization thickness, no hidden liquid injection"},
-        "display_mode":{"type":"string","enum":["material","thickness"],"description":"Thickness colour scale: blue 0, green 50, red 100 micrometres; saturates above 100"},
-        "refractive_index":{"type":"number","minimum":1,"maximum":2.5,"description":"optical index of refraction"},
-        "absorption_r_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"red absorption per metre"},
-        "absorption_g_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"green absorption per metre"},
-        "absorption_b_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"blue absorption per metre"},
-        "density":{"type":"number","minimum":100,"maximum":20000,"description":"kg/m3"},
-        "viscosity":{"type":"number","minimum":0.0001,"maximum":100,"description":"Pa s"},
-        "surface_tension":{"type":"number","minimum":0,"maximum":1,"description":"N/m"},
-        "wetting":{"type":"number","minimum":0,"maximum":0.001,"description":"phenomenological m2/s"},
-        "sources":{"type":"array","maxItems":16,"description":"Additional independent sources; replaces the entire list, primary scalar source is preserved","items":{"type":"object","properties":{
-            "id":{"type":"string","minLength":1,"maxLength":64,"pattern":"^[A-Za-z0-9_-]+$"},
-            "x_m":{"type":"number","minimum":-2,"maximum":2},"y_m":{"type":"number","minimum":-2,"maximum":2},"z_m":{"type":"number","minimum":-2,"maximum":2},
-            "radius_m":{"type":"number","minimum":0.001,"maximum":0.5},"rate_m3_s":{"type":"number","minimum":0,"maximum":0.000001}},"required":["id","x_m","y_m","z_m","radius_m","rate_m3_s"],"additionalProperties":false}},
-        "source_x_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
-        "source_y_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
-        "source_z_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
-        "source_radius_m":{"type":"number","minimum":0.001,"maximum":0.5,"description":"source selection radius in metres"},
-        "source_rate_m3_s":{"type":"number","minimum":0,"maximum":0.000001,"description":"explicit demo source volume flow m3/s"}},"additionalProperties":false}},"required":["settings"],"additionalProperties":false}}));
-    json!({"tools":tools})
+    tools.push(ToolDef::new(
+        "view_update",
+        "Save surface mode; compare measurements.view with saved settings in a fresh presented frame",
+        json!({"type":"object","properties":{"settings":{"type":"object","properties":{"mode":{"type":"string","enum":["material","displacement","strain"]}},"additionalProperties":false}},"required":["settings"],"additionalProperties":false}),
+    ));
+    tools.push(ToolDef::new(
+        "model_update",
+        "Atomically apply partial body proportions; unspecified fields are preserved. A preview watching this file reloads on its next simulation advance.",
+        json!({"type":"object","properties":{"parameters":parameter_schema()},"required":["parameters"],"additionalProperties":false}),
+    ));
+    tools.push(ToolDef::new(
+        "film_update",
+        "Set film physical properties and independent demo source rate; enabled film preview watches this sidecar. Density editing conserves existing mass.",
+        json!({"type":"object","properties":{"settings":{"type":"object","properties":{
+            "self_contact_enabled":{"type":"boolean","description":"Same-body film exchange; static contact, no tissue collision resolution"},
+            "self_contact_max_gap_m":{"type":"number","minimum":1e-6,"maximum":0.01,"description":"metres; films must span actual gap"},
+            "self_contact_transfer_speed_m_s":{"type":"number","minimum":0,"maximum":0.1,"description":"phenomenological transfer speed in m/s, not calibrated physiology"},
+            "precursor_wetting_enabled":{"type":"boolean","description":"Enable small-angle wetting potential without depositing precursor liquid"},
+            "contact_angle_rad":{"type":"number","minimum":0,"maximum":0.5,"description":"radians; long-wave model validity limit"},
+            "precursor_thickness_m":{"type":"number","minimum":1e-9,"maximum":1e-5,"description":"metres; regularization thickness, no hidden liquid injection"},
+            "display_mode":{"type":"string","enum":["material","thickness"],"description":"Thickness colour scale: blue 0, green 50, red 100 micrometres; saturates above 100"},
+            "refractive_index":{"type":"number","minimum":1,"maximum":2.5,"description":"optical index of refraction"},
+            "absorption_r_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"red absorption per metre"},
+            "absorption_g_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"green absorption per metre"},
+            "absorption_b_per_m":{"type":"number","minimum":0,"maximum":10000,"description":"blue absorption per metre"},
+            "density":{"type":"number","minimum":100,"maximum":20000,"description":"kg/m3"},
+            "viscosity":{"type":"number","minimum":0.0001,"maximum":100,"description":"Pa s"},
+            "surface_tension":{"type":"number","minimum":0,"maximum":1,"description":"N/m"},
+            "wetting":{"type":"number","minimum":0,"maximum":0.001,"description":"phenomenological m2/s"},
+            "sources":{"type":"array","maxItems":16,"description":"Additional independent sources; replaces the entire list, primary scalar source is preserved","items":{"type":"object","properties":{
+                "id":{"type":"string","minLength":1,"maxLength":64,"pattern":"^[A-Za-z0-9_-]+$"},
+                "x_m":{"type":"number","minimum":-2,"maximum":2},"y_m":{"type":"number","minimum":-2,"maximum":2},"z_m":{"type":"number","minimum":-2,"maximum":2},
+                "radius_m":{"type":"number","minimum":0.001,"maximum":0.5},"rate_m3_s":{"type":"number","minimum":0,"maximum":0.000001}},"required":["id","x_m","y_m","z_m","radius_m","rate_m3_s"],"additionalProperties":false}},
+            "source_x_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
+            "source_y_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
+            "source_z_m":{"type":"number","minimum":-2,"maximum":2,"description":"canonical model-space metres"},
+            "source_radius_m":{"type":"number","minimum":0.001,"maximum":0.5,"description":"source selection radius in metres"},
+            "source_rate_m3_s":{"type":"number","minimum":0,"maximum":0.000001,"description":"explicit demo source volume flow m3/s"}},"additionalProperties":false}},"required":["settings"],"additionalProperties":false}),
+    ));
+    tools
 }
 fn read(path: &Path) -> Result<BodyParameters, Box<dyn std::error::Error>> {
     BodyParameters::from_json(&std::fs::read_to_string(path)?)
@@ -373,41 +386,198 @@ fn snapshot(path: &Path, include_film: bool) -> Result<Value, Box<dyn std::error
         {"type":"resource_link","uri":format!("file://{}",output.display()),"name":"snapshot.png","mimeType":"image/png"}],
         "structuredContent":value,"isError":false}))
 }
-fn dispatch(path: &Path, request: &Value, initialized: &mut bool) -> Value {
-    let id = request.get("id").cloned().unwrap_or(Value::Null);
-    let error = |code, message: &str| json!({"jsonrpc":"2.0","id":id,"error":{"code":code,"message":message}});
-    if request["jsonrpc"] != "2.0" || !request["method"].is_string() {
-        return error(-32600, "Invalid Request");
-    }
-    let method = request["method"].as_str().unwrap();
-    let params = request.get("params").cloned().unwrap_or(json!({}));
-    let result = match method {
-        "initialize" => {
-            let requested = params["protocolVersion"].as_str().unwrap_or(PROTOCOL);
-            let version = if ["2024-11-05", "2025-03-26", PROTOCOL].contains(&requested) {
-                requested
-            } else {
-                PROTOCOL
-            };
-            *initialized = true;
-            json!({"protocolVersion":version,"capabilities":{"tools":{}},"serverInfo":{"name":"voxy-models","version":"0.1.0"}})
-        }
-        "ping" => json!({}),
-        "tools/list" if *initialized => tools(),
-        "tools/call" if *initialized => match call(path, &params) {
-            Ok(v) => v,
-            Err(e) => json!({"content":[{"type":"text","text":e.to_string()}],"isError":true}),
-        },
-        "tools/list" | "tools/call" => return error(-32000, "Initialize first"),
-        _ => return error(-32601, "Method not found"),
-    };
-    json!({"jsonrpc":"2.0","id":id,"result":result})
+struct ModelServer {
+    path: PathBuf,
 }
+
+impl MutableMcpHandler for ModelServer {
+    fn config(&self) -> ServerConfig {
+        ServerConfig::new("voxy-models", "0.1.0").with_instructions(
+            "Parametric body + surface film MCP server (`stdio` and `--http`). Use `model_get`/`model_update` for atomic body edits, `view_update`/`film_update` for diagnostics, and `voxy://model/*` resources for subscription updates.",
+        )
+    }
+
+    fn list_tools(&self) -> Vec<ToolDef> {
+        tools()
+    }
+
+    fn call_tool(
+        &mut self,
+        ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> Result<CallToolResult, String> {
+        if name == "model_snapshot" {
+            ctx.report_progress(0.25, Some(1.0), Some("rendering body snapshot PNG"));
+        }
+        let raw = call(&self.path, &json!({ "name": name, "arguments": arguments }))
+            .map_err(|e| e.to_string())?;
+        if matches!(name, "model_update" | "model_reset") {
+            ctx.notify_resource_updated("voxy://model/parameters");
+            ctx.notify_resource_updated("voxy://model/status");
+        } else if name == "view_update" {
+            ctx.notify_resource_updated("voxy://model/view");
+        } else if name == "film_update" {
+            ctx.notify_resource_updated("voxy://model/film");
+        }
+        if name == "model_snapshot" {
+            ctx.report_progress(1.0, Some(1.0), Some("snapshot ready"));
+        }
+        let content: Vec<ContentBlock> =
+            serde_json::from_value(raw["content"].clone()).map_err(|e| e.to_string())?;
+        Ok(CallToolResult {
+            content,
+            structured_content: raw.get("structuredContent").cloned(),
+            is_error: false,
+        })
+    }
+
+    fn list_resources(&mut self) -> Vec<ResourceDef> {
+        [
+            (
+                "voxy://model/parameters",
+                "parameters",
+                "Current saved body parameters JSON.",
+            ),
+            (
+                "voxy://model/schema",
+                "schema",
+                "JSON Schema for body parameters.",
+            ),
+            ("voxy://model/view", "view", "Saved diagnostic view mode."),
+            ("voxy://model/film", "film", "Saved surface film settings."),
+            (
+                "voxy://model/status",
+                "status",
+                "Live presentation acknowledgement and measurements.",
+            ),
+        ]
+        .into_iter()
+        .map(|(uri, name, desc)| ResourceDef {
+            uri: uri.into(),
+            name: name.into(),
+            title: None,
+            description: Some(desc.into()),
+            mime_type: Some("application/json".into()),
+            size: None,
+        })
+        .collect()
+    }
+
+    fn read_resource(
+        &mut self,
+        _ctx: &RequestContext,
+        uri: &str,
+    ) -> Result<Vec<ResourceContents>, RpcError> {
+        let value = match uri {
+            "voxy://model/parameters" => read(&self.path)
+                .map(|p| p.to_json())
+                .map_err(|e| RpcError::invalid_params(e.to_string()))?,
+            "voxy://model/schema" => parameter_schema(),
+            "voxy://model/view" => voxy_demos::view_settings::ViewSettings::read(
+                &voxy_demos::view_settings::path(&self.path),
+            )
+            .map(|v| v.to_json())
+            .map_err(|e| RpcError::invalid_params(e.to_string()))?,
+            "voxy://model/film" => voxy_demos::film_settings::FilmSettings::read(
+                &voxy_demos::film_settings::path(&self.path),
+            )
+            .map(|f| f.to_json())
+            .map_err(|e| RpcError::invalid_params(e.to_string()))?,
+            "voxy://model/status" => application_status(&self.path)
+                .map_err(|e| RpcError::invalid_params(e.to_string()))?,
+            _ => return Err(RpcError::resource_not_found(uri)),
+        };
+        Ok(vec![ResourceContents::json(uri, &value)])
+    }
+
+    fn list_prompts(&self) -> Vec<PromptDef> {
+        vec![
+            PromptDef {
+                name: "tune_body_proportions".into(),
+                title: Some("Tune Body Proportions".into()),
+                description: Some(
+                    "Inspect parameter schema ranges and apply partial model updates.".into(),
+                ),
+                arguments: vec![PromptArgument {
+                    name: "parameter".into(),
+                    description: Some("Target body parameter key".into()),
+                    required: false,
+                }],
+            },
+            PromptDef {
+                name: "inspect_film_wetting".into(),
+                title: Some("Inspect Surface Film Wetting".into()),
+                description: Some(
+                    "Check film settings vs presented simulation measurements.".into(),
+                ),
+                arguments: vec![],
+            },
+        ]
+    }
+
+    fn get_prompt(
+        &mut self,
+        _ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> Result<GetPromptResult, RpcError> {
+        let text = match name {
+            "tune_body_proportions" => {
+                let param = arguments
+                    .get("parameter")
+                    .and_then(Value::as_str)
+                    .unwrap_or("height_cm");
+                format!(
+                    "Read `voxy://model/schema`, update `{param}` via `model_update`, verify `voxy://model/status` shows `liveApplied: true`, or render offscreen via `model_snapshot`."
+                )
+            }
+            "inspect_film_wetting" => {
+                "Read `film_get` and `model_measurements` to confirm fluid mass balance, filmSettingsApplied, and request a checkpoint via `film_state_request`.".to_owned()
+            }
+            _ => return Err(RpcError::invalid_params(format!("unknown prompt: {name}"))),
+        };
+        Ok(GetPromptResult {
+            description: Some("Voxy model prompt".into()),
+            messages: vec![PromptMessage {
+                role: "user".into(),
+                content: ContentBlock::Text { text },
+            }],
+        })
+    }
+
+    fn complete(
+        &mut self,
+        _ctx: &RequestContext,
+        params: &CompleteParams,
+    ) -> Result<CompletionValues, RpcError> {
+        match params.argument.name.as_str() {
+            "parameter" => {
+                let keys: Vec<String> = BodyParameters::default()
+                    .to_json()
+                    .as_object()
+                    .map(|m| m.keys().cloned().collect())
+                    .unwrap_or_default();
+                Ok(CompletionValues::from_candidates(
+                    keys,
+                    &params.argument.value,
+                ))
+            }
+            "mode" => Ok(CompletionValues::from_candidates(
+                ["material", "displacement", "strain"].map(str::to_owned),
+                &params.argument.value,
+            )),
+            _ => Ok(CompletionValues::default()),
+        }
+    }
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let (mode, rest) = parse_transport_args(std::env::args().skip(1))?;
     let path = PathBuf::from(
-        std::env::args()
-            .nth(1)
-            .ok_or("usage: model_mcp /absolute/path/to/body.json")?,
+        rest.into_iter()
+            .next()
+            .ok_or("usage: model_mcp /absolute/path/to/body.json [--http 127.0.0.1:port]")?,
     );
     if !path.is_absolute() {
         return Err("parameter file path must be absolute".into());
@@ -416,8 +586,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         save(&path, BodyParameters::default())?;
     }
     read(&path)?;
-    let mut initialized = false;
-    mcp_stdio::serve(|request| dispatch(&path, request, &mut initialized))?;
+    let handler = Arc::new(MutexMcpHandler::new(ModelServer { path }));
+    serve(handler, mode)?;
     Ok(())
 }
 #[cfg(test)]
@@ -689,27 +859,21 @@ mod tests {
         );
         assert_eq!(film_before, std::fs::read(&film_path).unwrap());
         std::fs::remove_file(film_path).unwrap();
-        let mut initialized = false;
+        let router = voxy_mcp::Router::new(Arc::new(MutexMcpHandler::new(ModelServer {
+            path: path.clone(),
+        })));
         assert_eq!(
-            dispatch(
-                &path,
-                &json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}),
-                &mut initialized
-            )["error"]["code"],
+            router.dispatch_sync(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}))["error"]["code"],
             -32000
         );
-        let response = dispatch(
-            &path,
-            &json!({"jsonrpc":"2.0","id":2,"method":"initialize","params":{"protocolVersion":PROTOCOL}}),
-            &mut initialized,
-        );
-        assert_eq!(response["result"]["protocolVersion"], PROTOCOL);
+        let response = router.dispatch_sync(&json!({"jsonrpc":"2.0","id":2,"method":"initialize","params":{"protocolVersion":voxy_mcp::LATEST_PROTOCOL_VERSION}}));
         assert_eq!(
-            dispatch(
-                &path,
-                &json!({"jsonrpc":"2.0","id":3,"method":"tools/list"}),
-                &mut initialized
-            )["result"]["tools"]
+            response["result"]["protocolVersion"],
+            voxy_mcp::LATEST_PROTOCOL_VERSION
+        );
+        assert_eq!(
+            router.dispatch_sync(&json!({"jsonrpc":"2.0","id":3,"method":"tools/list"}))["result"]
+                ["tools"]
                 .as_array()
                 .unwrap()
                 .len(),

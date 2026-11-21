@@ -18,10 +18,14 @@ impl App {
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        let is_window = offscreen.is_none();
         self.draw_frame_inner(offscreen)?;
         // Every successful path, including offscreen and skipped presentation,
         // completes source adoption before advancing the detached load command.
         self.poll_snapshot_load_command();
+        if is_window {
+            self.poll_live_bridge()?;
+        }
         Ok(())
     }
     #[expect(

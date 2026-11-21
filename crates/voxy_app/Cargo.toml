@@ -20,6 +20,7 @@ voxy_demos = { path = "../voxy_demos" }
 wgpu = { workspace = true, features = ["noop"] }
 voxy_core = { path = "../voxy_core" }
 voxy_assets = { path = "../voxy_assets" }
+voxy_mcp = { path = "../voxy_mcp" }
 voxy_input = { path = "../voxy_input" }
 blake3.workspace = true
 serde.workspace = true

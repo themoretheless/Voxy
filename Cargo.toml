@@ -44,6 +44,7 @@ members = [
     "crates/voxy_xr",
     "crates/voxy_streamline",
     "crates/voxy_depgraph",
+    "crates/voxy_mcp",
 ]
 
 [workspace.package]

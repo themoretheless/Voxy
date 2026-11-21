@@ -98,6 +98,7 @@ impl App {
     }
 
     pub(crate) fn stop_workers(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.live_bridge.cleanup();
         self.finish_project_build();
         let mut save_errors = self.finish_editor_file_save();
         save_errors.extend(self.finish_editor_file_load());

@@ -1,18 +1,32 @@
-//! Stdio MCP server that lets an agent look at, drive and measure the street walk scene.
+//! MCP server that lets an agent look at, drive and measure the street walk scene.
 //!
-//! It keeps one warm `street_walk --control-stdio` child (built next to this binary), so
-//! after the first call a camera move, weather change or capture takes about a second.
-//! Tools: `street_set`, `street_capture` (frames + motion heat map), `street_motion`
-//! (block-matched sway amplitude and frequency), `street_stats` (frame times), `street_open`
-//! and `street_close`. Local stdio only; no listening socket.
-#[path = "../../../tools/mcp_stdio.rs"]
-mod mcp_stdio;
+//! Keeps one warm `street_walk --control-stdio` child (built next to this binary),
+//! and supports both stdio (default) and `--http 127.0.0.1:<port>` Streamable HTTP.
 use image::{GenericImageView, ImageEncoder, RgbImage, imageops::FilterType};
 use serde_json::{Value, json};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::sync::Arc;
 use std::time::Instant;
+use voxy_mcp::{
+    CallToolResult, CompleteParams, CompletionValues, ContentBlock, GetPromptResult,
+    MutableMcpHandler, MutexMcpHandler, PromptArgument, PromptDef, PromptMessage, RequestContext,
+    ResourceContents, ResourceDef, ResourceTemplateDef, RpcError, ServerConfig, ToolAnnotations,
+    ToolDef, base64_encode, parse_transport_args, serve,
+};
+
+const WAYPOINTS: [&str; 9] = [
+    "Улица",
+    "Площадь и метро",
+    "Бассейн и вилла",
+    "Сауна и оранжерея",
+    "Дзен-сад и бочче",
+    "Терраса на крыше",
+    "Обсерватория",
+    "Винный грот",
+    "Ателье художника",
+];
 
 type Failure = Box<dyn std::error::Error>;
 
@@ -56,6 +70,11 @@ impl Session {
         command.args(["--control-stdio", "--sdr", "--backend", backend]);
         if let Some(seed) = seed {
             command.args(["--seed", &seed.to_string()]);
+        }
+        if std::env::var_os("VOXY_STREET_PROBE_CACHE").is_none() {
+            let probe_dir = std::env::temp_dir().join("voxy-street-probe-cache");
+            std::fs::create_dir_all(&probe_dir)?;
+            command.env("VOXY_STREET_PROBE_CACHE", probe_dir.join("street"));
         }
         let mut child = command
             .env("VOXY_STREET_GPU_TIMING", "1")
@@ -196,7 +215,9 @@ impl Drop for Session {
 #[derive(Default)]
 struct Server {
     session: Option<Session>,
+    last_state: Value,
 }
+
 impl Server {
     fn session(&mut self, a: &Value) -> Result<&mut Session, Failure> {
         let backend = a["backend"]
@@ -218,71 +239,50 @@ impl Server {
         }
         Ok(self.session.as_mut().unwrap())
     }
-    fn dispatch(&mut self, request: &Value) -> Value {
-        let id = request["id"].clone();
-        let result = match request["method"].as_str().unwrap_or("") {
-            "initialize" => json!({
-                "protocolVersion": request["params"]["protocolVersion"].as_str().unwrap_or("2025-06-18"),
-                "capabilities": {"tools": {}},
-                "serverInfo": {"name": "voxy-street", "version": "0.2.0"},
-                "instructions": INSTRUCTIONS
-            }),
-            "ping" => json!({}),
-            "tools/list" => json!({"tools": tools()}),
-            "tools/call" => match self.call(&request["params"]) {
-                Ok(content) => json!({"content": content, "isError": false}),
-                Err(e) => {
-                    json!({"content": [{"type": "text", "text": e.to_string()}], "isError": true})
-                }
-            },
-            other => {
-                return json!({"jsonrpc": "2.0", "id": id, "error": {"code": -32601, "message": format!("unknown method {other}")}});
+
+    fn call_stats(
+        &mut self,
+        ctx: &RequestContext,
+        a: &Value,
+    ) -> Result<Vec<ContentBlock>, Failure> {
+        ctx.report_progress(0.2, Some(1.0), Some("applying street state"));
+        let (state, mut stats) = {
+            let session = self.session(a)?;
+            let state = session.apply(a)?;
+            let tour = a["tour"].as_bool().unwrap_or(false);
+            if tour {
+                session.send(json!({"cmd": "tour", "time": 0}))?;
             }
+            ctx.report_progress(0.6, Some(1.0), Some("measuring live frame times"));
+            let stats = session
+                .send(json!({"cmd": "stats", "seconds": a["seconds"].as_f64().unwrap_or(3.)}))?;
+            if tour {
+                session.send(json!({"cmd": "tour", "on": false}))?;
+            }
+            (state, stats)
         };
-        json!({"jsonrpc": "2.0", "id": id, "result": result})
-    }
-    fn call(&mut self, params: &Value) -> Result<Vec<Value>, Failure> {
-        let a = &params["arguments"];
-        match params["name"].as_str().unwrap_or("") {
-            "street_open" => {
-                let started = Instant::now();
-                let session = self.session(a)?;
-                text_content(
-                    &json!({"open": true, "session": session.key, "seconds": started.elapsed().as_secs_f64()}),
-                )
-            }
-            "street_close" => {
-                self.session = None;
-                text_content(&json!({"open": false}))
-            }
-            "street_set" => text_content(&self.session(a)?.apply(a)?),
-            "street_stats" => self.call_stats(a),
-            "street_capture" => self.call_capture(a),
-            "street_motion" => self.call_motion(a),
-            other => Err(format!("unknown tool {other}").into()),
-        }
-    }
-    fn call_stats(&mut self, a: &Value) -> Result<Vec<Value>, Failure> {
-        let session = self.session(a)?;
-        let state = session.apply(a)?;
-        let tour = a["tour"].as_bool().unwrap_or(false);
-        if tour {
-            session.send(json!({"cmd": "tour", "time": 0}))?;
-        }
-        let mut stats = session
-            .send(json!({"cmd": "stats", "seconds": a["seconds"].as_f64().unwrap_or(3.)}))?;
-        if tour {
-            session.send(json!({"cmd": "tour", "on": false}))?;
-        }
+        self.last_state = state.clone();
+        ctx.report_progress(1.0, Some(1.0), Some("stats ready"));
         stats["applied"] = state;
         text_content(&stats)
     }
-    fn call_capture(&mut self, a: &Value) -> Result<Vec<Value>, Failure> {
-        let session = self.session(a)?;
-        let state = session.apply(a)?;
+
+    fn call_capture(
+        &mut self,
+        ctx: &RequestContext,
+        a: &Value,
+    ) -> Result<Vec<ContentBlock>, Failure> {
+        ctx.report_progress(0.2, Some(1.0), Some("capturing frames"));
         let frames = a["frames"].as_u64().unwrap_or(4).clamp(1, 16);
-        let (images, step, reply) =
-            session.capture(a, frames, a["interval_ms"].as_u64().unwrap_or(100))?;
+        let interval = a["interval_ms"].as_u64().unwrap_or(100);
+        let (state, images, step, reply) = {
+            let session = self.session(a)?;
+            let state = session.apply(a)?;
+            let (images, step, reply) = session.capture(a, frames, interval)?;
+            (state, images, step, reply)
+        };
+        self.last_state = state.clone();
+        ctx.report_progress(0.8, Some(1.0), Some("encoding PNG capture"));
         let max_width = a["max_width"].as_u64().unwrap_or(960) as u32;
         let (w, h) = images[0].dimensions();
         let (heat, peak, moving) = heat_map(&images);
@@ -297,7 +297,9 @@ impl Server {
             for (i, image) in images.iter().enumerate() {
                 image::imageops::replace(&mut strip, image, i as i64 * w as i64, 0);
             }
-            content.push(json!({"type": "text", "text": "frames, left to right:"}));
+            content.push(ContentBlock::Text {
+                text: "frames, left to right:".to_owned(),
+            });
             content.push(png(
                 &strip,
                 max_width.max(w * images.len() as u32).min(2400),
@@ -306,17 +308,31 @@ impl Server {
             content.push(png(&images[0], max_width)?);
         }
         if images.len() > 1 {
-            content.push(json!({"type": "text", "text": "motion heat map (orange = changed between frames):"}));
+            content.push(ContentBlock::Text {
+                text: "motion heat map (orange = changed between frames):".to_owned(),
+            });
             content.push(png(&heat, max_width)?);
         }
+        ctx.report_progress(1.0, Some(1.0), Some("capture ready"));
         Ok(content)
     }
-    fn call_motion(&mut self, a: &Value) -> Result<Vec<Value>, Failure> {
-        let session = self.session(a)?;
-        let state = session.apply(a)?;
+
+    fn call_motion(
+        &mut self,
+        ctx: &RequestContext,
+        a: &Value,
+    ) -> Result<Vec<ContentBlock>, Failure> {
+        ctx.report_progress(0.2, Some(1.0), Some("capturing motion sequence"));
         let frames = a["frames"].as_u64().unwrap_or(48).clamp(4, 64);
-        let (images, step, _) =
-            session.capture(a, frames, a["interval_ms"].as_u64().unwrap_or(60))?;
+        let interval = a["interval_ms"].as_u64().unwrap_or(60);
+        let (state, images, step) = {
+            let session = self.session(a)?;
+            let state = session.apply(a)?;
+            let (images, step, _) = session.capture(a, frames, interval)?;
+            (state, images, step)
+        };
+        self.last_state = state.clone();
+        ctx.report_progress(0.7, Some(1.0), Some("analyzing block motion"));
         let block = a["block"].as_u64().unwrap_or(32).clamp(8, 128) as u32;
         let (mut report, map) = motion(&images, step, block);
         // Vertical field of view is 65 degrees unless the panel changed it.
@@ -335,19 +351,207 @@ impl Server {
         }
         report["applied"] = state;
         let mut content = text_content(&report)?;
-        content.push(json!({"type": "text", "text": "first frame with per-block sway amplitude (red = large, blue = small, untinted = static or textureless):"}));
+        content.push(ContentBlock::Text {
+            text: "first frame with per-block sway amplitude (red = large, blue = small, untinted = static or textureless):".to_owned(),
+        });
         content.push(png(&map, a["max_width"].as_u64().unwrap_or(960) as u32)?);
+        ctx.report_progress(1.0, Some(1.0), Some("motion analysis complete"));
         Ok(content)
     }
 }
 
-fn text_content(v: &Value) -> Result<Vec<Value>, Failure> {
-    Ok(vec![
-        json!({"type": "text", "text": serde_json::to_string_pretty(v)?}),
-    ])
+impl MutableMcpHandler for Server {
+    fn config(&self) -> ServerConfig {
+        ServerConfig::new("voxy-street", "0.2.0").with_instructions(INSTRUCTIONS)
+    }
+
+    fn list_tools(&self) -> Vec<ToolDef> {
+        tools()
+    }
+
+    fn call_tool(
+        &mut self,
+        ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> Result<CallToolResult, String> {
+        let a = &arguments;
+        let blocks = match name {
+            "street_open" => {
+                let started = Instant::now();
+                let session = self.session(a).map_err(|e| e.to_string())?;
+                text_content(&json!({
+                    "open": true,
+                    "session": session.key,
+                    "seconds": started.elapsed().as_secs_f64()
+                }))
+            }
+            "street_close" => {
+                self.session = None;
+                text_content(&json!({"open": false}))
+            }
+            "street_set" => {
+                let applied = self
+                    .session(a)
+                    .and_then(|s| s.apply(a))
+                    .map_err(|e| e.to_string())?;
+                self.last_state = applied.clone();
+                text_content(&applied)
+            }
+            "street_stats" => self.call_stats(ctx, a),
+            "street_capture" => self.call_capture(ctx, a),
+            "street_motion" => self.call_motion(ctx, a),
+            other => return Err(format!("unknown tool {other}")),
+        }
+        .map_err(|e| e.to_string())?;
+        ctx.notify_resource_updated("voxy://street/state");
+        Ok(CallToolResult {
+            content: blocks,
+            structured_content: None,
+            is_error: false,
+        })
+    }
+
+    fn list_resources(&mut self) -> Vec<ResourceDef> {
+        vec![
+            ResourceDef {
+                uri: "voxy://street/waypoints".into(),
+                name: "street-waypoints".into(),
+                title: None,
+                description: Some("Named viewpoints around the generated street and villa.".into()),
+                mime_type: Some("application/json".into()),
+                size: None,
+            },
+            ResourceDef {
+                uri: "voxy://street/state".into(),
+                name: "street-state".into(),
+                title: None,
+                description: Some(
+                    "Live street_walk session open status and last applied state.".into(),
+                ),
+                mime_type: Some("application/json".into()),
+                size: None,
+            },
+        ]
+    }
+
+    fn list_resource_templates(&self) -> Vec<ResourceTemplateDef> {
+        vec![ResourceTemplateDef {
+            uri_template: "voxy://street/waypoint/{place}".into(),
+            name: "street-waypoint".into(),
+            title: None,
+            description: Some("Inspect matching street viewpoint name.".into()),
+            mime_type: Some("application/json".into()),
+        }]
+    }
+
+    fn read_resource(
+        &mut self,
+        _ctx: &RequestContext,
+        uri: &str,
+    ) -> Result<Vec<ResourceContents>, RpcError> {
+        match uri {
+            "voxy://street/waypoints" => Ok(vec![ResourceContents::json(
+                uri,
+                &json!({ "waypoints": WAYPOINTS }),
+            )]),
+            "voxy://street/state" => Ok(vec![ResourceContents::json(
+                uri,
+                &json!({
+                    "open": self.session.is_some(),
+                    "session": self.session.as_ref().map(|s| &s.key),
+                    "lastApplied": self.last_state,
+                }),
+            )]),
+            _ => {
+                if let Some(place) = uri.strip_prefix("voxy://street/waypoint/") {
+                    let matched: Vec<&&str> = WAYPOINTS
+                        .iter()
+                        .filter(|w| w.to_lowercase().contains(&place.to_lowercase()))
+                        .collect();
+                    return Ok(vec![ResourceContents::json(
+                        uri,
+                        &json!({ "query": place, "matches": matched }),
+                    )]);
+                }
+                Err(RpcError::resource_not_found(uri))
+            }
+        }
+    }
+
+    fn list_prompts(&self) -> Vec<PromptDef> {
+        vec![
+            PromptDef {
+                name: "inspect_street_fps".into(),
+                title: Some("Inspect Street FPS & Frame Pacing".into()),
+                description: Some("Measure FPS percentiles across key street viewpoints.".into()),
+                arguments: vec![PromptArgument {
+                    name: "place".into(),
+                    description: Some("Viewpoint name".into()),
+                    required: false,
+                }],
+            },
+            PromptDef {
+                name: "inspect_foliage_motion".into(),
+                title: Some("Measure Foliage Wind Sway".into()),
+                description: Some(
+                    "Capture motion heat map and Hz/amplitude across wind speeds.".into(),
+                ),
+                arguments: vec![],
+            },
+        ]
+    }
+
+    fn get_prompt(
+        &mut self,
+        _ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> Result<GetPromptResult, RpcError> {
+        let place = arguments
+            .get("place")
+            .and_then(Value::as_str)
+            .unwrap_or("Улица");
+        let text = match name {
+            "inspect_street_fps" => format!(
+                "Call `street_stats` with place `{place}` and `seconds: 3` (and optionally `tour: true`), then report mean FPS, p50/p99 ms, `monitor_refresh_hz`, `over_120hz_frames`, and `gpu_scene_mean_ms`."
+            ),
+            "inspect_foliage_motion" => {
+                "Call `street_motion` at eye `[-3.0, 1.7, -9.0]`, look `[-5.9, 3.6, -5.0]` for wind speeds 0, 8, 15 m/s and compare amplitude_px_p90 and frequency_hz_median.".to_owned()
+            }
+            _ => return Err(RpcError::invalid_params(format!("unknown prompt: {name}"))),
+        };
+        Ok(GetPromptResult {
+            description: Some("Street inspection prompt".into()),
+            messages: vec![PromptMessage {
+                role: "user".into(),
+                content: ContentBlock::Text { text },
+            }],
+        })
+    }
+
+    fn complete(
+        &mut self,
+        _ctx: &RequestContext,
+        params: &CompleteParams,
+    ) -> Result<CompletionValues, RpcError> {
+        if params.argument.name == "place" {
+            return Ok(CompletionValues::from_candidates(
+                WAYPOINTS.into_iter().map(str::to_owned),
+                &params.argument.value,
+            ));
+        }
+        Ok(CompletionValues::default())
+    }
 }
 
-fn tools() -> Value {
+fn text_content(v: &Value) -> Result<Vec<ContentBlock>, Failure> {
+    Ok(vec![ContentBlock::Text {
+        text: serde_json::to_string_pretty(v)?,
+    }])
+}
+
+fn tools() -> Vec<ToolDef> {
     let v3 = json!({"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3});
     let set = json!({
         "eye": v3, "look": v3,
@@ -379,29 +583,53 @@ fn tools() -> Value {
         }
         out
     };
-    json!([
-        {"name": "street_open", "description": "Start (or restart) the street scene. Optional: seed, backend (auto|dx12|vulkan|metal), restart. Other tools open it implicitly.",
-         "inputSchema": {"type": "object", "properties": {"seed": {"type": "integer"}, "backend": {"type": "string"}, "restart": {"type": "boolean"}}}},
-        {"name": "street_close", "description": "Stop the street scene.", "inputSchema": {"type": "object", "properties": {}}},
-        {"name": "street_set", "description": "Place the camera and set wind, weather and hour. The camera stays pinned where it is put. Every other tool accepts the same arguments and applies them first.",
-         "inputSchema": with(json!({}))},
-        {"name": "street_capture", "description": "Capture frames from the running scene: first frame (or a left-to-right strip with return_frames) plus a motion heat map.",
-         "inputSchema": with(merged(&shot, json!({
-            "frames": {"type": "integer", "minimum": 1, "maximum": 16},
-            "interval_ms": {"type": "integer", "minimum": 0, "maximum": 2000},
-            "return_frames": {"type": "boolean"}}))),
-         "annotations": {"readOnlyHint": true}},
-        {"name": "street_motion", "description": "Measure motion over a frame sequence by block matching: per-block sway amplitude (px, and metres with distance_m), dominant frequency in Hz, how coherent neighbouring blocks are (1 = everything moves together like jelly, 0 = independent), and an amplitude map. Keep the camera still; crop to the tree for speed.",
-         "inputSchema": with(merged(&shot, json!({
-            "frames": {"type": "integer", "minimum": 4, "maximum": 64},
-            "interval_ms": {"type": "integer", "minimum": 0, "maximum": 1000},
-            "block": {"type": "integer", "minimum": 8, "maximum": 128},
-            "distance_m": {"type": "number", "description": "camera-to-subject distance for px to metres"}}))),
-         "annotations": {"readOnlyHint": true}},
-        {"name": "street_stats", "description": "Frame-time statistics over `seconds` (default 3) of the live window: mean FPS, p50/p95/p99/max ms, frames over the 120 Hz and 60 Hz budgets, GPU scene time, and the eight slowest frames with when and where they happened. `tour` flies the camera through the whole street while measuring (use 45 s for one pass) to find hitches in motion.",
-         "inputSchema": with(json!({"seconds": {"type": "number", "minimum": 0.2, "maximum": 60}, "tour": {"type": "boolean"}})),
-         "annotations": {"readOnlyHint": true}}
-    ])
+    let ro = ToolAnnotations {
+        read_only_hint: Some(true),
+        destructive_hint: None,
+        idempotent_hint: None,
+        open_world_hint: None,
+    };
+    vec![
+        ToolDef::new(
+            "street_open",
+            "Start (or restart) the street scene. Optional: seed, backend (auto|dx12|vulkan|metal), restart. Other tools open it implicitly.",
+            json!({"type": "object", "properties": {"seed": {"type": "integer"}, "backend": {"type": "string"}, "restart": {"type": "boolean"}}}),
+        ),
+        ToolDef::new(
+            "street_close",
+            "Stop the street scene.",
+            json!({"type": "object", "properties": {}}),
+        ),
+        ToolDef::new(
+            "street_set",
+            "Place the camera and set wind, weather and hour. The camera stays pinned where it is put. Every other tool accepts the same arguments and applies them first.",
+            with(json!({})),
+        ),
+        ToolDef::new(
+            "street_capture",
+            "Capture frames from the running scene: first frame (or a left-to-right strip with return_frames) plus a motion heat map.",
+            with(merged(&shot, json!({
+                "frames": {"type": "integer", "minimum": 1, "maximum": 16},
+                "interval_ms": {"type": "integer", "minimum": 0, "maximum": 2000},
+                "return_frames": {"type": "boolean"}
+            }))),
+        ).with_annotations(ro.clone()),
+        ToolDef::new(
+            "street_motion",
+            "Measure motion over a frame sequence by block matching: per-block sway amplitude (px, and metres with distance_m), dominant frequency in Hz, how coherent neighbouring blocks are (1 = everything moves together like jelly, 0 = independent), and an amplitude map. Keep the camera still; crop to the tree for speed.",
+            with(merged(&shot, json!({
+                "frames": {"type": "integer", "minimum": 4, "maximum": 64},
+                "interval_ms": {"type": "integer", "minimum": 0, "maximum": 1000},
+                "block": {"type": "integer", "minimum": 8, "maximum": 128},
+                "distance_m": {"type": "number", "description": "camera-to-subject distance for px to metres"}
+            }))),
+        ).with_annotations(ro.clone()),
+        ToolDef::new(
+            "street_stats",
+            "Frame-time statistics over `seconds` (default 3) of the live window: mean FPS, p50/p95/p99/max ms, frames over the 120 Hz and 60 Hz budgets, GPU scene time, and the eight slowest frames with when and where they happened. `tour` flies the camera through the whole street while measuring (use 45 s for one pass) to find hitches in motion.",
+            with(json!({"seconds": {"type": "number", "minimum": 0.2, "maximum": 60}, "tour": {"type": "boolean"}})),
+        ).with_annotations(ro),
+    ]
 }
 
 fn load(path: &Path, crop: Option<&[u32]>) -> Result<RgbImage, Failure> {
@@ -668,7 +896,7 @@ fn motion(images: &[RgbImage], step_seconds: f64, block: u32) -> (Value, RgbImag
     (report, map)
 }
 
-fn png(image: &RgbImage, max_width: u32) -> Result<Value, Failure> {
+fn png(image: &RgbImage, max_width: u32) -> Result<ContentBlock, Failure> {
     let scaled;
     let image = if image.width() > max_width {
         let h = (image.height() as u64 * max_width as u64 / image.width() as u64).max(1) as u32;
@@ -684,29 +912,18 @@ fn png(image: &RgbImage, max_width: u32) -> Result<Value, Failure> {
         image.height(),
         image::ExtendedColorType::Rgb8,
     )?;
-    Ok(json!({"type": "image", "mimeType": "image/png", "data": base64(&bytes)}))
-}
-
-fn base64(bytes: &[u8]) -> String {
-    const T: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let mut s = String::with_capacity(bytes.len().div_ceil(3) * 4);
-    for c in bytes.chunks(3) {
-        let n = (u32::from(c[0]) << 16)
-            | (u32::from(*c.get(1).unwrap_or(&0)) << 8)
-            | u32::from(*c.get(2).unwrap_or(&0));
-        for i in 0..4 {
-            if i <= c.len() {
-                s.push(T[(n >> (18 - 6 * i) & 63) as usize] as char);
-            } else {
-                s.push('=');
-            }
-        }
-    }
-    s
+    Ok(ContentBlock::Image {
+        mime_type: "image/png".to_owned(),
+        data: base64_encode(&bytes),
+    })
 }
 
 fn main() -> Result<(), Failure> {
-    let mut server = Server::default();
-    mcp_stdio::serve(|request| server.dispatch(request))?;
+    let (mode, rest) = parse_transport_args(std::env::args().skip(1))?;
+    if !rest.is_empty() {
+        return Err(format!("unexpected arguments: {}", rest.join(" ")).into());
+    }
+    let handler = Arc::new(MutexMcpHandler::new(Server::default()));
+    serve(handler, mode)?;
     Ok(())
 }

@@ -229,7 +229,11 @@ impl UiLive {
                 *ui_presented = false;
                 self.published = Some(snapshot);
                 self.published_text = Some(Arc::new(prepared));
-                println!("GAME UI GPU PUBLISHED draws={}", draws.len());
+                if crate::mcp::stdio_quiet() {
+                    eprintln!("GAME UI GPU PUBLISHED draws={}", draws.len());
+                } else {
+                    println!("GAME UI GPU PUBLISHED draws={}", draws.len());
+                }
                 return Ok(());
             }
         }

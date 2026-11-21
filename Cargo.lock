@@ -2917,6 +2917,7 @@ dependencies = [
  "voxy_demos",
  "voxy_gpu",
  "voxy_input",
+ "voxy_mcp",
  "voxy_model",
  "voxy_render",
  "voxy_runtime",
@@ -3027,6 +3028,7 @@ dependencies = [
  "voxy_audio_device",
  "voxy_gameplay",
  "voxy_input",
+ "voxy_mcp",
  "voxy_model",
  "voxy_player",
  "voxy_render",
@@ -3102,6 +3104,17 @@ dependencies = [
  "thiserror 2.0.20",
  "voxy_core",
  "voxy_world",
+]
+
+[[package]]
+name = "voxy_mcp"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.20",
+ "voxy_core",
 ]
 
 [[package]]

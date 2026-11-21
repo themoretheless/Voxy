@@ -208,11 +208,19 @@ fn export_app_package(
             max_document_bytes: 256 * 1024 * 1024,
         })?;
         voxy_assets::save_atomic_new_file(output, &bytes, 256 * 1024 * 1024)?;
-        println!(
-            "GAME PACKAGE PASS sources={} bytes={}",
-            paths.len(),
-            bytes.len()
-        );
+        if crate::mcp::stdio_quiet() {
+            eprintln!(
+                "GAME PACKAGE PASS sources={} bytes={}",
+                paths.len(),
+                bytes.len()
+            );
+        } else {
+            println!(
+                "GAME PACKAGE PASS sources={} bytes={}",
+                paths.len(),
+                bytes.len()
+            );
+        }
         Ok(())
     })();
     app.stop_workers()?;

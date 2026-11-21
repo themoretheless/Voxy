@@ -495,7 +495,9 @@ impl App {
                 if let Some(window) = &self.window {
                     window.set_title("Voxy — model loaded");
                 }
-                if let Some(asset) = self.catalog.snapshot(output) {
+                if self.window.is_some()
+                    && let Some(asset) = self.catalog.snapshot(output)
+                {
                     println!(
                         "MODEL PUBLISHED frames={} first_x={} asset={} publication_us={publication_us}",
                         self.frames,
@@ -510,13 +512,15 @@ impl App {
                 if let Some(window) = &self.window {
                     window.set_title("Voxy — import failed; showing previous model");
                 }
-                println!(
-                    "MODEL FAILED frames={} last_good={} asset={} status={:?} publication_us={publication_us}",
-                    self.frames,
-                    self.catalog.snapshot(output).is_some(),
-                    output.0,
-                    self.catalog.status(output),
-                );
+                if self.window.is_some() {
+                    println!(
+                        "MODEL FAILED frames={} last_good={} asset={} status={:?} publication_us={publication_us}",
+                        self.frames,
+                        self.catalog.snapshot(output).is_some(),
+                        output.0,
+                        self.catalog.status(output),
+                    );
+                }
                 Ok(())
             }
             Err(PublicationError::Asset(AssetError::StaleTicket)) => Ok(()),

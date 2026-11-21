@@ -26,13 +26,14 @@ voxy_text = { path = "../voxy_text" }
 voxy_ui = { path = "../voxy_ui" }
 voxy_assets = { path = "../voxy_assets" }
 voxy_player = { path = "../voxy_player" }
+voxy_mcp = { path = "../voxy_mcp" }
 voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
+image = { workspace = true, features = ["png"] }
 winit.workspace = true
 wgpu.workspace = true
 
 [dev-dependencies]
-image = { workspace = true, features = ["png"] }
 base64 = "0.22"
 
 [lints]

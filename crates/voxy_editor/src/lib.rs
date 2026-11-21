@@ -56,9 +56,11 @@ pub use headless_game::{AnimationSnapshot, CharacterReplicationSnapshot, Headles
 #[cfg(test)]
 mod game_host_tests;
 mod liquid_draw;
+mod live_bridge;
 mod locomotion;
 #[cfg(test)]
 mod locomotion_tests;
+pub mod mcp;
 pub use locomotion::ModelLocomotion;
 mod lod_smoke;
 pub use lod_smoke::lod_transition_with_hysteresis;
@@ -582,6 +584,7 @@ struct App {
     watcher: Option<SourcePollWorker>,
     window: Option<Arc<Window>>,
     window_occluded: bool,
+    live_bridge: live_bridge::LiveBridge,
     presentation: frame_pacing::Presentation,
     graphics: Option<Graphics>,
     reload: BTreeSet<AssetId>,
@@ -806,6 +809,7 @@ impl App {
             standalone_snapshot_smoke: None,
             window: None,
             window_occluded: false,
+            live_bridge: live_bridge::LiveBridge::default(),
             presentation: frame_pacing::Presentation::from_environment()?,
             graphics: None,
             reload,

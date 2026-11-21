@@ -9,6 +9,11 @@ use std::{
     io::Read as _,
     path::{Path, PathBuf},
 };
+use voxy_mcp::{
+    CallToolResult, CompleteParams, CompletionValues, ContentBlock, GetPromptResult,
+    MutableMcpHandler, PromptArgument, PromptDef, PromptMessage, RequestContext, ResourceContents,
+    ResourceDef, ResourceTemplateDef, RpcError, ServerConfig, ToolAnnotations, ToolDef,
+};
 use voxy_scene::{ComponentRegistry, SceneDocument, SceneHistory, SceneObject};
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 const LIMIT: usize = 8 * 1024 * 1024;
@@ -26,7 +31,6 @@ pub struct Server {
     manifest: Vec<u8>,
     assets: BTreeSet<String>,
     revision: u64,
-    initialized: bool,
 }
 fn read(path: &Path) -> Result<Vec<u8>> {
     let mut bytes = Vec::new();
@@ -141,7 +145,6 @@ impl Server {
             disk,
             assets,
             revision: 0,
-            initialized: false,
         };
         result.validate(result.history.current())?;
         Ok(result)
@@ -451,41 +454,162 @@ impl Server {
             json!({"content":[{"type":"text","text":value.to_string()}],"structuredContent":value,"isError":false}),
         )
     }
-    pub fn dispatch(&mut self, request: &Value) -> Value {
-        let id = request.get("id").cloned().unwrap_or(Value::Null);
-        let error = |code, message: &str| json!({"jsonrpc":"2.0","id":id,"error":{"code":code,"message":message}});
-        if request["jsonrpc"] != "2.0"
-            || !request["method"].is_string()
-            || !(id.is_string() || id.is_number() || id.is_null())
-        {
-            return error(-32600, "Invalid Request");
+}
+
+impl MutableMcpHandler for Server {
+    fn config(&self) -> ServerConfig {
+        ServerConfig::new("voxy-scene", "0.1.0").with_instructions(
+            "Call scene_get first. Use its expected_revision for atomic scene_apply, undo/redo, save and render. Edits stay in session memory until scene_save; do not exit with unsaved work. scene_render returns an inline PNG and exact scene/mesh hashes from a frozen OBJ project. No live editor-window synchronization. Materials support opaque tint and Lambert lighting; unsupported render components fail explicitly.",
+        )
+    }
+
+    fn list_tools(&self) -> Vec<ToolDef> {
+        tools()
+    }
+
+    fn call_tool(
+        &mut self,
+        ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> std::result::Result<CallToolResult, String> {
+        if name == "scene_render" {
+            ctx.report_progress(0.25, Some(1.0), Some("preparing offscreen scene render"));
         }
-        let params = request.get("params").cloned().unwrap_or(json!({}));
-        let result = match request["method"].as_str().unwrap() {
-            "initialize" => {
-                let requested = params["protocolVersion"].as_str().unwrap_or("2025-06-18");
-                let version = if ["2024-11-05", "2025-03-26", "2025-06-18"].contains(&requested) {
-                    requested
-                } else {
-                    "2025-06-18"
-                };
-                self.initialized = true;
-                json!({"protocolVersion":version,"capabilities":{"tools":{}},"serverInfo":{"name":"voxy-scene","version":"0.1.0"},"instructions":"Call scene_get first. Use its expected_revision for atomic scene_apply, undo/redo, save and render. Edits stay in session memory until scene_save; do not exit with unsaved work. scene_render returns an inline PNG and exact scene/mesh hashes from a frozen OBJ project. No live editor-window synchronization. Materials support opaque tint and Lambert lighting; unsupported render components fail explicitly."})
-            }
-            "ping" => json!({}),
-            "tools/list" if self.initialized => tools(),
-            "tools/call" if self.initialized => match self.call(&params) {
-                Ok(v) => v,
-                Err(e) => json!({"content":[{"type":"text","text":e.to_string()}],"isError":true}),
-            },
-            "tools/list" | "tools/call" => return error(-32000, "Initialize first"),
-            _ => return error(-32601, "Method not found"),
-        };
-        json!({"jsonrpc":"2.0","id":id,"result":result})
+        let raw = self
+            .call(&json!({ "name": name, "arguments": arguments }))
+            .map_err(|e| e.to_string())?;
+        if matches!(
+            name,
+            "scene_apply" | "scene_undo" | "scene_redo" | "scene_save"
+        ) {
+            ctx.notify_resource_updated("voxy://scene/document");
+        }
+        if name == "scene_render" {
+            ctx.report_progress(1.0, Some(1.0), Some("render ready"));
+        }
+        let content: Vec<ContentBlock> =
+            serde_json::from_value(raw["content"].clone()).map_err(|e| e.to_string())?;
+        Ok(CallToolResult {
+            content,
+            structured_content: raw.get("structuredContent").cloned(),
+            is_error: false,
+        })
+    }
+
+    fn list_resources(&mut self) -> Vec<ResourceDef> {
+        vec![ResourceDef {
+            uri: "voxy://scene/document".into(),
+            name: "scene-document".into(),
+            title: None,
+            description: Some(
+                "Current session SceneDocument, revision, dirty state, and hash.".into(),
+            ),
+            mime_type: Some("application/json".into()),
+            size: None,
+        }]
+    }
+
+    fn list_resource_templates(&self) -> Vec<ResourceTemplateDef> {
+        vec![ResourceTemplateDef {
+            uri_template: "voxy://scene/node/{node_id}".into(),
+            name: "scene-node".into(),
+            title: None,
+            description: Some("Single SceneObject by ObjectId.".into()),
+            mime_type: Some("application/json".into()),
+        }]
+    }
+
+    fn read_resource(
+        &mut self,
+        _ctx: &RequestContext,
+        uri: &str,
+    ) -> std::result::Result<Vec<ResourceContents>, RpcError> {
+        if uri == "voxy://scene/document" {
+            let doc = self
+                .state()
+                .map_err(|e| RpcError::invalid_params(e.to_string()))?;
+            return Ok(vec![ResourceContents::json(uri, &doc)]);
+        }
+        if let Some(node_id) = uri.strip_prefix("voxy://scene/node/") {
+            let obj = self
+                .history
+                .current()
+                .objects
+                .iter()
+                .find(|o| o.id.0 == node_id)
+                .ok_or_else(|| RpcError::resource_not_found(uri))?;
+            return Ok(vec![ResourceContents::json(
+                uri,
+                &serde_json::to_value(obj).unwrap_or(Value::Null),
+            )]);
+        }
+        Err(RpcError::resource_not_found(uri))
+    }
+
+    fn list_prompts(&self) -> Vec<PromptDef> {
+        vec![PromptDef {
+            name: "inspect_scene".into(),
+            title: Some("Inspect Voxy Scene".into()),
+            description: Some(
+                "Check current scene revision, nodes, and render PNG preview.".into(),
+            ),
+            arguments: vec![PromptArgument {
+                name: "node_id".into(),
+                description: Some("Optional focus ObjectId".into()),
+                required: false,
+            }],
+        }]
+    }
+
+    fn get_prompt(
+        &mut self,
+        _ctx: &RequestContext,
+        name: &str,
+        arguments: Value,
+    ) -> std::result::Result<GetPromptResult, RpcError> {
+        if name != "inspect_scene" {
+            return Err(RpcError::invalid_params(format!("unknown prompt: {name}")));
+        }
+        let node = arguments
+            .get("node_id")
+            .and_then(Value::as_str)
+            .unwrap_or("root");
+        Ok(GetPromptResult {
+            description: Some("Scene inspection prompt".into()),
+            messages: vec![PromptMessage {
+                role: "user".into(),
+                content: ContentBlock::Text {
+                    text: format!(
+                        "Call `scene_get` for the active revision, inspect node `voxy://scene/node/{node}`, and render a PNG via `scene_render`."
+                    ),
+                },
+            }],
+        })
+    }
+
+    fn complete(
+        &mut self,
+        _ctx: &RequestContext,
+        params: &CompleteParams,
+    ) -> std::result::Result<CompletionValues, RpcError> {
+        if params.argument.name == "node_id" {
+            let ids = self
+                .history
+                .current()
+                .objects
+                .iter()
+                .map(|o| o.id.0.clone());
+            return Ok(CompletionValues::from_candidates(
+                ids,
+                &params.argument.value,
+            ));
+        }
+        Ok(CompletionValues::default())
     }
 }
 
-fn tools() -> Value {
+fn tools() -> Vec<ToolDef> {
     let vector = |n| json!({"type":"array","items":{"type":"number"},"minItems":n,"maxItems":n});
     let id = json!({"type":"string","minLength":1});
     let op = |tag: &str, props: Value, required: Vec<&str>| {
@@ -505,9 +629,24 @@ fn tools() -> Value {
         op("active",json!({"node_id":id,"active":{"type":"boolean"}}),vec!["node_id","active"])
     ]}});
     let guard = json!({"type":"object","properties":{"expected_revision":{"type":"integer","minimum":0}},"required":["expected_revision"],"additionalProperties":false});
+    let ro = ToolAnnotations {
+        read_only_hint: Some(true),
+        destructive_hint: None,
+        idempotent_hint: None,
+        open_world_hint: None,
+    };
     let mut tools = vec![
-        json!({"name":"scene_get","description":"Read session scene, revision, dirty state and scene hash. Does not imply application in a live editor.","inputSchema":{"type":"object","properties":{},"additionalProperties":false},"annotations":{"readOnlyHint":true}}),
-        json!({"name":"scene_apply","description":"Apply 1..128 scene edits atomically in session memory; validates hierarchy and components. remove removes subtree. Save explicitly.","inputSchema":{"type":"object","properties":{"expected_revision":{"type":"integer","minimum":0},"edits":edits},"required":["expected_revision","edits"],"additionalProperties":false}}),
+        ToolDef::new(
+            "scene_get",
+            "Read session scene, revision, dirty state and scene hash. Does not imply application in a live editor.",
+            json!({"type":"object","properties":{},"additionalProperties":false}),
+        )
+        .with_annotations(ro.clone()),
+        ToolDef::new(
+            "scene_apply",
+            "Apply 1..128 scene edits atomically in session memory; validates hierarchy and components. remove removes subtree. Save explicitly.",
+            json!({"type":"object","properties":{"expected_revision":{"type":"integer","minimum":0},"edits":edits},"required":["expected_revision","edits"],"additionalProperties":false}),
+        ),
     ];
     for (name, description) in [
         ("scene_undo", "Undo one atomic batch in memory."),
@@ -521,9 +660,13 @@ fn tools() -> Value {
             "Render current unsaved session scene to PNG through Voxy/Metal. Returns inline image, scene hash and local path. Local OBJ only; offscreen, no live-window claim.",
         ),
     ] {
-        tools.push(json!({"name":name,"description":description,"inputSchema":guard,"annotations":{"readOnlyHint":name=="scene_render"}}));
+        let mut def = ToolDef::new(name, description, guard.clone());
+        if name == "scene_render" {
+            def = def.with_annotations(ro.clone());
+        }
+        tools.push(def);
     }
-    json!({"tools":tools})
+    tools
 }
 
 #[cfg(test)]
@@ -613,25 +756,29 @@ mod tests {
     #[test]
     fn protocol_initialization_and_unknown_fields() {
         let mut f = Fixture::new();
-        assert_eq!(
-            f.server
-                .dispatch(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}))["error"]["code"],
-            -32000
-        );
-        f.server.dispatch(&json!({"jsonrpc":"2.0","id":2,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}));
-        assert_eq!(
-            f.server
-                .dispatch(&json!({"jsonrpc":"2.0","id":3,"method":"tools/list"}))["result"]["tools"]
-                .as_array()
-                .unwrap()
-                .len(),
-            6
-        );
         assert!(
             f.server
                 .call(&json!({"name":"scene_get","arguments":{"unexpected":true}}))
                 .is_err()
         );
         assert!(f.server.call(&json!({"name":"scene_apply","arguments":{"expected_revision":0,"edits":[{"op":"camera","node_id":"root","target":[0,0,0],"distance":0,"yaw":0,"pitch":0,"perspective":true}]}})).is_err());
+
+        let server = Server::open(&f.root.join("project.voxy")).unwrap();
+        let router =
+            voxy_mcp::Router::new(std::sync::Arc::new(voxy_mcp::MutexMcpHandler::new(server)));
+        assert_eq!(
+            router.dispatch_sync(&json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}))["error"]["code"],
+            -32000
+        );
+        let _ = router.dispatch_sync(&json!({"jsonrpc":"2.0","id":2,"method":"initialize","params":{"protocolVersion":"2025-06-18"}}));
+        assert_eq!(
+            router.dispatch_sync(&json!({"jsonrpc":"2.0","id":3,"method":"tools/list"}))["result"]
+                ["tools"]
+                .as_array()
+                .unwrap()
+                .len(),
+            6
+        );
+        let _ = std::fs::remove_dir_all(&f.root);
     }
 }

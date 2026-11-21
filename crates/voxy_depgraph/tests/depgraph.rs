@@ -48,6 +48,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
             "voxy_audio_device",
             "voxy_gameplay",
             "voxy_input",
+            "voxy_mcp",
             "voxy_player",
             "voxy_render",
             "voxy_scene",
@@ -83,6 +84,7 @@ const ALLOWED: &[(&str, &[&str])] = &[
         ],
     ),
     ("voxy_lighting", &["voxy_core", "voxy_world"]),
+    ("voxy_mcp", &["voxy_core"]),
     ("voxy_mobile", &["voxy_shell"]),
     (
         "voxy_shell",
@@ -185,6 +187,7 @@ const PLATFORM_FREE: &[&str] = &[
     "physics_voxel",
     "voxy_scene",
     "voxy_animation",
+    "voxy_mcp",
 ];
 const PLATFORM_CRATES: &[&str] = &["wgpu", "winit"];
 

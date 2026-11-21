@@ -1,11 +1,15 @@
 {
   "mcpServers": {
+    "voxy-engine": {
+      "command": "target/release/voxy_mcp",
+      "args": ["examples/img2voxy-airpods-pro-3-final/project.voxy"]
+    },
     "voxy-scene": {
-      "command": "target/debug/examples/scene_mcp.exe",
-      "args": ["assets/scenes/design.scene.json"]
+      "command": "target/release/examples/scene_mcp",
+      "args": ["examples/img2voxy-airpods-pro-3-final/project.voxy"]
     },
     "voxy-street": {
-      "command": "target/release/examples/street_mcp.exe"
+      "command": "target/release/examples/street_mcp"
     }
   }
 }
