@@ -20,7 +20,8 @@ mod manifest;
 mod package;
 pub use package::{
     PROJECT_LAUNCH_SOURCE, PROJECT_PACKAGE_LIMITS, PackageLimits, ProjectDescriptor,
-    ProjectPackageLaunch, ResourcePackage,
+    ProjectMigrationRegistry, ProjectMigrationReport, ProjectMigrationStep, ProjectPackageLaunch,
+    ResourcePackage,
 };
 
 mod streaming;

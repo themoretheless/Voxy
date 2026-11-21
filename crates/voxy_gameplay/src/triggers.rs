@@ -10,6 +10,12 @@ use voxy_scene::{
 };
 pub use voxy_scene::{TriggerEvent, TriggerPhase};
 
+mod curved;
+pub(crate) use curved::{
+    AcceptedCurvedMotion, CurvedMotionInput, append_curved_pair_transits,
+    merge_timed_translation_phases,
+};
+
 const MAX_TRIGGERS: usize = 4096;
 pub const MAX_PAIRS: usize = 65_536;
 
@@ -289,21 +295,27 @@ impl TriggerTracker {
                 }
             }
         }
-        if traces.iter().any(|trace| trace.rotation_arc.is_some()) {
+        if traces
+            .iter()
+            .any(|trace| trace.curved.is_some() || trace.post_curved_snap != glam::DVec3::ZERO)
+        {
             for (trigger, descriptor) in scene.active_components::<BoxTrigger>() {
                 let layers = queries.layer_filter(crate::CollisionLayers::on(scene, trigger));
-                let mut record =
-                    |collider, target: BoxArc, moving: BoxArc, budget: &mut SupportQueryBudget| {
+                let mut record_curved =
+                    |collider,
+                     moving_in: CurvedMotionInput<'_>,
+                     target_in: CurvedMotionInput<'_>,
+                     budget: &mut SupportQueryBudget| {
                         let pair = (trigger, collider);
                         if trigger != collider && layers(collider) {
                             let previous = traced_pairs
                                 .get(&pair)
                                 .copied()
                                 .unwrap_or_else(|| self.pairs.contains(&pair));
-                            let touching = append_arc_transits(
-                                target,
-                                moving,
+                            let touching = append_curved_pair_transits(
                                 pair,
+                                moving_in,
+                                target_in,
                                 previous,
                                 budget,
                                 &mut crossings,
@@ -319,8 +331,8 @@ impl TriggerTracker {
                         .ok()
                         .map(|index| &traces[index])
                 });
-                if let Some((trace, arc)) =
-                    owner_trace.and_then(|trace| trace.rotation_arc.map(|arc| (trace, arc)))
+                if let Some(trace) = owner_trace
+                    .filter(|t| t.curved.is_some() || t.post_curved_snap != glam::DVec3::ZERO)
                 {
                     let mut start = trigger_at_trace_origin(
                         scene,
@@ -329,8 +341,7 @@ impl TriggerTracker {
                         trace,
                         budget,
                     )?;
-                    start.center = arc.pivot + (start.center - trace.origin);
-                    let moving = BoxArc::rotating(start, arc);
+                    start.center += trace.pre_curved_center() - trace.origin;
                     for (collider, target) in queries.collider_boxes() {
                         budget.charge_work(1)?;
                         if collider == trace.owner {
@@ -340,33 +351,71 @@ impl TriggerTracker {
                             .binary_search_by_key(&collider, |trace| trace.owner)
                             .ok()
                             .map(|index| &traces[index]);
-                        if let Some((other, arc)) =
-                            other.and_then(|other| other.rotation_arc.map(|arc| (other, arc)))
-                        {
-                            let start = AffineBox {
-                                center: arc.pivot,
+                        if let Some(other) = other.filter(|o| {
+                            o.curved.is_some() || o.post_curved_snap != glam::DVec3::ZERO
+                        }) {
+                            let other_start = AffineBox {
+                                center: other.pre_curved_center(),
                                 edges: other.edges,
                             };
-                            record(collider, BoxArc::rotating(start, arc), moving, budget)?;
+                            record_curved(
+                                collider,
+                                CurvedMotionInput {
+                                    initial: start,
+                                    motion: trace.curved.as_ref(),
+                                    post_snap: trace.post_curved_snap,
+                                },
+                                CurvedMotionInput {
+                                    initial: other_start,
+                                    motion: other.curved.as_ref(),
+                                    post_snap: other.post_curved_snap,
+                                },
+                                budget,
+                            )?;
                         } else if scene.component::<crate::BoxCollider>(collider)?.is_some()
-                            || other.is_some_and(stationary_trace)
+                            || other.is_some()
                         {
-                            record(collider, BoxArc::stationary(target), moving, budget)?;
+                            record_curved(
+                                collider,
+                                CurvedMotionInput {
+                                    initial: start,
+                                    motion: trace.curved.as_ref(),
+                                    post_snap: trace.post_curved_snap,
+                                },
+                                CurvedMotionInput {
+                                    initial: target,
+                                    motion: None,
+                                    post_snap: glam::DVec3::ZERO,
+                                },
+                                budget,
+                            )?;
                         }
                     }
-                } else if owner.is_none() || owner_trace.is_some_and(stationary_trace) {
+                } else if owner.is_none()
+                    || owner_trace.is_some_and(|t| {
+                        t.curved.is_none() && t.post_curved_snap == glam::DVec3::ZERO
+                    })
+                {
                     let zone = queries.query_box(trigger, descriptor.half_extents)?;
                     for trace in traces {
                         budget.charge_work(1)?;
-                        if let Some(arc) = trace.rotation_arc {
+                        if trace.curved.is_some() || trace.post_curved_snap != glam::DVec3::ZERO {
                             let start = AffineBox {
-                                center: arc.pivot,
+                                center: trace.pre_curved_center(),
                                 edges: trace.edges,
                             };
-                            record(
+                            record_curved(
                                 trace.owner,
-                                BoxArc::stationary(zone),
-                                BoxArc::rotating(start, arc),
+                                CurvedMotionInput {
+                                    initial: start,
+                                    motion: trace.curved.as_ref(),
+                                    post_snap: trace.post_curved_snap,
+                                },
+                                CurvedMotionInput {
+                                    initial: zone,
+                                    motion: None,
+                                    post_snap: glam::DVec3::ZERO,
+                                },
                                 budget,
                             )?;
                         }
@@ -458,10 +507,6 @@ fn trigger_at_trace_origin(
         return Err(PhysicsError::UnsupportedTransform);
     }
     Ok(shape)
-}
-
-fn stationary_trace(trace: &CharacterTranslationTrace) -> bool {
-    trace.complete && trace.segments.is_empty() && trace.origin == trace.end
 }
 
 fn has_timed_path(trace: &CharacterTranslationTrace) -> bool {
@@ -564,6 +609,7 @@ fn append_crossings(
     Ok(touching)
 }
 
+#[cfg(test)]
 #[derive(Clone, Copy)]
 struct BoxArc {
     local: AffineBox,
@@ -572,6 +618,7 @@ struct BoxArc {
     stop: f64,
 }
 
+#[cfg(test)]
 impl BoxArc {
     fn stationary(shape: AffineBox) -> Self {
         Self {
@@ -619,6 +666,7 @@ impl BoxArc {
     }
 }
 
+#[cfg(test)]
 fn append_arc_transits(
     mut target: BoxArc,
     mut moving: BoxArc,
@@ -838,7 +886,8 @@ mod tests {
             edges: [DVec3::X, DVec3::Y, DVec3::Z],
             complete: true,
             end: DVec3::ZERO,
-            rotation_arc: None,
+            curved: None,
+            post_curved_snap: DVec3::ZERO,
             segments,
             end_fractions,
         };
@@ -1768,7 +1817,8 @@ mod tests {
             complete: true,
             end_fractions: Vec::new(),
             end: DVec3::ZERO,
-            rotation_arc: None,
+            curved: None,
+            post_curved_snap: DVec3::ZERO,
         };
         assert_eq!(
             tracker

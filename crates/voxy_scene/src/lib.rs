@@ -19,7 +19,7 @@ pub use picking::{
 };
 
 mod file;
-pub use file::{SceneFileError, read_scene_file, save_scene_file};
+pub use file::{SceneFileError, read_scene_file, read_scene_file_migrated, save_scene_file};
 
 mod history;
 pub use history::{
@@ -50,6 +50,9 @@ pub use table::{ComponentTable, TableBuildError};
 mod associated;
 pub use associated::AssociatedData;
 
+mod migration;
+pub use migration::{DocumentMigrationChain, DocumentMigrationStep, SceneMigrationReport};
+
 mod document;
 pub use document::{
     ComponentRegistry, DocumentError, LoadedScene, ObjectId, SceneAllocationCheckpoint,
@@ -68,7 +71,7 @@ mod prefab_document;
 pub use prefab_document::{
     ExpandedScene, ObjectOverride, ParentOverride, PrefabInstance, PrefabLimits,
     PrefabSceneDocument, has_parent_override_cycle, instance_object_id, read_prefab_scene_file,
-    save_prefab_scene_file,
+    read_prefab_scene_file_migrated, save_prefab_scene_file,
 };
 
 mod prefab;

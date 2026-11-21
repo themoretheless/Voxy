@@ -267,16 +267,7 @@ fn solve_motion<W: CollisionWorld>(
             next.body = candidate.body;
             if let Some(segments) = segments {
                 segments.clear();
-                segments.extend(
-                    candidate
-                        .segments
-                        .into_iter()
-                        .filter(|segment| *segment != [0.; 3])
-                        .map(|displacement| CharacterTranslationSegment {
-                            displacement,
-                            end_fraction: None,
-                        }),
-                );
+                segments.extend(timed_step_segments(candidate.segments));
             }
             applied = candidate.applied;
             contacts = candidate.contacts;
@@ -303,6 +294,45 @@ struct StepCandidate<O> {
     body: AnchoredAabb,
     applied: [f64; 3],
     contacts: Vec<CharacterContact<O>>,
+}
+
+fn timed_step_segments(segments: [[f64; 3]; 3]) -> Vec<CharacterTranslationSegment> {
+    let kept: Vec<[f64; 3]> = segments.into_iter().filter(|s| *s != [0.; 3]).collect();
+    if kept.is_empty() {
+        return Vec::new();
+    }
+    let lengths: Vec<f64> = kept.iter().map(|s| squared_length(*s).sqrt()).collect();
+    let total: f64 = lengths.iter().sum();
+    let m = kept.len();
+    let mut fracts = Vec::with_capacity(m);
+    let mut accum = 0.0_f64;
+    for (idx, len) in lengths.iter().enumerate() {
+        accum += *len;
+        let frac = if idx + 1 == m {
+            1.0
+        } else if total > 0.0 {
+            (accum / total).clamp(f64::MIN_POSITIVE, 1.0_f64.next_down())
+        } else {
+            ((idx + 1) as f64) / (m as f64)
+        };
+        fracts.push(frac);
+    }
+    for i in (0..m.saturating_sub(1)).rev() {
+        fracts[i] = fracts[i].min(fracts[i + 1].next_down());
+    }
+    fracts[0] = fracts[0].max(f64::MIN_POSITIVE);
+    for i in 1..m {
+        if fracts[i] <= fracts[i - 1] {
+            fracts[i] = fracts[i - 1].next_up().min(1.0);
+        }
+    }
+    kept.into_iter()
+        .zip(fracts)
+        .map(|(displacement, f)| CharacterTranslationSegment {
+            displacement,
+            end_fraction: Some(f),
+        })
+        .collect()
 }
 
 fn try_step_up<W: CollisionWorld>(

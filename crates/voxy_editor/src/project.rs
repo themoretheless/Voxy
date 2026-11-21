@@ -15,6 +15,8 @@ pub struct OpenProject {
     /// Expanded runtime view; editing retains the original prefab composition.
     pub scene: voxy_scene::SceneDocument,
     pub assets: voxy_assets::AssetLocations,
+    /// True if any project descriptor, startup scene, or prefab payload was upgraded on load.
+    pub migrated: bool,
     pub(super) descriptor_path: PathBuf,
     descriptor_text: String,
 }
@@ -33,6 +35,12 @@ impl OpenProject {
         descriptor: &ProjectDescriptor,
         registry: &voxy_scene::ComponentRegistry,
     ) -> Result<(), ProjectError> {
+        if descriptor.version != ProjectDescriptor::CURRENT_VERSION {
+            return Err(ProjectError::Invalid(format!(
+                "unsupported project save version {}",
+                descriptor.version
+            )));
+        }
         let encoded = serde_json::to_string_pretty(descriptor)?;
         if encoded.len() > LIMIT {
             return Err(ProjectError::Invalid("document exceeds 8 MiB".into()));
@@ -148,12 +156,8 @@ fn load_descriptor(
         .parent()
         .ok_or_else(|| ProjectError::Invalid("project parent missing".into()))?
         .to_owned();
-    let descriptor: ProjectDescriptor = serde_json::from_str(descriptor_text)?;
-    if descriptor.version != 1 || descriptor.name.trim().is_empty() {
-        return Err(ProjectError::Invalid(
-            "unsupported version or empty name".into(),
-        ));
-    }
+    let (descriptor, proj_migration) =
+        ProjectDescriptor::parse_migrated(descriptor_text).map_err(ProjectError::Invalid)?;
     let manifest_path = resolve(&root, &root, &descriptor.asset_manifest)?;
     let scene_path = resolve(&root, &root, &descriptor.startup_scene)?;
     if manifest_path == path || scene_path == path || manifest_path == scene_path {
@@ -229,7 +233,12 @@ fn load_descriptor(
             |id, limit| provider.read(id, limit.min(crate::scene_limits::DOCUMENT_BYTES)),
         )
         .map_err(|error| ProjectError::Invalid(format!("scene input: {error:?}")))?;
-    let source: voxy_scene::PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
+    let startup_text = std::str::from_utf8(&snapshot.bytes)
+        .map_err(|_| ProjectError::Invalid("scene document is not UTF-8".into()))?;
+    let (source, startup_migration) =
+        voxy_scene::PrefabSceneDocument::from_json_migrated(startup_text, registry)
+            .map_err(|error| ProjectError::Invalid(error.to_string()))?;
+    let mut prefab_migrated = false;
     let expanded = source
         .expand(registry, crate::scene_limits::PREFABS, |asset| {
             let path = assets
@@ -244,9 +253,17 @@ fn load_descriptor(
                 .map_err(|error| {
                     voxy_scene::DocumentError::Invalid(format!("prefab input: {error:?}"))
                 })?;
-            serde_json::from_slice(&snapshot.bytes).map_err(Into::into)
+            let text = std::str::from_utf8(&snapshot.bytes)
+                .map_err(|_| voxy_scene::DocumentError::Invalid("prefab is not UTF-8".into()))?;
+            let (doc, rep) = voxy_scene::PrefabSceneDocument::from_json_migrated(text, registry)?;
+            if rep.was_migrated() {
+                prefab_migrated = true;
+            }
+            Ok(doc)
         })
         .map_err(|error| ProjectError::Invalid(error.to_string()))?;
+    let migrated =
+        proj_migration.was_migrated() || startup_migration.was_migrated() || prefab_migrated;
     let publication = inputs
         .finish(expanded.document, |id, limit| provider.read(id, limit))
         .map_err(|error| {
@@ -274,6 +291,7 @@ fn load_descriptor(
         descriptor,
         scene,
         assets,
+        migrated,
         descriptor_path: path.to_owned(),
         descriptor_text: descriptor_text.to_owned(),
     })
@@ -1146,6 +1164,59 @@ mod tests {
         assert_eq!(reopened.authoring_document()?, edited);
         reopened.stop_workers()?;
         assert!(open(&path, &registry).is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn open_migrates_legacy_scene_components_without_mutating_disk()
+    -> Result<(), Box<dyn std::error::Error>> {
+        #[derive(serde::Serialize, serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct TagV2 {
+            label: String,
+        }
+        let temp = Temp::new();
+        let root = temp.0.join("migrated-proj");
+        let path = create(&root, "MigTest")?;
+        let legacy_scene = serde_json::json!({
+            "version": 1,
+            "objects": [{
+                "id": "n1",
+                "parent": null,
+                "name": "Node",
+                "active": true,
+                "translation": [0.0, 0.0, 0.0],
+                "rotation": [0.0, 0.0, 0.0, 1.0],
+                "scale": [1.0, 1.0, 1.0],
+                "components": { "game.tag.v1": { "title": "legacy" } }
+            }]
+        })
+        .to_string();
+        let scene_path = root.join("main.scene.json");
+        fs::write(&scene_path, &legacy_scene)?;
+        let mut registry = crate::editor_component_registry()?;
+        registry.register::<TagV2>("game.tag.v2")?;
+        registry.register_migration("game.tag.v1", "game.tag.v2", |v| {
+            let title = v
+                .get("title")
+                .and_then(serde_json::Value::as_str)
+                .ok_or_else(|| voxy_scene::DocumentError::Invalid("missing title".into()))?;
+            Ok(serde_json::json!({ "label": title }))
+        })?;
+
+        let opened = open(&path, &registry)?;
+        assert!(opened.migrated);
+        assert!(
+            opened.scene.objects[0]
+                .components
+                .contains_key("game.tag.v2")
+        );
+        assert!(
+            !opened.scene.objects[0]
+                .components
+                .contains_key("game.tag.v1")
+        );
+        assert_eq!(fs::read_to_string(&scene_path)?, legacy_scene);
         Ok(())
     }
 }

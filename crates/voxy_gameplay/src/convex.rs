@@ -750,6 +750,8 @@ pub(crate) fn move_body_affine_traced(
     let mut remaining = *velocity * dt;
     let mut grounded = false;
     let mut elapsed = 0.;
+    let mut recorded = [(DVec3::ZERO, 0.0_f64); 5];
+    let mut count = 0usize;
     for _ in 0..4 {
         if remaining.length_squared() < 1e-20 {
             break;
@@ -760,14 +762,18 @@ pub(crate) fn move_body_affine_traced(
             .min_by(|a, b| a.0.total_cmp(&b.0));
         let Some((fraction, normal)) = nearest else {
             *center += remaining;
-            record(remaining, Some(1.));
+            if count < recorded.len() {
+                recorded[count] = (remaining, 1.);
+                count += 1;
+            }
             break;
         };
         elapsed += (1. - elapsed) * fraction;
         let accepted = remaining * fraction;
         *center += accepted;
-        if accepted != DVec3::ZERO {
-            record(accepted, Some(elapsed));
+        if accepted != DVec3::ZERO && count < recorded.len() {
+            recorded[count] = (accepted, elapsed);
+            count += 1;
         }
         remaining *= 1. - fraction;
         let into = remaining.dot(normal);
@@ -786,6 +792,7 @@ pub(crate) fn move_body_affine_traced(
         }
         grounded |= normal.y > 0.5;
     }
+    let mut snap_accepted = DVec3::ZERO;
     if velocity.y <= 0. && carried.as_ref().is_none_or(|carried| carried.y <= 0.) {
         let snap = DVec3::new(0., -0.005, 0.);
         if let Some((fraction, _)) = boxes
@@ -797,7 +804,7 @@ pub(crate) fn move_body_affine_traced(
             let accepted = snap * fraction;
             *center += accepted;
             if accepted != DVec3::ZERO {
-                record(accepted, None);
+                snap_accepted = accepted;
             }
             velocity.y = 0.;
             if let Some(carried) = carried {
@@ -806,7 +813,50 @@ pub(crate) fn move_body_affine_traced(
             grounded = true;
         }
     }
+    emit_traced_segments(&recorded[..count], snap_accepted, &mut record);
     grounded
+}
+
+fn emit_traced_segments(
+    slides: &[(DVec3, f64)],
+    snap: DVec3,
+    record: &mut impl FnMut(DVec3, Option<f64>),
+) {
+    if snap == DVec3::ZERO {
+        for &(seg, frac) in slides {
+            record(seg, Some(frac));
+        }
+        return;
+    }
+    if slides.is_empty() {
+        record(snap, Some(1.0));
+        return;
+    }
+    let slide_len: f64 = slides.iter().map(|(s, _)| s.length()).sum();
+    let snap_len = snap.length();
+    let scale = if slide_len + snap_len > 0. {
+        (slide_len / (slide_len + snap_len)).clamp(f64::MIN_POSITIVE, 1.0_f64.next_down())
+    } else {
+        0.5
+    };
+    let n = slides.len();
+    let mut fracts = [0.0_f64; 5];
+    for (i, &(_, f)) in slides.iter().enumerate() {
+        fracts[i] = (f * scale).clamp(f64::MIN_POSITIVE, 1.0_f64.next_down());
+    }
+    for i in (0..n.saturating_sub(1)).rev() {
+        fracts[i] = fracts[i].min(fracts[i + 1].next_down());
+    }
+    fracts[0] = fracts[0].max(f64::MIN_POSITIVE);
+    for i in 1..n {
+        if fracts[i] <= fracts[i - 1] {
+            fracts[i] = fracts[i - 1].next_up().min(1.0_f64.next_down());
+        }
+    }
+    for (i, &(seg, _)) in slides.iter().enumerate() {
+        record(seg, Some(fracts[i]));
+    }
+    record(snap, Some(1.0));
 }
 
 #[cfg(test)]

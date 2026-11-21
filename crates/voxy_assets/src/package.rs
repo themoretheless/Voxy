@@ -25,6 +25,153 @@ pub struct ProjectDescriptor {
     pub startup_scene: std::path::PathBuf,
 }
 
+impl ProjectDescriptor {
+    pub const MIN_SUPPORTED_VERSION: u32 = 1;
+    pub const CURRENT_VERSION: u32 = 1;
+
+    /// Parses and migrates a raw JSON project descriptor using built-in rules.
+    /// # Errors
+    /// Rejects malformed JSON, unsupported versions, missing migration steps, unknown fields, or empty names.
+    pub fn parse_migrated(text: &str) -> Result<(Self, ProjectMigrationReport), String> {
+        ProjectMigrationRegistry::builtin().parse(text)
+    }
+}
+
+/// Summary of `project.voxy` version migration performed on load.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ProjectMigrationReport {
+    pub original_version: u32,
+    pub target_version: u32,
+}
+
+impl ProjectMigrationReport {
+    #[must_use]
+    pub const fn was_migrated(&self) -> bool {
+        self.original_version != self.target_version
+    }
+}
+
+/// Step transforming a project descriptor JSON map from version `V` to `V + 1`.
+pub type ProjectMigrationStep =
+    fn(&mut serde_json::Map<String, serde_json::Value>) -> Result<(), String>;
+
+/// Ordered version migration chain for `project.voxy` descriptors.
+#[derive(Clone)]
+pub struct ProjectMigrationRegistry {
+    min_supported: u32,
+    current_version: u32,
+    steps: BTreeMap<u32, ProjectMigrationStep>,
+}
+
+impl std::fmt::Debug for ProjectMigrationRegistry {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ProjectMigrationRegistry")
+            .field("min_supported", &self.min_supported)
+            .field("current_version", &self.current_version)
+            .field(
+                "registered_from_versions",
+                &self.steps.keys().collect::<Vec<_>>(),
+            )
+            .finish()
+    }
+}
+
+impl Default for ProjectMigrationRegistry {
+    fn default() -> Self {
+        Self::builtin()
+    }
+}
+
+impl ProjectMigrationRegistry {
+    #[must_use]
+    pub fn builtin() -> Self {
+        Self {
+            min_supported: ProjectDescriptor::MIN_SUPPORTED_VERSION,
+            current_version: ProjectDescriptor::CURRENT_VERSION,
+            steps: BTreeMap::new(),
+        }
+    }
+
+    /// Creates a migration registry covering `min_supported..=current_version`.
+    /// # Errors
+    /// Rejects zero minimum version or inverted ranges.
+    pub fn with_range(min_supported: u32, current_version: u32) -> Result<Self, String> {
+        if min_supported == 0 || min_supported > current_version {
+            return Err("invalid project version range".into());
+        }
+        Ok(Self {
+            min_supported,
+            current_version,
+            steps: BTreeMap::new(),
+        })
+    }
+
+    /// Registers a schema migration step from `from_version` to `from_version + 1`.
+    /// # Errors
+    /// Rejects out-of-range or duplicate source versions.
+    pub fn register_step(
+        &mut self,
+        from_version: u32,
+        step: ProjectMigrationStep,
+    ) -> Result<(), String> {
+        if from_version < self.min_supported || from_version >= self.current_version {
+            return Err(format!(
+                "migration step source version {from_version} outside {}..{}",
+                self.min_supported, self.current_version
+            ));
+        }
+        if self.steps.insert(from_version, step).is_some() {
+            return Err(format!(
+                "duplicate project migration step from v{from_version}"
+            ));
+        }
+        Ok(())
+    }
+
+    /// Parses, validates version bounds, runs ordered upgrades, and decodes `ProjectDescriptor`.
+    /// # Errors
+    /// Rejects malformed JSON, unsupported versions, missing steps, unknown fields, and empty names.
+    pub fn parse(&self, text: &str) -> Result<(ProjectDescriptor, ProjectMigrationReport), String> {
+        let mut raw: serde_json::Value =
+            serde_json::from_str(text).map_err(|error| error.to_string())?;
+        let obj = raw
+            .as_object_mut()
+            .ok_or_else(|| "project descriptor must be a JSON object".to_owned())?;
+        let version_raw = obj
+            .get("version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| "project descriptor missing integer version".to_owned())?;
+        let version = u32::try_from(version_raw)
+            .map_err(|_| "project descriptor version out of range".to_owned())?;
+        if version == 0 || version < self.min_supported || version > self.current_version {
+            return Err(format!(
+                "unsupported project version {version} (supported: {}..={})",
+                self.min_supported, self.current_version
+            ));
+        }
+        for v in version..self.current_version {
+            let step = self
+                .steps
+                .get(&v)
+                .ok_or_else(|| format!("missing project migration step from v{v} to v{}", v + 1))?;
+            step(obj)?;
+            obj.insert("version".into(), serde_json::Value::from(v + 1));
+        }
+        let descriptor: ProjectDescriptor =
+            serde_json::from_value(raw).map_err(|error| error.to_string())?;
+        if descriptor.name.trim().is_empty() {
+            return Err("project name must not be empty".into());
+        }
+        Ok((
+            descriptor,
+            ProjectMigrationReport {
+                original_version: version,
+                target_version: self.current_version,
+            },
+        ))
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ProjectPackageLaunch {
@@ -210,11 +357,9 @@ impl ResourcePackage {
             serde_json::from_slice(&launch_bytes).map_err(|error| error.to_string())?;
         let bootstrap = launch.descriptor_path()?;
         let descriptor_bytes = self.read(&bootstrap.observation_id(), 8 * 1024 * 1024)?;
-        let descriptor: ProjectDescriptor =
-            serde_json::from_slice(&descriptor_bytes).map_err(|error| error.to_string())?;
-        if descriptor.version != 1 || descriptor.name.trim().is_empty() {
-            return Err("unsupported version or empty name".into());
-        }
+        let descriptor_text = std::str::from_utf8(&descriptor_bytes)
+            .map_err(|error| format!("project descriptor UTF-8: {error}"))?;
+        let (descriptor, _) = ProjectDescriptor::parse_migrated(descriptor_text)?;
         Ok((bootstrap, descriptor))
     }
 }
@@ -314,5 +459,59 @@ mod tests {
             ))
             .is_err()
         );
+    }
+
+    #[test]
+    fn project_descriptor_migration_chain_and_bounds() {
+        let v1_json = serde_json::json!({
+            "version": 1,
+            "name": "Legacy",
+            "asset_manifest": "assets.json",
+            "startup_scene": "main.scene.json"
+        })
+        .to_string();
+        let (desc, report) = ProjectDescriptor::parse_migrated(&v1_json).unwrap();
+        assert_eq!(desc.version, ProjectDescriptor::CURRENT_VERSION);
+        assert!(!report.was_migrated());
+
+        let mut chain = ProjectMigrationRegistry::with_range(1, 3).unwrap();
+        chain
+            .register_step(1, |obj| {
+                if let Some(legacy_title) = obj.remove("legacy_title") {
+                    obj.insert("name".into(), legacy_title);
+                }
+                Ok(())
+            })
+            .unwrap();
+        chain
+            .register_step(2, |obj| {
+                obj.entry("startup_scene".to_owned())
+                    .or_insert_with(|| serde_json::json!("main.scene.json"));
+                Ok(())
+            })
+            .unwrap();
+        let legacy_v1 = serde_json::json!({
+            "version": 1,
+            "legacy_title": "Upgraded Project",
+            "asset_manifest": "assets.json",
+            "startup_scene": "main.scene.json"
+        })
+        .to_string();
+        let (migrated, mig_report) = chain.parse(&legacy_v1).unwrap();
+        assert_eq!(migrated.version, 3);
+        assert_eq!(migrated.name, "Upgraded Project");
+        assert!(mig_report.was_migrated());
+        assert_eq!(mig_report.original_version, 1);
+        assert_eq!(mig_report.target_version, 3);
+
+        let v0 = serde_json::json!({"version": 0, "name": "Bad", "asset_manifest": "a", "startup_scene": "b"}).to_string();
+        assert!(chain.parse(&v0).is_err());
+        let v99 = serde_json::json!({"version": 99, "name": "Future", "asset_manifest": "a", "startup_scene": "b"}).to_string();
+        assert!(chain.parse(&v99).is_err());
+        let empty = serde_json::json!({"version": 1, "name": "  ", "asset_manifest": "a", "startup_scene": "b"}).to_string();
+        assert!(ProjectDescriptor::parse_migrated(&empty).is_err());
+
+        let incomplete = ProjectMigrationRegistry::with_range(1, 2).unwrap();
+        assert!(incomplete.parse(&v1_json).is_err());
     }
 }

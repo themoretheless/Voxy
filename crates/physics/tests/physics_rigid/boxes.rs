@@ -1,6 +1,6 @@
 use physics::{
     AnchoredAabb, CharacterConfig, CharacterError, CharacterInput, CharacterState, CollisionWorld,
-    Origin, SweepResult, step_character, sweep_box,
+    Origin, SweepResult, step_character, step_character_traced, sweep_box,
 };
 
 // Deliberately no voxel/world dependency: arbitrary non-grid static boxes.
@@ -182,4 +182,36 @@ fn invalid_bounds_rejected_even_with_empty_backend() {
         Err(CharacterError::InvalidBounds)
     );
     assert_eq!(body, before);
+}
+
+#[test]
+fn step_character_traced_times_stair_segments() {
+    let world = Boxes(vec![
+        ([-5.0, -1.0, -5.0], [10.0, 0.35, 5.0]),
+        ([0.9, 0.35, -5.0], [4.0, 0.85, 5.0]),
+    ]);
+    let mut body = CharacterState {
+        body: AnchoredAabb {
+            anchor: Origin::default(),
+            min: [0.15, 0.350_001, 0.15],
+            max: [0.85, 2.150_001, 0.85],
+        },
+        velocity: [0.0; 3],
+        grounded: true,
+    };
+    let (report, segments) = step_character_traced(
+        &world,
+        &mut body,
+        CharacterInput {
+            planar_velocity: [2.0, 0.0],
+            jump_pressed: false,
+        },
+        0.25,
+        CharacterConfig::default(),
+    )
+    .unwrap();
+    assert!(report.stepped_up, "report={report:?} segments={segments:?}");
+    assert_eq!(segments.len(), 3);
+    let fracs: Vec<f64> = segments.iter().map(|s| s.end_fraction.unwrap()).collect();
+    assert!(fracs[0] > 0.0 && fracs[0] < fracs[1] && fracs[1] < fracs[2] && fracs[2] == 1.0);
 }

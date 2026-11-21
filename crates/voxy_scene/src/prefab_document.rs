@@ -316,7 +316,7 @@ impl<F: FnMut(&str) -> Result<PrefabSceneDocument, DocumentError>> Expansion<'_,
     }
 
     fn expand(&mut self, source: &PrefabSceneDocument) -> Result<Vec<SceneObject>, DocumentError> {
-        if source.version != 1 {
+        if source.version != PrefabSceneDocument::CURRENT_VERSION {
             return Err(invalid("unsupported prefab scene version"));
         }
         if source.objects.len() > self.limits.max_objects {
@@ -371,6 +371,52 @@ impl<F: FnMut(&str) -> Result<PrefabSceneDocument, DocumentError>> Expansion<'_,
     }
 }
 impl PrefabSceneDocument {
+    pub const MIN_SUPPORTED_VERSION: u32 = 1;
+    pub const CURRENT_VERSION: u32 = 1;
+
+    /// Parses, upgrades document envelope version, and migrates component payloads and instance overrides.
+    /// # Errors
+    /// Rejects unsupported versions, missing migration steps, conflicting overrides, or invalid JSON.
+    pub fn from_json_migrated(
+        text: &str,
+        registry: &ComponentRegistry,
+    ) -> Result<(Self, crate::SceneMigrationReport), DocumentError> {
+        Self::from_json_migrated_with_chain(
+            text,
+            registry,
+            &crate::DocumentMigrationChain::prefab_builtin(),
+        )
+    }
+
+    /// Parses, upgrades with a caller-supplied document migration chain, and migrates component payloads and overrides.
+    /// # Errors
+    /// Rejects unsupported versions, missing migration steps, conflicting overrides, or invalid JSON.
+    pub fn from_json_migrated_with_chain(
+        text: &str,
+        registry: &ComponentRegistry,
+        chain: &crate::DocumentMigrationChain,
+    ) -> Result<(Self, crate::SceneMigrationReport), DocumentError> {
+        let (raw, original_version, target_version) = chain.upgrade_json(text)?;
+        let mut doc: Self = serde_json::from_value(raw)?;
+        let mut migrated_components = 0usize;
+        for object in &mut doc.objects {
+            migrated_components += registry.migrate_component_map(&mut object.components)?;
+        }
+        for instance in &mut doc.instances {
+            for override_entry in instance.overrides.values_mut() {
+                migrated_components += registry.migrate_override_components(override_entry)?;
+            }
+        }
+        Ok((
+            doc,
+            crate::SceneMigrationReport {
+                original_version,
+                target_version,
+                migrated_components,
+            },
+        ))
+    }
+
     /// Source revisions are resolved by the caller's existing asset pipeline.
     /// The caller must keep observations/revision validation around publication.
     /// # Errors
@@ -425,6 +471,19 @@ pub fn read_prefab_scene_file(
     let text = crate::file::read_text(path, max_bytes)?;
     serde_json::from_str(&text).map_err(|error| DocumentError::from(error).into())
 }
+
+/// Reads and migrates a prefab authoring composition without modifying disk files.
+/// # Errors
+/// Reports quotas, IO, migration errors, and malformed/unknown JSON fields.
+pub fn read_prefab_scene_file_migrated(
+    path: &std::path::Path,
+    max_bytes: usize,
+    registry: &ComponentRegistry,
+) -> Result<(PrefabSceneDocument, crate::SceneMigrationReport), crate::SceneFileError> {
+    let text = crate::file::read_text(path, max_bytes)?;
+    PrefabSceneDocument::from_json_migrated(&text, registry).map_err(Into::into)
+}
+
 /// Validates the full dependency expansion before atomic authoring-file replacement.
 /// Instance links and overrides are saved intact, rather than baking the flat graph.
 /// # Errors
@@ -438,6 +497,13 @@ pub fn save_prefab_scene_file(
     max_bytes: usize,
     resolve: impl FnMut(&str) -> Result<PrefabSceneDocument, DocumentError>,
 ) -> Result<(), crate::SceneFileError> {
+    if document.version != PrefabSceneDocument::CURRENT_VERSION {
+        return Err(DocumentError::Invalid(format!(
+            "refusing to save unmigrated prefab version {}",
+            document.version
+        ))
+        .into());
+    }
     let text = serde_json::to_string_pretty(document).map_err(DocumentError::from)?;
     if text.len() > max_bytes {
         return Err(crate::SceneFileError::TooLarge);

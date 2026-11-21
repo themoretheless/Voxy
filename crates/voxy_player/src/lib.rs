@@ -209,9 +209,11 @@ fn expand_packaged_scene<B: AsRef<[u8]>>(
     registry: &ComponentRegistry,
     mut read: impl FnMut(&AssetId) -> Result<B, String>,
 ) -> Result<AuthoredScene, String> {
-    let startup: PrefabSceneDocument =
-        serde_json::from_slice(read(&source.observation_id())?.as_ref())
-            .map_err(|error| error.to_string())?;
+    let startup_bytes = read(&source.observation_id())?;
+    let startup_text = std::str::from_utf8(startup_bytes.as_ref())
+        .map_err(|error| format!("packaged scene UTF-8: {error}"))?;
+    let (startup, _) = PrefabSceneDocument::from_json_migrated(startup_text, registry)
+        .map_err(|error| error.to_string())?;
     let mut dependencies = std::collections::BTreeMap::new();
     let expanded = startup
         .expand(registry, PACKAGED_PREFAB_LIMITS, |id| {
@@ -219,7 +221,9 @@ fn expand_packaged_scene<B: AsRef<[u8]>>(
                 .source(&AssetId(id.into()))
                 .ok_or_else(|| DocumentError::Invalid(format!("missing prefab {id}")))?;
             let bytes = read(&path.observation_id()).map_err(DocumentError::Invalid)?;
-            let document: PrefabSceneDocument = serde_json::from_slice(bytes.as_ref())?;
+            let text = std::str::from_utf8(bytes.as_ref())
+                .map_err(|error| DocumentError::Invalid(format!("prefab UTF-8: {error}")))?;
+            let (document, _) = PrefabSceneDocument::from_json_migrated(text, registry)?;
             dependencies.insert(id.to_owned(), document.clone());
             Ok(document)
         })

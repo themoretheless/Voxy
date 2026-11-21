@@ -3209,3 +3209,297 @@ fn durable_point_loads_reload_without_runtime_state_and_reject_silent_play() {
     malformed["runtime_velocity"] = serde_json::json!([1., 2., 3.]);
     assert!(serde_json::from_value::<voxy_gameplay::RigidPointLoads>(malformed).is_err());
 }
+
+#[test]
+fn curved_root_rotation_path_emits_mid_tick_trigger_enter_and_exit() {
+    use voxy_animation::Interpolation;
+    use voxy_gameplay::{CharacterTrajectoryMotion, TriggerEvent, TriggerPhase, TriggerTracker};
+
+    let trajectory = rotation_trajectory(
+        &[Quat::IDENTITY, Quat::IDENTITY],
+        Interpolation::CubicSpline,
+        vec![
+            [glam::Vec4::ZERO, glam::Vec4::Y * 8.],
+            [-glam::Vec4::Y * 8., glam::Vec4::ZERO],
+        ],
+    );
+    let mut scene = SceneGraph::new(4);
+    let player = scene.spawn(None, Default::default()).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.02],
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let trigger = scene.spawn(None, at(Vec3::new(0.0, 0.0, 0.25))).unwrap();
+    scene
+        .insert_component(
+            trigger,
+            voxy_gameplay::BoxTrigger {
+                half_extents: [0.05, 0.1, 0.05],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 0);
+    let mut input = player_input().unwrap();
+    let mut tracker = TriggerTracker::new(&scene, 2).unwrap();
+    assert!(
+        tracker
+            .sample_tick(&scene, Some(&physics))
+            .unwrap()
+            .is_empty()
+    );
+
+    let request = CharacterTrajectoryMotion {
+        owner: player,
+        displacement: Vec3::ZERO,
+        rotation: &trajectory,
+        basis: glam::DQuat::IDENTITY,
+        pivot: Vec3::ZERO,
+    };
+    let receipts = physics
+        .fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap();
+    assert!(receipts[0].complete);
+    let events = tracker.sample_character_tick(&scene, &mut physics).unwrap();
+    // Mid-tick peak angle reaches 2*atan(2) ~= 126.87 deg, sweeping the X-wing across z=0.25 twice.
+    assert_eq!(
+        events,
+        [
+            TriggerEvent {
+                trigger,
+                collider: player,
+                phase: TriggerPhase::Enter,
+            },
+            TriggerEvent {
+                trigger,
+                collider: player,
+                phase: TriggerPhase::Exit,
+            },
+            TriggerEvent {
+                trigger,
+                collider: player,
+                phase: TriggerPhase::Enter,
+            },
+            TriggerEvent {
+                trigger,
+                collider: player,
+                phase: TriggerPhase::Exit,
+            },
+        ]
+    );
+    assert!(!tracker.contains(trigger, player));
+}
+
+#[test]
+fn curved_root_rigid_path_synchronizes_triggers_between_two_characters() {
+    use glam::DVec3;
+    use voxy_animation::{RootRigidPath, RootRigidTwist};
+    use voxy_gameplay::{
+        CharacterRigidTrajectoryMotion, TriggerEvent, TriggerPhase, TriggerTracker,
+    };
+
+    let path_a = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::X * 2.0,
+                angular: DVec3::Y * 0.4,
+            },
+            1.0,
+        )],
+        4,
+    )
+    .unwrap();
+    let path_b = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::NEG_X * 2.0,
+                angular: DVec3::Y * -0.4,
+            },
+            1.0,
+        )],
+        4,
+    )
+    .unwrap();
+    let mut scene = SceneGraph::new(4);
+    let a = scene.spawn(None, at(Vec3::new(-1.0, 0.0, 0.0))).unwrap();
+    let b = scene.spawn(None, at(Vec3::new(1.0, 0.0, 0.0))).unwrap();
+    for owner in [a, b] {
+        scene
+            .insert_component(
+                owner,
+                CharacterBody {
+                    half_extents: [0.1, 0.1, 0.1],
+                    speed: 0.,
+                    gravity: 0.,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+    }
+    let trigger = a;
+    scene
+        .insert_component(
+            trigger,
+            voxy_gameplay::BoxTrigger {
+                half_extents: [0.1, 0.1, 0.1],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 2, 0);
+    let mut input = player_input().unwrap();
+    let mut tracker = TriggerTracker::new(&scene, 2).unwrap();
+    assert!(
+        tracker
+            .sample_tick(&scene, Some(&physics))
+            .unwrap()
+            .is_empty()
+    );
+
+    let reqs = [
+        CharacterRigidTrajectoryMotion {
+            owner: a,
+            trajectory: &path_a,
+            scale: 1.0,
+            basis: glam::DQuat::IDENTITY,
+            origin: Vec3::ZERO,
+        },
+        CharacterRigidTrajectoryMotion {
+            owner: b,
+            trajectory: &path_b,
+            scale: 1.0,
+            basis: glam::DQuat::IDENTITY,
+            origin: Vec3::ZERO,
+        },
+    ];
+    physics
+        .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &reqs)
+        .unwrap();
+    let events = tracker.sample_character_tick(&scene, &mut physics).unwrap();
+    assert_eq!(
+        events,
+        [
+            TriggerEvent {
+                trigger,
+                collider: b,
+                phase: TriggerPhase::Enter,
+            },
+            TriggerEvent {
+                trigger,
+                collider: b,
+                phase: TriggerPhase::Exit,
+            },
+        ]
+    );
+}
+
+fn setup_stair_and_affine_scene() -> (SceneGraph, NodeId, NodeId) {
+    let mut scene = SceneGraph::new(8);
+    for (center, half_extents) in [
+        (Vec3::new(0.0, -0.25, 0.0), [5.0, 0.25, 2.0]),
+        (Vec3::new(1.15, 0.0075, 0.0), [0.5, 0.0075, 1.0]),
+    ] {
+        let node = scene.spawn(None, at(center)).unwrap();
+        scene
+            .insert_component(node, BoxCollider { half_extents })
+            .unwrap();
+    }
+    let climber = scene.spawn(None, at(Vec3::new(0.50, 0.10, 0.0))).unwrap();
+    scene
+        .insert_component(
+            climber,
+            CharacterBody {
+                half_extents: [0.1, 0.1, 0.1],
+                speed: 18.0,
+                gravity: -0.5,
+                jump_speed: 0.0,
+            },
+        )
+        .unwrap();
+    let runner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::new(0.42, 0.102, -0.6),
+                rotation: Quat::from_rotation_y(std::f32::consts::FRAC_PI_4),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            runner,
+            CharacterBody {
+                half_extents: [0.1, 0.1, 0.1],
+                speed: 0.0,
+                gravity: 0.0,
+                jump_speed: 0.0,
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            runner,
+            voxy_gameplay::BoxTrigger {
+                half_extents: [0.16, 0.09, 0.16],
+            },
+        )
+        .unwrap();
+    (scene, climber, runner)
+}
+
+#[test]
+fn stair_step_up_and_affine_floor_snap_synchronize_mid_step_triggers() {
+    use voxy_gameplay::{TriggerEvent, TriggerPhase, TriggerTracker};
+
+    let (mut scene, climber, runner) = setup_stair_and_affine_scene();
+    let trigger = runner;
+    let mut physics = CharacterPhysics::new(&scene, 2, 4);
+    let mut input = player_input().unwrap();
+    let mut tracker = TriggerTracker::new(&scene, 4).unwrap();
+    assert!(
+        tracker
+            .sample_tick(&scene, Some(&physics))
+            .unwrap()
+            .is_empty()
+    );
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    assert!(
+        tracker
+            .sample_character_tick(&scene, &mut physics)
+            .unwrap()
+            .is_empty()
+    );
+    input.event(voxy_gameplay::RIGHT, 1.0).unwrap();
+    physics
+        .fixed_step_with_motion(
+            &mut scene,
+            &mut input,
+            1. / 60.,
+            &[(runner, Vec3::new(0.0, 0.0, 1.2))],
+        )
+        .unwrap();
+    let events = tracker.sample_character_tick(&scene, &mut physics).unwrap();
+    assert_eq!(
+        events,
+        [
+            TriggerEvent {
+                trigger,
+                collider: climber,
+                phase: TriggerPhase::Enter,
+            },
+            TriggerEvent {
+                trigger,
+                collider: climber,
+                phase: TriggerPhase::Exit,
+            },
+        ]
+    );
+}

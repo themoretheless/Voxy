@@ -47,6 +47,17 @@ pub fn read_scene_file(path: &Path, max_bytes: usize) -> Result<SceneDocument, S
     SceneDocument::from_json(&read_text(path, max_bytes)?).map_err(Into::into)
 }
 
+/// Reads and migrates a scene file using registered document and component upgrades without writing back to disk.
+/// # Errors
+/// Reports IO, quota, UTF-8, version migration, and document syntax errors.
+pub fn read_scene_file_migrated(
+    path: &Path,
+    max_bytes: usize,
+    registry: &ComponentRegistry,
+) -> Result<(SceneDocument, crate::SceneMigrationReport), SceneFileError> {
+    SceneDocument::from_json_migrated(&read_text(path, max_bytes)?, registry).map_err(Into::into)
+}
+
 pub(crate) fn read_text(path: &Path, max_bytes: usize) -> Result<String, SceneFileError> {
     let limit = u64::try_from(max_bytes)
         .ok()
@@ -80,6 +91,13 @@ pub fn save_scene_file(
     scene_capacity: usize,
     max_bytes: usize,
 ) -> Result<(), SceneFileError> {
+    if document.version != SceneDocument::CURRENT_VERSION {
+        return Err(DocumentError::Invalid(format!(
+            "refusing to save unmigrated scene version {}",
+            document.version
+        ))
+        .into());
+    }
     let text = document.to_json()?;
     if text.len() > max_bytes {
         return Err(SceneFileError::TooLarge);

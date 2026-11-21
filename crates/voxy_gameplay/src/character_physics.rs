@@ -165,7 +165,7 @@ impl CachedPlayerActions {
     }
 }
 
-/// Accepted constant-basis translations before rotational or curved root motion.
+/// Accepted constant-basis translations plus any accepted rotational/curved root motion.
 #[derive(Clone, Debug)]
 pub struct CharacterTranslationTrace {
     pub owner: NodeId,
@@ -175,7 +175,17 @@ pub struct CharacterTranslationTrace {
     pub(crate) complete: bool,
     pub(crate) end_fractions: Vec<f64>,
     pub(crate) end: glam::DVec3,
-    pub(crate) rotation_arc: Option<AcceptedRotationArc>,
+    pub(crate) curved: Option<crate::triggers::AcceptedCurvedMotion>,
+    pub(crate) post_curved_snap: glam::DVec3,
+}
+
+impl CharacterTranslationTrace {
+    pub(crate) fn pre_curved_center(&self) -> glam::DVec3 {
+        self.curved.as_ref().map_or_else(
+            || self.end - self.post_curved_snap,
+            crate::triggers::AcceptedCurvedMotion::start_center,
+        )
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -1079,7 +1089,8 @@ impl CharacterPhysics {
                     complete: true,
                     end_fractions: Vec::new(),
                     end: glam::DVec3::ZERO,
-                    rotation_arc: None,
+                    curved: None,
+                    post_curved_snap: glam::DVec3::ZERO,
                 };
                 if !aligned_edges(runtime.edges) || world.3 {
                     step_affine(
@@ -1114,11 +1125,11 @@ impl CharacterPhysics {
                     }
                 }
                 if let Some(request) = requested.get(&owner) {
-                    let timed_segment_count = trace.segments.len();
                     let start = precise_center(runtime.state.body);
                     let mut position = start;
                     let mut motion = request.displacement.as_dvec3();
                     let mut carried_velocity = glam::DVec3::from_array(runtime.state.velocity);
+                    let mut root_segments = Vec::new();
                     let grounded = convex::move_body_affine_traced(
                         &mut position,
                         runtime.edges,
@@ -1126,19 +1137,21 @@ impl CharacterPhysics {
                         1.0,
                         shapes,
                         Some(&mut carried_velocity),
-                        |segment, _| trace.segments.push(segment),
+                        |segment, end| root_segments.push((segment, end)),
                     );
-                    if trace.segments.len() != timed_segment_count {
-                        // Root translation has its own phase and no common
-                        // clock with input-driven translation.
-                        trace.end_fractions.clear();
-                    }
+                    crate::triggers::merge_timed_translation_phases(
+                        &mut trace.segments,
+                        &mut trace.end_fractions,
+                        &root_segments,
+                    );
                     relocate(runtime, position, *descriptor);
                     runtime.state.velocity = carried_velocity.to_array();
                     runtime.state.grounded = grounded;
                     if grounded && runtime.state.velocity[1] < 0. {
                         runtime.state.velocity[1] = 0.;
                     }
+                    let pre_curved_center = position;
+                    let pre_curved_orientation = runtime.orientation;
                     let mut angular_fraction = 1.;
                     let mut accepted_path = None;
                     let angular = if let Some((path, basis, pivot)) = requested_paths.get(&owner) {
@@ -1155,6 +1168,19 @@ impl CharacterPhysics {
                         )?;
                         position += hit.displacement;
                         angular_fraction = hit.path_fraction;
+                        if hit.completed_spans > 0 || hit.span_fraction > 0. {
+                            trace.curved =
+                                Some(crate::triggers::AcceptedCurvedMotion::RotationPath {
+                                    start_center: pre_curved_center,
+                                    start_orientation: pre_curved_orientation,
+                                    basis: *basis,
+                                    pivot: *pivot,
+                                    path: (*path).clone(),
+                                    completed_spans: hit.completed_spans,
+                                    span_fraction: hit.span_fraction,
+                                    stop: hit.path_fraction,
+                                });
+                        }
                         accepted_path = Some(AppliedCharacterTrajectoryMotion {
                             rigid_identity: None,
                             owner,
@@ -1205,6 +1231,19 @@ impl CharacterPhysics {
                         };
                         position += hit.displacement;
                         angular_fraction = hit.path_fraction;
+                        if hit.completed_spans > 0 || hit.span_fraction > 0. {
+                            trace.curved = Some(crate::triggers::AcceptedCurvedMotion::RigidPath {
+                                start_center: pre_curved_center,
+                                start_orientation: pre_curved_orientation,
+                                basis: path.basis,
+                                origin: path.origin.as_dvec3(),
+                                scale: path.scale,
+                                path: (*path.trajectory).clone(),
+                                completed_spans: hit.completed_spans,
+                                span_fraction: hit.span_fraction,
+                                stop: hit.path_fraction,
+                            });
+                        }
                         accepted_path = Some(AppliedCharacterTrajectoryMotion {
                             rigid_identity: Some(std::ptr::from_ref(path.trajectory) as usize),
                             owner,
@@ -1234,11 +1273,13 @@ impl CharacterPhysics {
                         )?;
                         angular_fraction = hit.fraction;
                         if angular_fraction > 0. {
-                            trace.rotation_arc = Some(AcceptedRotationArc {
-                                pivot: position,
-                                requested: world_angular,
-                                stop: angular_fraction,
-                            });
+                            trace.curved = Some(crate::triggers::AcceptedCurvedMotion::Arc(
+                                AcceptedRotationArc {
+                                    pivot: pre_curved_center,
+                                    requested: world_angular,
+                                    stop: angular_fraction,
+                                },
+                            ));
                         }
                         Some((
                             glam::DQuat::from_scaled_axis(angular * angular_fraction),
@@ -1266,6 +1307,7 @@ impl CharacterPhysics {
                         // Refresh grounding with the accepted shape. Upward carried
                         // velocity still suppresses snap, preserving a pending jump.
                         let mut zero = glam::DVec3::ZERO;
+                        let pre_snap = position;
                         runtime.state.grounded = convex::move_body_affine_carrying_velocity(
                             &mut position,
                             runtime.edges,
@@ -1274,6 +1316,7 @@ impl CharacterPhysics {
                             shapes,
                             Some(&mut carried_velocity),
                         );
+                        trace.post_curved_snap = position - pre_snap;
                         runtime.state.velocity = carried_velocity.to_array();
                         relocate(runtime, position, *descriptor);
                     }

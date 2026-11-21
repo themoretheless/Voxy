@@ -111,11 +111,26 @@ impl std::fmt::Debug for Codec {
             .finish_non_exhaustive()
     }
 }
+#[derive(Clone)]
+struct ComponentMigration {
+    target_schema: String,
+    transform: Arc<dyn Fn(Value) -> Result<Value, DocumentError> + Send + Sync>,
+}
+
+impl std::fmt::Debug for ComponentMigration {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ComponentMigration")
+            .field("target_schema", &self.target_schema)
+            .finish_non_exhaustive()
+    }
+}
+
 /// Cloning retains the registered codec callbacks while copying schema metadata.
 /// Registrations and collection declarations on a clone do not alter its source.
 #[derive(Clone, Debug, Default)]
 pub struct ComponentRegistry {
     codecs: BTreeMap<String, Codec>,
+    migrations: BTreeMap<String, ComponentMigration>,
 }
 impl ComponentRegistry {
     pub(crate) fn queued_schema(&self, type_id: TypeId) -> Result<&str, DocumentError> {
@@ -478,6 +493,189 @@ impl ComponentRegistry {
         self.validate_collections(name, &encoded)?;
         Ok(encoded)
     }
+
+    /// Registers a migration hook upgrading `legacy_schema` payloads into `target_schema`.
+    /// Chained migrations (`v1 -> v2 -> v3`) are supported up to 16 hops; cycles and active schema collisions are rejected.
+    /// # Errors
+    /// Rejects empty/identical names, registered active codecs, duplicates, or cycles.
+    pub fn register_migration(
+        &mut self,
+        legacy_schema: &str,
+        target_schema: &str,
+        transform: impl Fn(Value) -> Result<Value, DocumentError> + Send + Sync + 'static,
+    ) -> Result<(), DocumentError> {
+        if legacy_schema.is_empty()
+            || target_schema.is_empty()
+            || legacy_schema == target_schema
+            || self.codecs.contains_key(legacy_schema)
+            || self.migrations.contains_key(legacy_schema)
+        {
+            return Err(DocumentError::Invalid(format!(
+                "invalid or conflicting component migration {legacy_schema} -> {target_schema}"
+            )));
+        }
+        let mut cursor = target_schema;
+        for _ in 0..16 {
+            if cursor == legacy_schema {
+                return Err(DocumentError::Invalid(format!(
+                    "cyclic component migration involving {legacy_schema}"
+                )));
+            }
+            if let Some(next) = self.migrations.get(cursor) {
+                cursor = next.target_schema.as_str();
+            } else {
+                self.migrations.insert(
+                    legacy_schema.to_owned(),
+                    ComponentMigration {
+                        target_schema: target_schema.to_owned(),
+                        transform: Arc::new(transform),
+                    },
+                );
+                return Ok(());
+            }
+        }
+        Err(DocumentError::Invalid(format!(
+            "component migration chain exceeds 16 hops for {legacy_schema}"
+        )))
+    }
+
+    fn resolve_target_schema(&self, legacy_schema: &str) -> Result<Option<String>, DocumentError> {
+        let Some(mut entry) = self.migrations.get(legacy_schema) else {
+            return Ok(None);
+        };
+        let mut target = entry.target_schema.clone();
+        for _ in 0..16 {
+            if let Some(next) = self.migrations.get(&target) {
+                entry = next;
+                target.clone_from(&entry.target_schema);
+            } else {
+                if !self.codecs.contains_key(&target) {
+                    return Err(DocumentError::Invalid(format!(
+                        "migrated target schema {target} is not registered"
+                    )));
+                }
+                return Ok(Some(target));
+            }
+        }
+        Err(DocumentError::Invalid(format!(
+            "component migration chain exceeds 16 hops for {legacy_schema}"
+        )))
+    }
+
+    fn resolve_migration(
+        &self,
+        legacy_schema: &str,
+        mut payload: Value,
+    ) -> Result<Option<(String, Value)>, DocumentError> {
+        let Some(mut entry) = self.migrations.get(legacy_schema) else {
+            return Ok(None);
+        };
+        for _ in 0..16 {
+            payload = (entry.transform)(payload)?;
+            let target = entry.target_schema.clone();
+            if let Some(next) = self.migrations.get(&target) {
+                entry = next;
+            } else {
+                if !self.codecs.contains_key(&target) {
+                    return Err(DocumentError::Invalid(format!(
+                        "migrated target schema {target} is not registered"
+                    )));
+                }
+                return Ok(Some((target, payload)));
+            }
+        }
+        Err(DocumentError::Invalid(format!(
+            "component migration chain exceeds 16 hops for {legacy_schema}"
+        )))
+    }
+
+    /// Migrates any legacy component entries in `components`, returning how many entries were upgraded.
+    /// # Errors
+    /// Rejects conflicting migrated targets, cyclic/incomplete chains, or failing payload transformers.
+    pub fn migrate_component_map(
+        &self,
+        components: &mut BTreeMap<String, Value>,
+    ) -> Result<usize, DocumentError> {
+        if self.migrations.is_empty() || components.is_empty() {
+            return Ok(0);
+        }
+        let mut upgraded = 0usize;
+        let mut out = BTreeMap::new();
+        for (schema, value) in std::mem::take(components) {
+            if let Some((target, next)) = self.resolve_migration(&schema, value.clone())? {
+                if out.insert(target.clone(), next).is_some() {
+                    return Err(DocumentError::Invalid(format!(
+                        "conflicting migrated component {target}"
+                    )));
+                }
+                upgraded += 1;
+            } else if out.insert(schema.clone(), value).is_some() {
+                return Err(DocumentError::Invalid(format!(
+                    "conflicting migrated component {schema}"
+                )));
+            }
+        }
+        *components = out;
+        Ok(upgraded)
+    }
+
+    /// Migrates whole-component overrides in an `ObjectOverride`, returning how many overrides were upgraded.
+    /// # Errors
+    /// Rejects legacy schemas inside partial member/collection overrides or conflicting migrated targets.
+    pub fn migrate_override_components(
+        &self,
+        overrides: &mut crate::ObjectOverride,
+    ) -> Result<usize, DocumentError> {
+        if self.migrations.is_empty() {
+            return Ok(0);
+        }
+        for schema in overrides
+            .component_members
+            .keys()
+            .chain(overrides.component_collections.keys())
+        {
+            if self.migrations.contains_key(schema) {
+                return Err(DocumentError::Invalid(format!(
+                    "legacy component {schema} cannot use partial member or collection overrides"
+                )));
+            }
+        }
+        let mut upgraded = 0usize;
+        let mut out = BTreeMap::new();
+        for (schema, maybe_value) in std::mem::take(&mut overrides.components) {
+            match maybe_value {
+                Some(value) => {
+                    if let Some((target, next)) = self.resolve_migration(&schema, value.clone())? {
+                        if out.insert(target.clone(), Some(next)).is_some() {
+                            return Err(DocumentError::Invalid(format!(
+                                "conflicting migrated override component {target}"
+                            )));
+                        }
+                        upgraded += 1;
+                    } else if out.insert(schema.clone(), Some(value)).is_some() {
+                        return Err(DocumentError::Invalid(format!(
+                            "conflicting migrated override component {schema}"
+                        )));
+                    }
+                }
+                None => {
+                    let key = if let Some(target) = self.resolve_target_schema(&schema)? {
+                        upgraded += 1;
+                        target
+                    } else {
+                        schema
+                    };
+                    if out.insert(key.clone(), None).is_some() {
+                        return Err(DocumentError::Invalid(format!(
+                            "conflicting migrated override removal {key}"
+                        )));
+                    }
+                }
+            }
+        }
+        overrides.components = out;
+        Ok(upgraded)
+    }
 }
 
 /// A fully loaded world owns the mapping between durable IDs and runtime handles.
@@ -661,18 +859,60 @@ impl<'a> SceneCheckpointView<'a> {
         }
         objects.sort_by(|a, b| a.id.cmp(&b.id));
         Ok(SceneDocument {
-            version: 1,
+            version: SceneDocument::CURRENT_VERSION,
             objects,
         })
     }
 }
 
 impl SceneDocument {
+    pub const MIN_SUPPORTED_VERSION: u32 = 1;
+    pub const CURRENT_VERSION: u32 = 1;
+
     /// # Errors
     /// Rejects malformed JSON and unknown top-level/object fields.
     pub fn from_json(text: &str) -> Result<Self, DocumentError> {
         Ok(serde_json::from_str(text)?)
     }
+
+    /// Parses, upgrades document envelope version, and migrates registered component payloads.
+    /// # Errors
+    /// Rejects unsupported versions, missing migration steps, invalid schemas, or conflicts.
+    pub fn from_json_migrated(
+        text: &str,
+        registry: &ComponentRegistry,
+    ) -> Result<(Self, crate::SceneMigrationReport), DocumentError> {
+        Self::from_json_migrated_with_chain(
+            text,
+            registry,
+            &crate::DocumentMigrationChain::scene_builtin(),
+        )
+    }
+
+    /// Parses, upgrades with a caller-supplied document migration chain, and migrates component payloads.
+    /// # Errors
+    /// Rejects unsupported versions, missing migration steps, invalid schemas, or conflicts.
+    pub fn from_json_migrated_with_chain(
+        text: &str,
+        registry: &ComponentRegistry,
+        chain: &crate::DocumentMigrationChain,
+    ) -> Result<(Self, crate::SceneMigrationReport), DocumentError> {
+        let (raw, original_version, target_version) = chain.upgrade_json(text)?;
+        let mut doc: Self = serde_json::from_value(raw)?;
+        let mut migrated_components = 0usize;
+        for object in &mut doc.objects {
+            migrated_components += registry.migrate_component_map(&mut object.components)?;
+        }
+        Ok((
+            doc,
+            crate::SceneMigrationReport {
+                original_version,
+                target_version,
+                migrated_components,
+            },
+        ))
+    }
+
     /// # Errors
     /// Returns JSON serialization errors.
     pub fn to_json(&self) -> Result<String, DocumentError> {
@@ -701,7 +941,7 @@ impl SceneDocument {
         registry: &ComponentRegistry,
         capacity: usize,
     ) -> Result<LoadedScene, DocumentError> {
-        if self.version != 1 {
+        if self.version != Self::CURRENT_VERSION {
             return Err(DocumentError::Invalid(format!(
                 "unsupported scene version {}",
                 self.version
@@ -1259,5 +1499,93 @@ mod historical_identity_tests {
             assert_eq!(restored.graph.len(), 4);
             assert!(restored.graph.local(first).is_err());
         }
+    }
+
+    #[test]
+    fn document_and_component_migration_chain_handles_upgrades_and_conflicts() {
+        #[derive(Serialize, serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct StatsV2 {
+            max_hp: u32,
+        }
+        let mut registry = ComponentRegistry::default();
+        registry.register::<StatsV2>("game.stats.v2").unwrap();
+        registry
+            .register_migration("game.stats.v1", "game.stats.v1_5", |v| {
+                let hp = v
+                    .get("hp")
+                    .and_then(Value::as_u64)
+                    .ok_or_else(|| DocumentError::Invalid("missing hp".into()))?;
+                Ok(serde_json::json!({ "health": hp * 2 }))
+            })
+            .unwrap();
+        registry
+            .register_migration("game.stats.v1_5", "game.stats.v2", |v| {
+                let h = v
+                    .get("health")
+                    .and_then(Value::as_u64)
+                    .ok_or_else(|| DocumentError::Invalid("missing health".into()))?;
+                Ok(serde_json::json!({ "max_hp": h }))
+            })
+            .unwrap();
+        assert!(
+            registry
+                .register_migration("game.stats.v2", "game.stats.v1", Ok)
+                .is_err()
+        );
+
+        let mut chain = crate::DocumentMigrationChain::with_range(1, 2).unwrap();
+        chain
+            .register_step(1, |obj| {
+                let entities = obj
+                    .remove("entities")
+                    .ok_or_else(|| DocumentError::Invalid("missing entities".into()))?;
+                obj.insert("objects".into(), entities);
+                Ok(())
+            })
+            .unwrap();
+
+        let legacy_json = serde_json::json!({
+            "version": 1,
+            "entities": [{
+                "id": "hero",
+                "parent": null,
+                "name": "Hero",
+                "active": true,
+                "translation": [0.0, 0.0, 0.0],
+                "rotation": [0.0, 0.0, 0.0, 1.0],
+                "scale": [1.0, 1.0, 1.0],
+                "components": { "game.stats.v1": { "hp": 25 } }
+            }]
+        })
+        .to_string();
+        let (mut doc, report) =
+            SceneDocument::from_json_migrated_with_chain(&legacy_json, &registry, &chain).unwrap();
+        assert!(report.was_migrated());
+        assert_eq!(report.original_version, 1);
+        assert_eq!(report.target_version, 2);
+        assert_eq!(report.migrated_components, 1);
+        doc.version = SceneDocument::CURRENT_VERSION;
+        let loaded = doc.load(&registry, 8).unwrap();
+        assert!(loaded.resolve(&ObjectId("hero".into())).is_some());
+
+        let conflict_json = serde_json::json!({
+            "version": 1,
+            "objects": [{
+                "id": "hero",
+                "parent": null,
+                "name": "Hero",
+                "active": true,
+                "translation": [0.0, 0.0, 0.0],
+                "rotation": [0.0, 0.0, 0.0, 1.0],
+                "scale": [1.0, 1.0, 1.0],
+                "components": {
+                    "game.stats.v1": { "hp": 10 },
+                    "game.stats.v2": { "max_hp": 100 }
+                }
+            }]
+        })
+        .to_string();
+        assert!(SceneDocument::from_json_migrated(&conflict_json, &registry).is_err());
     }
 }

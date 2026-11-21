@@ -10,7 +10,8 @@ use std::path::{Path, PathBuf};
 use voxy_mcp::{ToolAnnotations, ToolDef};
 use voxy_scene::{
     ComponentRegistry, DocumentError, ObjectId, ObjectOverride, PrefabInstance,
-    PrefabSceneDocument, has_parent_override_cycle, read_prefab_scene_file, save_prefab_scene_file,
+    PrefabSceneDocument, has_parent_override_cycle, read_prefab_scene_file_migrated,
+    save_prefab_scene_file,
 };
 
 pub(crate) fn tool_defs() -> Vec<ToolDef> {
@@ -116,12 +117,13 @@ pub(crate) fn read_active_prefab_doc(
         Some(rel) => resolve_project_rel(&session.project.root, rel, true)?,
         None => session.scene_path.clone(),
     };
-    let doc = read_prefab_scene_file(&target, MAX_DOC_BYTES).map_err(|e| e.to_string())?;
+    let (doc, _) = read_prefab_scene_file_migrated(&target, MAX_DOC_BYTES, registry)
+        .map_err(|e| e.to_string())?;
     let root = session.project.root.clone();
     let asset_map = asset_source_map(session);
     let expanded = doc
         .expand(registry, crate::scene_limits::PREFABS, |asset_id| {
-            resolve_prefab_asset(&root, &asset_map, asset_id)
+            resolve_prefab_asset(&root, &asset_map, registry, asset_id)
         })
         .map_err(|e| e.to_string())?;
     Ok((target, doc, expanded.document))
@@ -139,14 +141,15 @@ fn asset_source_map(session: &ProjectSession) -> BTreeMap<String, String> {
 fn resolve_prefab_asset(
     root: &Path,
     asset_map: &BTreeMap<String, String>,
+    registry: &ComponentRegistry,
     asset_id: &str,
 ) -> Result<PrefabSceneDocument, DocumentError> {
     let source = asset_map
         .get(asset_id)
         .ok_or_else(|| DocumentError::Invalid(format!("unknown prefab asset {asset_id}")))?;
-    let bytes = fs::read(root.join(source))
+    let text = fs::read_to_string(root.join(source))
         .map_err(|e| DocumentError::Invalid(format!("read prefab {asset_id}: {e}")))?;
-    serde_json::from_slice(&bytes).map_err(Into::into)
+    PrefabSceneDocument::from_json_migrated(&text, registry).map(|(doc, _)| doc)
 }
 
 fn save_and_refresh(
@@ -165,7 +168,7 @@ fn save_and_refresh(
             &registry,
             crate::scene_limits::PREFABS,
             MAX_DOC_BYTES,
-            |asset_id| resolve_prefab_asset(&root, &asset_map, asset_id),
+            |asset_id| resolve_prefab_asset(&root, &asset_map, &registry, asset_id),
         )
         .map_err(|e| format!("save prefab scene: {e}"))?;
         (

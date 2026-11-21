@@ -158,8 +158,9 @@ pub(crate) fn open_scene_session(
     registry: &ComponentRegistry,
 ) -> Result<ProjectSession, String> {
     let disk_bytes = read_bounded(&scene_path, MAX_DOC_BYTES)?;
-    let prefab_doc: PrefabSceneDocument =
-        serde_json::from_slice(&disk_bytes).map_err(|e| format!("parse scene: {e}"))?;
+    let disk_text = std::str::from_utf8(&disk_bytes).map_err(|e| format!("scene UTF-8: {e}"))?;
+    let (prefab_doc, _) = PrefabSceneDocument::from_json_migrated(disk_text, registry)
+        .map_err(|e| format!("parse scene: {e}"))?;
     let is_prefab_composed = !prefab_doc.instances.is_empty();
     let expanded = if is_prefab_composed {
         let root = project.root.clone();
@@ -174,10 +175,10 @@ pub(crate) fn open_scene_session(
                     voxy_scene::DocumentError::Invalid(format!("unknown prefab asset {asset_id}"))
                 })?;
                 let target = root.join(source);
-                let raw = fs::read(&target).map_err(|e| {
+                let raw = fs::read_to_string(&target).map_err(|e| {
                     voxy_scene::DocumentError::Invalid(format!("read prefab {asset_id}: {e}"))
                 })?;
-                serde_json::from_slice(&raw).map_err(Into::into)
+                PrefabSceneDocument::from_json_migrated(&raw, registry).map(|(doc, _)| doc)
             })
             .map_err(|e| format!("expand prefab scene: {e}"))?
             .document
@@ -315,6 +316,7 @@ fn project_validate(state: &mut EngineState, arguments: Value) -> Result<ToolOut
         "valid": gameplay_check.is_none(),
         "path": target.display().to_string(),
         "name": opened.descriptor.name,
+        "migrated": opened.migrated,
         "objectCount": opened.scene.objects.len(),
         "assetCount": opened.assets.bindings().count(),
         "gameplayIssue": gameplay_check,
@@ -364,6 +366,7 @@ pub(crate) fn project_summary(session: &ProjectSession) -> Value {
         "startupScene": session.project.descriptor.startup_scene.display().to_string(),
         "activeScene": session.scene_rel.display().to_string(),
         "assetManifest": session.project.descriptor.asset_manifest.display().to_string(),
+        "migrated": session.project.migrated,
         "revision": session.revision,
         "dirty": session.dirty(),
         "isPrefabComposed": session.is_prefab_composed,
