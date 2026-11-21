@@ -340,6 +340,7 @@ impl ArchiveSceneRenderer {
                 self.height,
                 self.output_format,
                 mode,
+                &self.depth_view,
             )?)
         } else {
             None

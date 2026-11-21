@@ -133,6 +133,10 @@ impl SupersampleResolve {
     pub fn render_size(&self) -> (u32, u32) {
         (self.color.width(), self.color.height())
     }
+    #[must_use]
+    pub const fn scale(&self) -> u32 {
+        self.scale
+    }
     pub(crate) fn validate(&self, output: &wgpu::TextureView) -> Result<(), ComputeError> {
         if output.texture().width() != self.width
             || output.texture().height() != self.height

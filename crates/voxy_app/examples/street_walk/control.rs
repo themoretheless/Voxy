@@ -341,6 +341,9 @@ impl App {
             "p99_ms": percentile(&ms, 0.99), "max_ms": ms[frames - 1],
             "over_120hz_frames": over_120, "over_60hz_frames": over_60, "worst_frames": worst,
             "gpu_scene_mean_ms": gpu_ms, "gpu_opaque_transparent_mean_ms": shading,
+            "monitor_name": self.pacer.monitor().name,
+            "monitor_refresh_hz": self.pacer.monitor().hz,
+            "present_mode": self.gpu.as_ref().map(|g| format!("{:?}", g.config.present_mode)),
             "resolution": self.gpu.as_ref().map(|g| [g.config.width, g.config.height])
         })
     }

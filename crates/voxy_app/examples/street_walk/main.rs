@@ -3,6 +3,7 @@ mod aa_validation;
 mod benchmark_cycle;
 mod control;
 mod day_cycle;
+mod frame_pacing;
 #[path = "../../src/graphics_options.rs"]
 mod graphics_options;
 mod materials;
@@ -140,6 +141,7 @@ struct App {
     aa_validation: Option<aa_validation::AaValidation>,
     view: StreetView,
     rig: voxy_render::BodycamRig,
+    pacer: frame_pacing::FramePacer,
     /// Cinematic camera auto-tour across the 8 viewpoints (F3).
     tour_active: bool,
     tour_time: f64,
@@ -315,6 +317,7 @@ impl App {
             aa_validation: aa_validation::AaValidation::from_environment(),
             view: StreetView::FirstPerson,
             rig: voxy_render::BodycamRig::default(),
+            pacer: frame_pacing::FramePacer::new(),
             tour_active: false,
             tour_time: 0.,
             window: None,
@@ -466,6 +469,7 @@ impl App {
             )?,
         );
         window.request_redraw();
+        self.pacer.update_monitor(&window, el);
         self.window = Some(window.clone());
         if !self.original {
             eprintln!("STREET loading full authored scene {}", self.root.display());
@@ -562,7 +566,10 @@ impl App {
             } else {
                 wgpu::Features::empty()
             }
-            | if std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some() {
+            | if std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some()
+                || (std::env::var("VOXY_STREET_LEGACY_RENDER").as_deref() != Ok("1")
+                    && std::env::var("VOXY_STREET_SUBGROUP_CULLING").as_deref() != Ok("0"))
+            {
                 adapter.features() & wgpu::Features::SUBGROUP
             } else {
                 wgpu::Features::empty()
@@ -627,11 +634,13 @@ impl App {
             "STREET DISPLAY format={:?} colour_space={:?} hdr_info={hdr_info:?}",
             config.format, config.color_space
         );
-        config.present_mode = if caps.present_modes.contains(&wgpu::PresentMode::Immediate) {
-            wgpu::PresentMode::Immediate
-        } else {
-            wgpu::PresentMode::AutoNoVsync
-        };
+        config.present_mode = self.pacer.policy().select_mode(&caps.present_modes);
+        eprintln!(
+            "STREET MONITOR name={:?} max_hz={:.2} present={:?}",
+            self.pacer.monitor().name,
+            self.pacer.monitor().hz,
+            config.present_mode
+        );
         config.desired_maximum_frame_latency = 2;
         if self.snapshot.is_some() || self.control.is_some() || self.aa_validation.is_some() {
             config.usage |= wgpu::TextureUsages::COPY_SRC;
@@ -1047,6 +1056,8 @@ impl App {
             }
         }
         let now = Instant::now();
+        self.pacer
+            .maybe_refresh_monitor(self.window.as_deref(), el, now);
         let elapsed = now.duration_since(self.last).as_secs_f64();
         self.last = now;
         self.control_poll(el, elapsed);
@@ -1256,6 +1267,7 @@ impl App {
                 }
                 wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => {
                     self.skipped_acquires += 1;
+                    self.pacer.on_occluded_or_timeout(Instant::now());
                     if let Some(profile) = &mut self.profile
                         && profile.record(
                             Instant::now(),
@@ -1827,6 +1839,7 @@ impl App {
                     tour: &mut self.tour_active,
                     teleport: &mut teleport_request,
                     perf_ms: (render_time * 1000., gpu_hud),
+                    refresh_hz: self.pacer.monitor().hz,
                 },
             );
         }
@@ -1856,6 +1869,9 @@ impl App {
             gpu.queue.present(frame);
             Instant::now()
         });
+        if let Some(presented) = presented_at {
+            self.pacer.on_present(now, presented);
+        }
         if view_idx != prev_view_idx {
             let next_view = match view_idx {
                 1 => StreetView::ThirdPerson,
@@ -2659,6 +2675,13 @@ impl ApplicationHandler for App {
                     self.camera.zoom(lines);
                 }
             }
+            WindowEvent::Moved(_)
+            | WindowEvent::Resized(_)
+            | WindowEvent::ScaleFactorChanged { .. } => {
+                if let Some(window) = self.window.as_deref() {
+                    self.pacer.update_monitor(window, el);
+                }
+            }
             WindowEvent::RedrawRequested => {}
             _ => {}
         }
@@ -2691,17 +2714,26 @@ impl ApplicationHandler for App {
         self.write_interrupted_run(phase);
     }
     fn about_to_wait(&mut self, el: &ActiveEventLoop) {
-        if self.gpu.is_some()
-            && !self.finished
-            && let Err(e) = self.draw(el)
-        {
-            eprintln!(
-                "STREET FAILURE phase=draw frames={} simulation_steps={} error={e}",
-                self.frames, self.simulation_steps
-            );
-            self.failure = Some(e.to_string());
-            self.finished = true;
-            el.exit();
+        if self.gpu.is_some() && !self.finished {
+            let now = Instant::now();
+            if self.probe_bake.is_some() || self.pacer.ready_to_draw(now) {
+                if self.probe_bake.is_none() {
+                    self.pacer.wait_for_deadline();
+                }
+                if let Err(e) = self.draw(el) {
+                    eprintln!(
+                        "STREET FAILURE phase=draw frames={} simulation_steps={} error={e}",
+                        self.frames, self.simulation_steps
+                    );
+                    self.failure = Some(e.to_string());
+                    self.finished = true;
+                    el.exit();
+                    return;
+                }
+            }
+            if self.probe_bake.is_none() && !self.finished {
+                el.set_control_flow(self.pacer.control_flow(Instant::now()));
+            }
         }
     }
 }

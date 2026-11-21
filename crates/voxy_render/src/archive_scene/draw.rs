@@ -41,6 +41,13 @@ impl ArchiveSceneRenderer {
         if self.device != resolve.device || (self.width, self.height) != resolve.render_size() {
             return Err(crate::ComputeError::InvalidBuffer);
         }
+        if self.bypass_1x_supersample
+            && resolve.scale() == 1
+            && output.texture().format() == self.output_format
+            && (!self.linear_output || self.output_format == wgpu::TextureFormat::Rgba16Float)
+        {
+            return Ok(self.draw(output, eye, direction));
+        }
         let linear = self.linear_output;
         self.set_linear_output(true);
         self.draw(&resolve.view, eye, direction);
@@ -278,9 +285,25 @@ impl ArchiveSceneRenderer {
             self.shadow_ready = true;
         }
         {
+            let prepass_colors = self.fast_gi.as_ref().map(|fast| {
+                [Some(wgpu::RenderPassColorAttachment {
+                    view: fast.prepass_normal_view(),
+                    depth_slice: None,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 0.5,
+                            g: 0.5,
+                            b: 0.5,
+                            a: 0.,
+                        }),
+                        store: wgpu::StoreOp::Store,
+                    },
+                })]
+            });
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("exact opaque visibility prepass"),
-                color_attachments: &[],
+                color_attachments: prepass_colors.as_ref().map_or(&[][..], |c| &c[..]),
                 timestamp_writes: if time_this_frame {
                     self.timing
                         .as_ref()
@@ -308,11 +331,22 @@ impl ArchiveSceneRenderer {
                 if material.transparent || mesh.visible_count == 0 {
                     continue;
                 }
-                pass.set_pipeline(if material.double_sided {
-                    &self.depth_double
-                } else {
-                    &self.depth_pipeline
-                });
+                pass.set_pipeline(
+                    match (
+                        self.fast_gi.is_some(),
+                        material.masked,
+                        material.double_sided,
+                    ) {
+                        (true, true, true) => &self.prepass_masked_double,
+                        (true, true, false) => &self.prepass_masked,
+                        (true, false, true) => &self.prepass_double,
+                        (true, false, false) => &self.prepass_pipeline,
+                        (false, true, true) => &self.depth_double,
+                        (false, true, false) => &self.depth_pipeline,
+                        (false, false, true) => &self.depth_opaque_double,
+                        (false, false, false) => &self.depth_opaque,
+                    },
+                );
                 pass.set_bind_group(1, &material.bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
                 pass.set_vertex_buffer(1, mesh.visible_instances.slice(..));
@@ -327,6 +361,9 @@ impl ArchiveSceneRenderer {
         self.depth_bounds.encode(&mut encoder);
         if let Some(bounds) = &self.pixel_depth_bounds {
             bounds.encode(&mut encoder);
+        }
+        if let Some(fast) = &self.fast_gi {
+            fast.encode(&mut encoder);
         }
         let compute_active = self.compute_gi_active_for_frame();
         if let Some(gi) = self.compute_gi.as_ref().filter(|_| compute_active) {
@@ -390,10 +427,11 @@ impl ArchiveSceneRenderer {
                 if !material.fully_covering || mesh.visible_count == 0 {
                     continue;
                 }
-                pass.set_pipeline(if material.double_sided {
-                    &self.depth_double
-                } else {
-                    &self.depth_pipeline
+                pass.set_pipeline(match (material.masked, material.double_sided) {
+                    (true, true) => &self.depth_double,
+                    (true, false) => &self.depth_pipeline,
+                    (false, true) => &self.depth_opaque_double,
+                    (false, false) => &self.depth_opaque,
                 });
                 pass.set_bind_group(1, &material.bind, &[]);
                 pass.set_vertex_buffer(0, mesh.vertices.slice(..));
@@ -407,6 +445,12 @@ impl ArchiveSceneRenderer {
             }
         }
         for transparent in [false, true] {
+            self.draw_order.clear();
+            self.draw_order
+                .extend(self.meshes.iter().enumerate().filter_map(|(i, m)| {
+                    (m.visible_count > 0 && self.materials[m.material].transparent == transparent)
+                        .then_some(i)
+                }));
             if transparent {
                 if let Some(capture) = opaque_capture {
                     encoder.copy_texture_to_texture(
@@ -415,6 +459,7 @@ impl ArchiveSceneRenderer {
                         self.hdr.size(),
                     );
                 }
+                let mut water_drew = false;
                 if let Some(water) = &mut self.water {
                     water.encode(
                         &self.queue,
@@ -429,33 +474,30 @@ impl ArchiveSceneRenderer {
                             planes: raw_planes,
                         },
                     );
+                    water_drew = water.drew_last_frame();
                 }
-                encoder.copy_texture_to_texture(
-                    wgpu::TexelCopyTextureInfo {
-                        texture: &self.hdr,
-                        mip_level: 0,
-                        origin: wgpu::Origin3d::ZERO,
-                        aspect: wgpu::TextureAspect::All,
-                    },
-                    wgpu::TexelCopyTextureInfo {
-                        texture: &self.background,
-                        mip_level: 0,
-                        origin: wgpu::Origin3d::ZERO,
-                        aspect: wgpu::TextureAspect::All,
-                    },
-                    wgpu::Extent3d {
-                        width: self.width,
-                        height: self.height,
-                        depth_or_array_layers: 1,
-                    },
-                );
+                if !water_drew || !self.draw_order.is_empty() {
+                    encoder.copy_texture_to_texture(
+                        wgpu::TexelCopyTextureInfo {
+                            texture: &self.hdr,
+                            mip_level: 0,
+                            origin: wgpu::Origin3d::ZERO,
+                            aspect: wgpu::TextureAspect::All,
+                        },
+                        wgpu::TexelCopyTextureInfo {
+                            texture: &self.background,
+                            mip_level: 0,
+                            origin: wgpu::Origin3d::ZERO,
+                            aspect: wgpu::TextureAspect::All,
+                        },
+                        wgpu::Extent3d {
+                            width: self.width,
+                            height: self.height,
+                            depth_or_array_layers: 1,
+                        },
+                    );
+                }
             }
-            self.draw_order.clear();
-            self.draw_order
-                .extend(self.meshes.iter().enumerate().filter_map(|(i, m)| {
-                    (m.visible_count > 0 && self.materials[m.material].transparent == transparent)
-                        .then_some(i)
-                }));
             if transparent {
                 let meshes = &self.meshes;
                 let materials = &self.materials;
@@ -633,7 +675,7 @@ impl ArchiveSceneRenderer {
             } else {
                 None
             };
-            temporal.encode_guides(&self.device, &mut encoder, &self.depth);
+            temporal.encode_guides(&mut encoder);
             #[cfg(target_os = "macos")]
             if temporal.native() {
                 preceding_commands.push(encoder.finish());

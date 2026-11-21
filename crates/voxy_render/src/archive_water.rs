@@ -430,6 +430,10 @@ impl ArchiveWater {
         }
     }
 
+    pub(crate) fn drew_last_frame(&self) -> bool {
+        self.last_drawn_bodies > 0
+    }
+
     pub(crate) fn advance(&mut self, dt: f32) {
         assert!(
             dt.is_finite() && dt >= 0.,
@@ -528,7 +532,15 @@ impl ArchiveWater {
             }
             _ => None,
         });
-        self.ripples.set_mask(mask);
+        let near_ripples = drawn.iter().any(|&i| {
+            let (lo, hi) = self.bodies[i].bounds;
+            let dx = (lo.x - eye_xz.x).max(0.).max(eye_xz.x - hi.x);
+            let dz = (lo.z - eye_xz.y).max(0.).max(eye_xz.y - hi.z);
+            dx.hypot(dz) <= RIPPLE_EXTENT + 8.0
+        });
+        if near_ripples {
+            self.ripples.set_mask(mask);
+        }
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("archive water simulation"),
@@ -536,8 +548,10 @@ impl ArchiveWater {
             });
             self.waves
                 .encode(queue, &mut pass, self.time, self.pending_seconds as f32);
-            self.ripples
-                .encode_elapsed(queue, &mut pass, eye_xz, self.pending_seconds);
+            if near_ripples {
+                self.ripples
+                    .encode_elapsed(queue, &mut pass, eye_xz, self.pending_seconds);
+            }
             self.pending_seconds = 0.;
         }
         let center = self.ripples.center();

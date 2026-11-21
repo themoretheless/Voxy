@@ -7,6 +7,9 @@ const PCSS_TAPS:array<vec2<f32>,12>=array<vec2<f32>,12>(
  vec2<f32>(0.962,-0.195),vec2<f32>(0.473,-0.480),vec2<f32>(0.519,0.767),vec2<f32>(0.185,-0.893),
  vec2<f32>(0.507,0.064),vec2<f32>(0.896,0.412),vec2<f32>(-0.322,-0.933),vec2<f32>(-0.792,-0.598));
 fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32{
+ return soft_sun_visibility_lod(shadow,uv,depth,noise,0.,false);
+}
+fn soft_sun_visibility_lod(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32,d2_view:f32,fast:bool)->f32{
  let size=vec2<f32>(textureDimensions(shadow_map));
  // Orthographic light: world metres per uv unit and per depth unit.
  let metres_per_uv=2./length(vec3<f32>(shadow[0].x,shadow[1].x,shadow[2].x));
@@ -15,8 +18,17 @@ fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32
  let spin=mat2x2<f32>(c,s,-s,c);
  let texel_bias=clamp(metres_per_uv/(size.x*3200.),0.000018,0.000045);
  let bias_depth=depth-texel_bias;
+ if fast&&d2_view>3025. {
+  let far_r=1.1/size.x;
+  var vis=0.;
+  for(var i=0;i<4;i++){
+   vis+=textureSampleCompareLevel(shadow_map,shadow_sampler,uv+spin*PCSS_TAPS[i]*far_r,bias_depth);
+  }
+  return vis*0.25;
+ }
+ let tap_count=select(12,6,fast&&d2_view>625.);
  var blockers=0.;var blocker_depth=0.;
- for(var i=0;i<12;i++){
+ for(var i=0;i<tap_count;i++){
   let p=clamp(vec2<i32>((uv+spin*PCSS_TAPS[i]*search)*size),vec2<i32>(0),vec2<i32>(size)-1);
   let z=textureLoad(shadow_map,p,0);
   if z<bias_depth {blockers+=1.;blocker_depth+=z;}
@@ -27,8 +39,8 @@ fn soft_sun_visibility(shadow:mat4x4<f32>,uv:vec2<f32>,depth:f32,noise:f32)->f32
  let penumbra_metres=(depth-blocker_depth)*metres_per_depth*2.*SUN_TAN_HALF_ANGLE;
  let radius=clamp(penumbra_metres/metres_per_uv,0.65/size.x,search);
  var visibility=0.;
- for(var i=0;i<12;i++){
+ for(var i=0;i<tap_count;i++){
   visibility+=textureSampleCompareLevel(shadow_map,shadow_sampler,uv+spin*PCSS_TAPS[i]*radius,bias_depth);
  }
- return visibility/12.;
+ return visibility/f32(tap_count);
 }

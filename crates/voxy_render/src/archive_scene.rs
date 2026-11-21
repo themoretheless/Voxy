@@ -5,6 +5,9 @@ pub use refine_crossover::RefineCrossover;
 #[path = "archive_compute_gi.rs"]
 mod compute_gi;
 mod draw;
+#[path = "archive_fast_gi.rs"]
+mod fast_gi;
+mod pipelines;
 mod probe_timing;
 mod settings;
 mod types;
@@ -21,6 +24,14 @@ use probe_timing::Timing;
 use std::sync::Arc;
 use types::{archive_light_z_masks, display_mode, fully_covering_transmission};
 use world_rays::validate_street_ray_env_config;
+
+fn legacy_render_mode() -> bool {
+    std::env::var("VOXY_STREET_LEGACY_RENDER").as_deref() == Ok("1")
+}
+
+fn opt_in_default(var: &str) -> bool {
+    !legacy_render_mode() && std::env::var(var).as_deref() != Ok("0")
+}
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Pod, Zeroable)]
@@ -93,8 +104,14 @@ pub struct ArchiveSceneRenderer {
     covered_transparent: wgpu::RenderPipeline,
     covered_transparent_double: wgpu::RenderPipeline,
     shadow_pipeline: wgpu::RenderPipeline,
+    depth_opaque: wgpu::RenderPipeline,
+    depth_opaque_double: wgpu::RenderPipeline,
     depth_pipeline: wgpu::RenderPipeline,
     depth_double: wgpu::RenderPipeline,
+    prepass_pipeline: wgpu::RenderPipeline,
+    prepass_double: wgpu::RenderPipeline,
+    prepass_masked: wgpu::RenderPipeline,
+    prepass_masked_double: wgpu::RenderPipeline,
     timing: Option<Timing>,
     refine_alternates: Option<[wgpu::RenderPipeline; 8]>,
     refine_crossover: Option<RefineCrossover>,
@@ -154,6 +171,8 @@ pub struct ArchiveSceneRenderer {
     depth_bounds: crate::archive_depth_bounds::ArchiveDepthBounds,
     pixel_depth_bounds: Option<crate::archive_depth_bounds::ArchiveDepthBounds>,
     compute_gi: Option<compute_gi::ArchiveComputeGi>,
+    fast_gi: Option<fast_gi::ArchiveFastGi>,
+    bypass_1x_supersample: bool,
     _gi_output: Arc<voxy_gpu_core::ManagedTexture>,
     _ssr_output: Arc<voxy_gpu_core::ManagedTexture>,
     shadow: wgpu::Texture,
@@ -491,313 +510,17 @@ impl ArchiveSceneRenderer {
             bind_group_layouts: &[Some(&camera_layout), Some(&material_layout)],
             immediate_size: 0,
         });
-        let refine_crossover = std::env::var("VOXY_STREET_REFINE_CROSSOVER")
-            .ok()
-            .map(|s| RefineCrossover::parse(&s))
-            .transpose()?;
-        let refine_cache_base = std::env::var_os("VOXY_STREET_REFINE_CACHE").is_some();
-        let gi_stage_crossover = std::env::var_os("VOXY_STREET_GI_STAGE_CROSSOVER").is_some();
-        let compute_requested = std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some();
-        if gi_stage_crossover && (refine_crossover.is_none() || !compute_requested) {
-            return Err(crate::ComputeError::Validation(
-                "GI stage crossover requires a schedule and compute GI".into(),
-            ));
-        }
-        if refine_crossover.is_some()
-            && (refine_cache_base
-                || (compute_requested && !gi_stage_crossover)
-                || [
-                    "VOXY_STREET_PAIRED_DDA",
-                    "VOXY_STREET_RAY_QUEUE",
-                    "VOXY_STREET_RAY_HIERARCHY",
-                    "VOXY_STREET_RAY_STAGES",
-                    "VOXY_STREET_COMPUTE_SSR",
-                ]
-                .iter()
-                .any(|key| std::env::var_os(key).is_some()))
-        {
-            return Err(crate::ComputeError::Validation(
-                "crossover requires the original GI algorithm without other ray experiments".into(),
-            ));
-        }
-        let compute_variant = std::cell::Cell::new(compute_requested && !gi_stage_crossover);
-        let refine_variant = std::cell::Cell::new(refine_cache_base);
-        let pipeline = |blend: bool,
-                        double: bool,
-                        shadow: bool,
-                        predepth: bool,
-                        masked: bool,
-                        covered: bool| {
-            let pipeline_started = std::time::Instant::now();
-            if std::env::var_os("VOXY_STREET_INIT_TRACE").is_some() {
-                eprintln!(
-                    "ARCHIVE INIT pipeline_begin blend={blend} double={double} shadow={shadow} predepth={predepth} masked={masked}"
-                );
-            }
-            let targets = [Some(wgpu::ColorTargetState {
-                format: wgpu::TextureFormat::Rgba16Float,
-                blend: if blend {
-                    Some(wgpu::BlendState::ALPHA_BLENDING)
-                } else {
-                    None
-                },
-                write_mask: wgpu::ColorWrites::ALL,
-            })];
-            let result = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: Some("archive instanced material pipeline"),
-                layout: Some(if shadow || predepth {
-                    &shadow_layout
-                } else {
-                    &layout
-                }),
-                vertex: wgpu::VertexState {
-                    module: &shader,
-                    entry_point: Some(if shadow { "vs_shadow" } else { "vs_main" }),
-                    compilation_options: Default::default(),
-                    buffers: &vertex_buffers,
-                },
-                primitive: wgpu::PrimitiveState {
-                    cull_mode: if double { None } else { Some(wgpu::Face::Back) },
-                    ..Default::default()
-                },
-                depth_stencil: Some(wgpu::DepthStencilState {
-                    format: wgpu::TextureFormat::Depth32Float,
-                    depth_write_enabled: Some(shadow || predepth),
-                    depth_compare: Some(if !shadow && !predepth && (!blend || covered) {
-                        wgpu::CompareFunction::Equal
-                    } else {
-                        wgpu::CompareFunction::LessEqual
-                    }),
-                    stencil: Default::default(),
-                    bias: if shadow {
-                        wgpu::DepthBiasState {
-                            constant: 2,
-                            slope_scale: 2.,
-                            clamp: 0.,
-                        }
-                    } else {
-                        Default::default()
-                    },
-                }),
-                multisample: Default::default(),
-                fragment: Some(wgpu::FragmentState {
-                    module: &shader,
-                    entry_point: Some(if shadow || predepth {
-                        "fs_shadow"
-                    } else if masked {
-                        "fs_main"
-                    } else {
-                        "fs_opaque"
-                    }),
-                    compilation_options: wgpu::PipelineCompilationOptions {
-                        constants: &[
-                            (
-                                "ARCHIVE_DDA_INTERVAL_CACHE",
-                                if std::env::var_os("VOXY_STREET_DDA_INTERVAL_CACHE").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_RAY_FORCE_FALLBACK",
-                                if std::env::var_os("VOXY_STREET_RAY_FORCE_FALLBACK").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_PLANE_CACHE",
-                                if std::env::var_os("VOXY_STREET_DDA_PLANE_CACHE").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_POINT_CACHE",
-                                if std::env::var_os("VOXY_STREET_DDA_POINT_CACHE").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_COMPUTE_SSR",
-                                if !blend
-                                    && !shadow
-                                    && !predepth
-                                    && std::env::var_os("VOXY_STREET_COMPUTE_GI").is_some()
-                                    && std::env::var_os("VOXY_STREET_COMPUTE_SSR").is_some()
-                                {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_COMPUTE_GI",
-                                if !blend && !shadow && !predepth && compute_variant.get() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_COMPUTE_GI_EXACT_SAMPLE",
-                                f64::from(u8::from(gi_stage_crossover)),
-                            ),
-                            (
-                                "ARCHIVE_EARLY_GI",
-                                if std::env::var_os("VOXY_STREET_EARLY_GI").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_TILE_EDGE_CACHE",
-                                if std::env::var("VOXY_STREET_DDA_TILE_EDGE_CACHE").as_deref()
-                                    == Ok("1")
-                                {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_EDGE_CACHE",
-                                if std::env::var_os("VOXY_STREET_DDA_EDGE_CACHE").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_RAY_BOUNDS",
-                                if std::env::var_os("VOXY_STREET_RAY_REFERENCE").is_some() {
-                                    0.
-                                } else {
-                                    1.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_HIERARCHY",
-                                if std::env::var_os("VOXY_STREET_DDA_HIERARCHY").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_FAR_BOUND",
-                                if std::env::var_os("VOXY_STREET_DDA_FAR_BOUND").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_CELL_BOUNDS",
-                                if std::env::var_os("VOXY_STREET_DDA_CELL_BOUNDS").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_DDA_TILES",
-                                if std::env::var_os("VOXY_STREET_PAIRED_DDA_TILES").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_PAIRED_DDA",
-                                if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "WGPU_METAL_PRECISE_MATH",
-                                if std::env::var_os("VOXY_STREET_PAIRED_DDA").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_LIGHT_Z_MASKS",
-                                if std::env::var_os("VOXY_STREET_LIGHT_Z_MASKS").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_RAY_DEPTH_REUSE",
-                                if std::env::var_os("VOXY_STREET_RAY_DEPTH_REUSE").is_some() {
-                                    1.
-                                } else {
-                                    0.
-                                },
-                            ),
-                            (
-                                "ARCHIVE_REFINE_CACHE",
-                                if refine_variant.get() { 1. } else { 0. },
-                            ),
-                        ],
-                        ..Default::default()
-                    },
-                    targets: if shadow || predepth { &[] } else { &targets },
-                }),
-                multiview_mask: None,
-                cache: None,
-            });
-            if std::env::var_os("VOXY_STREET_INIT_TRACE").is_some() {
-                eprintln!(
-                    "ARCHIVE INIT pipeline_ready blend={blend} double={double} shadow={shadow} predepth={predepth} masked={masked} milliseconds={:.3}",
-                    pipeline_started.elapsed().as_secs_f64() * 1000.
-                );
-            }
-            result
-        };
-        let opaque = pipeline(false, false, false, false, false, false);
-        let opaque_double = pipeline(false, true, false, false, false, false);
-        let masked = pipeline(false, false, false, false, true, false);
-        let masked_double = pipeline(false, true, false, false, true, false);
-        let transparent = pipeline(true, false, false, false, false, false);
-        let transparent_double = pipeline(true, true, false, false, false, false);
-        let covered_transparent = pipeline(true, false, false, false, false, true);
-        let covered_transparent_double = pipeline(true, true, false, false, false, true);
-        let shadow_pipeline = pipeline(false, true, true, false, false, false);
-        let depth_pipeline = pipeline(false, false, false, true, false, false);
-        let depth_double = pipeline(false, true, false, true, false, false);
-
-        let refine_alternates = refine_crossover.map(|mode| {
-            refine_variant.set(mode.cache_b() && !gi_stage_crossover);
-            compute_variant.set(if gi_stage_crossover {
-                mode.cache_b()
-            } else {
-                compute_requested
-            });
-            let result = [
-                pipeline(false, false, false, false, false, false),
-                pipeline(false, false, false, false, true, false),
-                pipeline(false, true, false, false, false, false),
-                pipeline(false, true, false, false, true, false),
-                pipeline(true, false, false, false, false, false),
-                pipeline(true, true, false, false, false, false),
-                pipeline(true, false, false, false, false, true),
-                pipeline(true, true, false, false, false, true),
-            ];
-            refine_variant.set(refine_cache_base);
-            compute_variant.set(compute_requested && !gi_stage_crossover);
-            result
+        let cfg = pipelines::ScenePipelineConfig::from_env()?;
+        let refine_crossover = cfg.refine_crossover;
+        let refine_cache_base = cfg.refine_cache_base;
+        let gi_stage_crossover = cfg.gi_stage_crossover;
+        let p = pipelines::ScenePipelines::build(&pipelines::PipelineInputs {
+            device,
+            shader: &shader,
+            main_layout: &layout,
+            shadow_layout: &shadow_layout,
+            vertex_buffers: &vertex_buffers,
+            config: &cfg,
         });
         let post_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("archive display transform"),
@@ -1052,8 +775,8 @@ impl ArchiveSceneRenderer {
                         | wgpu::BufferUsages::COPY_DST
                         | wgpu::BufferUsages::COPY_SRC,
                 )?;
-                let culling = if std::env::var_os("VOXY_STREET_GPU_CULLING").is_some()
-                    && s.instances.len() >= 1024
+                let culling = if opt_in_default("VOXY_STREET_GPU_CULLING")
+                    && s.instances.len() >= 64
                     && !materials[s.material].transparent
                 {
                     Some(crate::ArchiveInstanceCulling::new(
@@ -1107,7 +830,7 @@ impl ArchiveSceneRenderer {
         let background = target(device, width, height)?;
         let depth_texture = depth(device, width, height);
         let depth_view = depth_texture.create_view(&Default::default());
-        let depth_bounds = if std::env::var_os("VOXY_STREET_DDA_HIERARCHY").is_some() {
+        let depth_bounds = if opt_in_default("VOXY_STREET_DDA_HIERARCHY") {
             crate::archive_depth_bounds::ArchiveDepthBounds::new_hierarchy(
                 device,
                 &depth_texture,
@@ -1216,6 +939,30 @@ impl ArchiveSceneRenderer {
         if let Some(timing) = &mut timing {
             timing.skip_inactive_gi = gi_stage_crossover;
         }
+        let fast_constants = cfg.fast_gi_constants();
+        let fast_gi = if cfg.fast_gi_enabled {
+            Some(fast_gi::ArchiveFastGi::new(&fast_gi::FastGiInputs {
+                device,
+                shader: &shader,
+                camera: &camera,
+                background: &background,
+                depth: &depth_texture,
+                history: &history_depth,
+                bounds: &depth_bounds.texture,
+                constants: &fast_constants,
+                width,
+                height,
+            })?)
+        } else {
+            None
+        };
+        let default_gi_view = gi_output.create_view(&Default::default());
+        let default_ssr_view = ssr_output.create_view(&Default::default());
+        let (frame_gi_view, frame_ssr_view) = if let Some(fast) = &fast_gi {
+            (fast.gi_view(), fast.ao_view())
+        } else {
+            (&default_gi_view, &default_ssr_view)
+        };
         let frame_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: None,
             layout: &frame_layout,
@@ -1260,15 +1007,11 @@ impl ArchiveSceneRenderer {
                 },
                 wgpu::BindGroupEntry {
                     binding: 8,
-                    resource: wgpu::BindingResource::TextureView(
-                        &gi_output.create_view(&Default::default()),
-                    ),
+                    resource: wgpu::BindingResource::TextureView(frame_gi_view),
                 },
                 wgpu::BindGroupEntry {
                     binding: 9,
-                    resource: wgpu::BindingResource::TextureView(
-                        &ssr_output.create_view(&Default::default()),
-                    ),
+                    resource: wgpu::BindingResource::TextureView(frame_ssr_view),
                 },
             ],
         });
@@ -1329,12 +1072,13 @@ impl ArchiveSceneRenderer {
                 },
             ],
         });
-        let transmission_depth = (std::env::var_os("VOXY_STREET_TRANSMISSION_DEPTH").is_some()
+        let transmission_depth = (opt_in_default("VOXY_STREET_TRANSMISSION_DEPTH")
             && materials.iter().any(|m| m.fully_covering))
         .then(|| depth(device, width, height));
         let transmission_depth_view = transmission_depth
             .as_ref()
             .map(|t| t.create_view(&Default::default()));
+        let bypass_1x_supersample = pipelines::ScenePipelineConfig::bypass_1x_supersample();
         let draw_order = Vec::with_capacity(meshes.len());
         Ok(Self {
             device: device.clone(),
@@ -1347,21 +1091,29 @@ impl ArchiveSceneRenderer {
             camera,
             camera_bind,
             compute_gi,
+            fast_gi,
+            bypass_1x_supersample,
             _gi_output: gi_output,
             _ssr_output: ssr_output,
-            opaque,
-            opaque_double,
-            masked,
-            masked_double,
-            transparent,
-            transparent_double,
-            covered_transparent,
-            covered_transparent_double,
-            shadow_pipeline,
-            depth_pipeline,
-            depth_double,
+            opaque: p.opaque,
+            opaque_double: p.opaque_double,
+            masked: p.masked,
+            masked_double: p.masked_double,
+            transparent: p.transparent,
+            transparent_double: p.transparent_double,
+            covered_transparent: p.covered_transparent,
+            covered_transparent_double: p.covered_transparent_double,
+            shadow_pipeline: p.shadow_pipeline,
+            depth_opaque: p.depth_opaque,
+            depth_opaque_double: p.depth_opaque_double,
+            depth_pipeline: p.depth_pipeline,
+            depth_double: p.depth_double,
+            prepass_pipeline: p.prepass_pipeline,
+            prepass_double: p.prepass_double,
+            prepass_masked: p.prepass_masked,
+            prepass_masked_double: p.prepass_masked_double,
             timing,
-            refine_alternates,
+            refine_alternates: p.refine_alternates,
             refine_crossover,
             refine_cache_base,
             gi_stage_crossover,

@@ -38,17 +38,31 @@ pub struct ArchiveCameraLens {
     pub sensor_width_m: f32,
 }
 #[derive(Debug)]
+struct DisplayBindSet {
+    frame: wgpu::BindGroup,
+    empty: wgpu::BindGroup,
+    color: [wgpu::BindGroup; 2],
+}
+
+#[derive(Debug)]
 pub(crate) struct ArchiveTemporal {
     pub current: Arc<voxy_gpu_core::ManagedTexture>,
     color: [Arc<voxy_gpu_core::ManagedTexture>; 2],
-    depths: [Arc<voxy_gpu_core::ManagedTexture>; 2],
+    _depths: [Arc<voxy_gpu_core::ManagedTexture>; 2],
     motion: Arc<voxy_gpu_core::ManagedTexture>,
     expected: Arc<voxy_gpu_core::ManagedTexture>,
+    motion_view: wgpu::TextureView,
+    expected_view: wgpu::TextureView,
+    color_views: [wgpu::TextureView; 2],
     uniform: crate::ComputeStorage,
     guides: wgpu::RenderPipeline,
+    guide_bind: wgpu::BindGroup,
     resolve: wgpu::ComputePipeline,
+    frame_bind: wgpu::BindGroup,
+    resolve_binds: [wgpu::BindGroup; 2],
     display: wgpu::RenderPipeline,
     display_linear: wgpu::RenderPipeline,
+    display_binds: [DisplayBindSet; 2],
     linear_output: bool,
     previous: Mat4,
     previous_eye: Vec3,
@@ -62,6 +76,92 @@ pub(crate) struct ArchiveTemporal {
     bloom: crate::bloom::Bloom,
     #[cfg(target_os = "macos")]
     metalfx: Option<crate::metalfx::MetalFxTemporal>,
+}
+
+fn view_bind_group(
+    device: &wgpu::Device,
+    layout: &wgpu::BindGroupLayout,
+    views: &[&wgpu::TextureView],
+    uniform: Option<&wgpu::Buffer>,
+) -> wgpu::BindGroup {
+    let mut entries: Vec<_> = views
+        .iter()
+        .enumerate()
+        .map(|(i, v)| wgpu::BindGroupEntry {
+            binding: i as u32,
+            resource: wgpu::BindingResource::TextureView(v),
+        })
+        .collect();
+    if let Some(uniform) = uniform {
+        entries.push(wgpu::BindGroupEntry {
+            binding: 1,
+            resource: uniform.as_entire_binding(),
+        });
+    }
+    device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("polygon temporal bindings"),
+        layout,
+        entries: &entries,
+    })
+}
+
+fn build_display_bind_set(
+    device: &wgpu::Device,
+    pipeline: &wgpu::RenderPipeline,
+    uniform: &wgpu::Buffer,
+    color_views: &[wgpu::TextureView; 2],
+    shared_views: [&wgpu::TextureView; 3],
+    bloom_sampler: &wgpu::Sampler,
+) -> DisplayBindSet {
+    let [expected, motion, bloom] = shared_views;
+    let frame = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("polygon temporal display settings"),
+        layout: &pipeline.get_bind_group_layout(0),
+        entries: &[wgpu::BindGroupEntry {
+            binding: 1,
+            resource: uniform.as_entire_binding(),
+        }],
+    });
+    let empty = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &pipeline.get_bind_group_layout(1),
+        entries: &[],
+    });
+    let layout2 = pipeline.get_bind_group_layout(2);
+    let make_color = |color: &wgpu::TextureView| {
+        device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("polygon temporal display color"),
+            layout: &layout2,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: wgpu::BindingResource::TextureView(color),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(expected),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::TextureView(motion),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
+                    resource: wgpu::BindingResource::TextureView(bloom),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 4,
+                    resource: wgpu::BindingResource::Sampler(bloom_sampler),
+                },
+            ],
+        })
+    };
+    let color = [make_color(&color_views[0]), make_color(&color_views[1])];
+    DisplayBindSet {
+        frame,
+        empty,
+        color,
+    }
 }
 fn texture(
     device: &wgpu::Device,
@@ -128,6 +228,7 @@ impl ArchiveTemporal {
         h: u32,
         format: wgpu::TextureFormat,
         mode: ArchiveAntialiasing,
+        depth_view: &wgpu::TextureView,
     ) -> Result<Self, ComputeError> {
         #[cfg(target_os = "macos")]
         let metalfx = if mode == ArchiveAntialiasing::MetalFx {
@@ -205,23 +306,96 @@ impl ArchiveTemporal {
                 usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             },
         ])?;
+        let current = texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?;
+        let color = [
+            texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?,
+            texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?,
+        ];
+        let depths = [
+            texture(device, w, h, wgpu::TextureFormat::R32Float)?,
+            texture(device, w, h, wgpu::TextureFormat::R32Float)?,
+        ];
+        let motion = texture(device, w, h, wgpu::TextureFormat::Rg16Float)?;
+        let expected = texture(device, w, h, wgpu::TextureFormat::R32Float)?;
+        let bloom = crate::bloom::Bloom::new(device, w, h)?;
+        let current_view = current.create_view(&Default::default());
+        let color_views = [
+            color[0].create_view(&Default::default()),
+            color[1].create_view(&Default::default()),
+        ];
+        let depth_views = [
+            depths[0].create_view(&Default::default()),
+            depths[1].create_view(&Default::default()),
+        ];
+        let motion_view = motion.create_view(&Default::default());
+        let expected_view = expected.create_view(&Default::default());
+        let bloom_view = bloom.output();
+        let guide_bind = view_bind_group(
+            device,
+            &guides.get_bind_group_layout(0),
+            &[depth_view],
+            Some(&uniform),
+        );
+        let frame_bind = view_bind_group(
+            device,
+            &resolve.get_bind_group_layout(0),
+            &[depth_view],
+            Some(&uniform),
+        );
+        let resolve_layout1 = resolve.get_bind_group_layout(1);
+        let resolve_binds = [0usize, 1].map(|read| {
+            let write = 1 - read;
+            view_bind_group(
+                device,
+                &resolve_layout1,
+                &[
+                    &current_view,
+                    &color_views[read],
+                    &depth_views[read],
+                    &motion_view,
+                    &expected_view,
+                    &color_views[write],
+                    &depth_views[write],
+                ],
+                None,
+            )
+        });
+        let display_binds = [
+            build_display_bind_set(
+                device,
+                &display,
+                &uniform,
+                &color_views,
+                [&expected_view, &motion_view, &bloom_view],
+                bloom.sampler(),
+            ),
+            build_display_bind_set(
+                device,
+                &display_linear,
+                &uniform,
+                &color_views,
+                [&expected_view, &motion_view, &bloom_view],
+                bloom.sampler(),
+            ),
+        ];
         Ok(Self {
-            current: texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?,
-            color: [
-                texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?,
-                texture(device, w, h, wgpu::TextureFormat::Rgba16Float)?,
-            ],
-            depths: [
-                texture(device, w, h, wgpu::TextureFormat::R32Float)?,
-                texture(device, w, h, wgpu::TextureFormat::R32Float)?,
-            ],
-            motion: texture(device, w, h, wgpu::TextureFormat::Rg16Float)?,
-            expected: texture(device, w, h, wgpu::TextureFormat::R32Float)?,
+            current,
+            color,
+            _depths: depths,
+            motion,
+            expected,
+            motion_view,
+            expected_view,
+            color_views,
             uniform,
             guides,
+            guide_bind,
             resolve,
+            frame_bind,
+            resolve_binds,
             display,
             display_linear,
+            display_binds,
             linear_output: false,
             previous: Mat4::IDENTITY,
             previous_eye: Vec3::ZERO,
@@ -232,7 +406,7 @@ impl ArchiveTemporal {
             reset: true,
             native: mode == ArchiveAntialiasing::MetalFx,
             lens: ArchiveCameraLens::default(),
-            bloom: crate::bloom::Bloom::new(device, w, h)?,
+            bloom,
             #[cfg(target_os = "macos")]
             metalfx,
         })
@@ -305,38 +479,7 @@ impl ArchiveTemporal {
         self.previous_direction = direction.normalize();
         self.previous_jitter = jitter;
     }
-    pub fn encode_guides(
-        &mut self,
-        device: &wgpu::Device,
-        encoder: &mut wgpu::CommandEncoder,
-        depth: &wgpu::Texture,
-    ) {
-        let depth_view = depth.create_view(&Default::default());
-        let group =
-            |layout: &wgpu::BindGroupLayout, views: &[&wgpu::TextureView], uniform: bool| {
-                let mut entries: Vec<_> = views
-                    .iter()
-                    .enumerate()
-                    .map(|(i, v)| wgpu::BindGroupEntry {
-                        binding: i as u32,
-                        resource: wgpu::BindingResource::TextureView(v),
-                    })
-                    .collect();
-                if uniform {
-                    entries.push(wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: self.uniform.as_entire_binding(),
-                    });
-                }
-                device.create_bind_group(&wgpu::BindGroupDescriptor {
-                    label: Some("polygon temporal bindings"),
-                    layout,
-                    entries: &entries,
-                })
-            };
-        let motion = self.motion.create_view(&Default::default());
-        let expected = self.expected.create_view(&Default::default());
-        let guide_bind = group(&self.guides.get_bind_group_layout(0), &[&depth_view], true);
+    pub fn encode_guides(&mut self, encoder: &mut wgpu::CommandEncoder) {
         let attachment = |view| {
             Some(wgpu::RenderPassColorAttachment {
                 view,
@@ -351,30 +494,16 @@ impl ArchiveTemporal {
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("polygon camera motion and depth"),
-                color_attachments: &[attachment(&motion), attachment(&expected)],
+                color_attachments: &[
+                    attachment(&self.motion_view),
+                    attachment(&self.expected_view),
+                ],
                 ..Default::default()
             });
             pass.set_pipeline(&self.guides);
-            pass.set_bind_group(0, &guide_bind, &[]);
+            pass.set_bind_group(0, &self.guide_bind, &[]);
             pass.draw(0..3, 0..1);
         }
-        let write = 1 - self.read;
-        let views = [
-            &*self.current,
-            &*self.color[self.read],
-            &*self.depths[self.read],
-            &*self.motion,
-            &*self.expected,
-            &*self.color[write],
-            &*self.depths[write],
-        ]
-        .map(|t| t.create_view(&Default::default()));
-        let resolve_bind = group(
-            &self.resolve.get_bind_group_layout(1),
-            &views.iter().collect::<Vec<_>>(),
-            false,
-        );
-        let frame_bind = group(&self.resolve.get_bind_group_layout(0), &[&depth_view], true);
         // This pass also registers every native MetalFX resource with wgpu's
         // lifetime/usage tracking before borrowing the underlying command buffer.
         {
@@ -383,8 +512,8 @@ impl ArchiveTemporal {
                 timestamp_writes: None,
             });
             pass.set_pipeline(&self.resolve);
-            pass.set_bind_group(0, &frame_bind, &[]);
-            pass.set_bind_group(1, &resolve_bind, &[]);
+            pass.set_bind_group(0, &self.frame_bind, &[]);
+            pass.set_bind_group(1, &self.resolve_binds[self.read], &[]);
             pass.dispatch_workgroups(
                 self.current.width().div_ceil(8),
                 self.current.height().div_ceil(8),
@@ -418,56 +547,13 @@ impl ArchiveTemporal {
         output: &wgpu::TextureView,
         timestamp_writes: Option<wgpu::RenderPassTimestampWrites<'_>>,
     ) {
-        let pipeline = if self.linear_output {
-            &self.display_linear
+        let (pipeline, binds) = if self.linear_output {
+            (&self.display_linear, &self.display_binds[1])
         } else {
-            &self.display
+            (&self.display, &self.display_binds[0])
         };
         let write = 1 - self.read;
-        let view = self.color[write].create_view(&Default::default());
-        let expected = self.expected.create_view(&Default::default());
-        let motion = self.motion.create_view(&Default::default());
-        self.bloom.encode(device, encoder, &view);
-        let bloom = self.bloom.output();
-        let display_frame = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("polygon temporal display settings"),
-            layout: &pipeline.get_bind_group_layout(0),
-            entries: &[wgpu::BindGroupEntry {
-                binding: 1,
-                resource: self.uniform.as_entire_binding(),
-            }],
-        });
-        let display_color = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("polygon temporal display color"),
-            layout: &pipeline.get_bind_group_layout(2),
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&view),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::TextureView(&expected),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: wgpu::BindingResource::TextureView(&motion),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 3,
-                    resource: wgpu::BindingResource::TextureView(&bloom),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 4,
-                    resource: wgpu::BindingResource::Sampler(self.bloom.sampler()),
-                },
-            ],
-        });
-        let empty = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: None,
-            layout: &pipeline.get_bind_group_layout(1),
-            entries: &[],
-        });
+        self.bloom.encode(device, encoder, &self.color_views[write]);
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("polygon temporal HDR display"),
@@ -484,9 +570,9 @@ impl ArchiveTemporal {
                 ..Default::default()
             });
             pass.set_pipeline(pipeline);
-            pass.set_bind_group(0, &display_frame, &[]);
-            pass.set_bind_group(1, &empty, &[]);
-            pass.set_bind_group(2, &display_color, &[]);
+            pass.set_bind_group(0, &binds.frame, &[]);
+            pass.set_bind_group(1, &binds.empty, &[]);
+            pass.set_bind_group(2, &binds.color[write], &[]);
             pass.draw(0..3, 0..1);
         }
         self.read = write;

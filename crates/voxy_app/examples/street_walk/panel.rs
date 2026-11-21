@@ -102,6 +102,8 @@ pub struct Settings<'a> {
     pub teleport: &'a mut Option<([f64; 3], [f32; 3])>,
     /// Live frame render time in ms and optional GPU pass timings `[total, opaque, transparent]`.
     pub perf_ms: (f64, Option<[f64; 3]>),
+    /// Detected refresh ceiling of the window's active display in Hz.
+    pub refresh_hz: f64,
 }
 
 impl Panel {
@@ -212,11 +214,14 @@ fn contents(ui: &mut egui::Ui, s: &mut Settings) {
         let fps = (1000. / s.perf_ms.0).min(999.);
         if let Some([tot, opq, trn]) = s.perf_ms.1 {
             ui.label(format!(
-                "Кадр {:.2} мс ({:.0} FPS) · GPU {:.2} мс (opq {:.2} · wtr {:.2})",
-                s.perf_ms.0, fps, tot, opq, trn
+                "Кадр {:.2} мс ({:.0} FPS · лимит {:.0} Гц) · GPU {:.2} мс (opq {:.2} · wtr {:.2})",
+                s.perf_ms.0, fps, s.refresh_hz, tot, opq, trn
             ));
         } else {
-            ui.label(format!("Кадр {:.2} мс ({:.0} FPS)", s.perf_ms.0, fps));
+            ui.label(format!(
+                "Кадр {:.2} мс ({:.0} FPS · лимит {:.0} Гц)",
+                s.perf_ms.0, fps, s.refresh_hz
+            ));
         }
     }
     ui.separator();

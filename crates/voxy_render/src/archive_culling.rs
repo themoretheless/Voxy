@@ -131,25 +131,27 @@ impl ArchiveInstanceCulling {
             layout: &layout,
             entries: &entries,
         });
+        let subgroup_enabled = device.features().contains(wgpu::Features::SUBGROUP)
+            && match std::env::var("VOXY_STREET_SUBGROUP_CULLING").as_deref() {
+                Ok("0") => false,
+                Ok(_) => true,
+                Err(_) => std::env::var("VOXY_STREET_LEGACY_RENDER").as_deref() != Ok("1"),
+            };
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("full precision stable frustum compaction"),
-            source: wgpu::ShaderSource::Wgsl(
-                if device.features().contains(wgpu::Features::SUBGROUP)
-                    && std::env::var_os("VOXY_STREET_SUBGROUP_CULLING").is_some()
-                {
-                    concat!(
-                        include_str!("archive_culling.wgsl"),
-                        include_str!("archive_culling_subgroup.wgsl")
-                    )
-                    .into()
-                } else {
-                    concat!(
-                        include_str!("archive_culling.wgsl"),
-                        include_str!("archive_culling_mark.wgsl")
-                    )
-                    .into()
-                },
-            ),
+            source: wgpu::ShaderSource::Wgsl(if subgroup_enabled {
+                concat!(
+                    include_str!("archive_culling.wgsl"),
+                    include_str!("archive_culling_subgroup.wgsl")
+                )
+                .into()
+            } else {
+                concat!(
+                    include_str!("archive_culling.wgsl"),
+                    include_str!("archive_culling_mark.wgsl")
+                )
+                .into()
+            }),
         });
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: None,

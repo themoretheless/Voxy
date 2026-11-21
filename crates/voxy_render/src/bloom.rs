@@ -1,14 +1,16 @@
 //! Dual Kawase bloom mip chain for the archive display pass.
 use crate::{ComputeError, ComputeMemoryBudget};
-use std::sync::Arc;
 
 const LEVELS: usize = 6;
 const FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
 
 #[derive(Debug)]
 pub(crate) struct Bloom {
-    levels: Vec<Arc<voxy_gpu_core::ManagedTexture>>,
-    params: Vec<wgpu::Buffer>,
+    views: Vec<wgpu::TextureView>,
+    output_view: wgpu::TextureView,
+    down_binds: Vec<wgpu::BindGroup>,
+    up_binds: Vec<wgpu::BindGroup>,
+    first_param: wgpu::Buffer,
     layout: wgpu::BindGroupLayout,
     sampler: wgpu::Sampler,
     down: wgpu::RenderPipeline,
@@ -65,9 +67,11 @@ impl Bloom {
                 usage: wgpu::BufferUsages::UNIFORM,
             })
         };
-        let mut params = vec![uniform((width, height), true)];
-        params.extend((1..LEVELS).map(|i| uniform(sizes[i - 1], false)));
-        params.extend((0..LEVELS).map(|i| uniform(sizes[(i + 1).min(LEVELS - 1)], false)));
+        let first_param = uniform((width, height), true);
+        let down_params: Vec<_> = (1..LEVELS).map(|i| uniform(sizes[i - 1], false)).collect();
+        let up_params: Vec<_> = (0..LEVELS - 1)
+            .map(|i| uniform(sizes[(i + 1).min(LEVELS - 1)], false))
+            .collect();
         let layout = voxy_gpu_core::BindGroupLayoutBuilder::new(Some("bloom"))
             .texture_2d(
                 0,
@@ -132,11 +136,32 @@ impl Bloom {
             },
             alpha: wgpu::BlendComponent::REPLACE,
         };
+        let views: Vec<_> = levels
+            .iter()
+            .map(|t| t.create_view(&Default::default()))
+            .collect();
+        let output_view = levels[0].create_view(&Default::default());
+        let make_bind = |input: &wgpu::TextureView, param: &wgpu::Buffer| {
+            voxy_gpu_core::BindGroupBuilder::new(Some("bloom pass"), &layout)
+                .texture_view(0, input)
+                .sampler(1, &sampler)
+                .buffer(2, param)
+                .build(device)
+        };
+        let down_binds = (1..LEVELS)
+            .map(|i| make_bind(&views[i - 1], &down_params[i - 1]))
+            .collect();
+        let up_binds = (0..LEVELS - 1)
+            .map(|i| make_bind(&views[i + 1], &up_params[i]))
+            .collect();
         Ok(Self {
             down: pipeline("fs_down", None),
             up: pipeline("fs_up", Some(additive)),
-            levels,
-            params,
+            views,
+            output_view,
+            down_binds,
+            up_binds,
+            first_param,
             layout,
             sampler,
         })
@@ -145,7 +170,7 @@ impl Bloom {
     /// The half-resolution result: the sum of all levels, `LEVELS` times the
     /// mean radiance, so readers divide by `levels()`.
     pub fn output(&self) -> wgpu::TextureView {
-        self.levels[0].create_view(&Default::default())
+        self.output_view.clone()
     }
 
     pub fn sampler(&self) -> &wgpu::Sampler {
@@ -163,21 +188,15 @@ impl Bloom {
         encoder: &mut wgpu::CommandEncoder,
         source: &wgpu::TextureView,
     ) {
-        let views: Vec<_> = self
-            .levels
-            .iter()
-            .map(|t| t.create_view(&Default::default()))
-            .collect();
-        let mut pass = |pass_index: usize,
-                        pipeline: &wgpu::RenderPipeline,
-                        input: &wgpu::TextureView,
+        let first_bind = voxy_gpu_core::BindGroupBuilder::new(Some("bloom pass"), &self.layout)
+            .texture_view(0, source)
+            .sampler(1, &self.sampler)
+            .buffer(2, &self.first_param)
+            .build(device);
+        let mut pass = |pipeline: &wgpu::RenderPipeline,
+                        bind: &wgpu::BindGroup,
                         output: &wgpu::TextureView,
                         load: wgpu::LoadOp<wgpu::Color>| {
-            let bind = voxy_gpu_core::BindGroupBuilder::new(Some("bloom pass"), &self.layout)
-                .texture_view(0, input)
-                .sampler(1, &self.sampler)
-                .buffer(2, &self.params[pass_index])
-                .build(device);
             let mut render = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("bloom"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -192,20 +211,19 @@ impl Bloom {
                 ..Default::default()
             });
             render.set_pipeline(pipeline);
-            render.set_bind_group(0, &bind, &[]);
+            render.set_bind_group(0, bind, &[]);
             render.draw(0..3, 0..1);
         };
         let clear = wgpu::LoadOp::Clear(wgpu::Color::BLACK);
-        pass(0, &self.down, source, &views[0], clear);
+        pass(&self.down, &first_bind, &self.views[0], clear);
         for i in 1..LEVELS {
-            pass(i, &self.down, &views[i - 1], &views[i], clear);
+            pass(&self.down, &self.down_binds[i - 1], &self.views[i], clear);
         }
         for i in (0..LEVELS - 1).rev() {
             pass(
-                LEVELS + i,
                 &self.up,
-                &views[i + 1],
-                &views[i],
+                &self.up_binds[i],
+                &self.views[i],
                 wgpu::LoadOp::Load,
             );
         }
