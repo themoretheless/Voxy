@@ -171,6 +171,7 @@ fn save_and_refresh(
             |asset_id| resolve_prefab_asset(&root, &asset_map, &registry, asset_id),
         )
         .map_err(|e| format!("save prefab scene: {e}"))?;
+        let _ = crate::autosave::remove_journal(target_path);
         (
             session.project.descriptor_path.clone(),
             session.scene_rel.clone(),

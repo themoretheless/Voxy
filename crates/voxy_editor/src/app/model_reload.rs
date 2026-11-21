@@ -426,6 +426,21 @@ impl App {
         }
         Ok(())
     }
+    pub(crate) fn abort_pending_gpu_for_scene_transition(&mut self) -> Result<(), Error> {
+        if let Some(Pending {
+            ticket,
+            source,
+            checks,
+            ..
+        }) = self.pending_model.take()
+        {
+            drop(checks);
+            let source =
+                Arc::try_unwrap(source).map_err(|_| "cancelled GPU publication still shared")?;
+            self.complete_model_reload(&ticket, Ok(source), None)?;
+        }
+        Ok(())
+    }
     fn complete_model_reload(
         &mut self,
         ticket: &AssetTicket,

@@ -103,7 +103,17 @@ impl App {
             .poll(&self.scene, &self.authoring.authoring_project)?
         {
             audio_session::AudioPoll::Ready | audio_session::AudioPoll::RetryPlay => {
-                self.toggle_play()?;
+                if self.play.playing.is_some() {
+                    if let audio_session::AudioStart::Ready(audio) = self.audio.prepare_start(
+                        &self.scene,
+                        &self.authoring.authoring_project,
+                        self.window.is_some(),
+                    )? {
+                        self.audio.set_play(audio);
+                    }
+                } else {
+                    self.toggle_play()?;
+                }
             }
             audio_session::AudioPoll::Pending => {}
         }

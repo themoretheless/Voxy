@@ -78,6 +78,8 @@ impl App {
             retry: false,
             relink: false,
             editing: false,
+            recovery: false,
+            discard_recovery: false,
         })
     }
 
@@ -248,6 +250,8 @@ impl App {
             retry: false,
             relink: false,
             editing: true,
+            recovery: false,
+            discard_recovery: false,
         })
     }
 }

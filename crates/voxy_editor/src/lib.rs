@@ -18,6 +18,7 @@ mod app {
     pub(crate) mod resource_checkpoint;
     pub(crate) mod restore_barrier;
     pub(crate) mod restore_guard;
+    mod scene_transition;
     mod selection_clipboard;
     pub(crate) mod snapshot_commands;
     mod viewport;
@@ -34,6 +35,7 @@ mod audio_reload;
 mod audio_session;
 mod audio_settings;
 mod authoring_session;
+mod autosave;
 mod camera;
 mod camera_authoring;
 #[cfg(test)]
@@ -567,6 +569,9 @@ struct App {
     behavior_checkpoints: Arc<voxy_scene::BehaviorCheckpointRegistry>,
     ui_action_checkpoints: Arc<voxy_gameplay::UiActionCheckpointRegistry>,
     retired_ui_workers: Vec<std::thread::JoinHandle<()>>,
+    startup_scene_rel: Option<SourcePath>,
+    active_play_scene: Option<SourcePath>,
+    pending_play_scene_transition: Option<SourcePath>,
     standalone: bool,
     keyboard_device: Option<winit::event::DeviceId>,
     inspector: InspectorMode,
@@ -758,6 +763,7 @@ impl App {
                 prefab_choice: 0,
                 authoring_source: None,
                 next_object_id: 1,
+                autosave: autosave::AutosaveState::from_env(),
                 authoring_project,
             },
             play: play_session::PlaySession {
@@ -799,6 +805,9 @@ impl App {
             behavior_checkpoints: Default::default(),
             ui_action_checkpoints: Arc::new(ui_action_codecs::registry()),
             retired_ui_workers: Vec::new(),
+            startup_scene_rel: None,
+            active_play_scene: None,
+            pending_play_scene_transition: None,
             standalone: false,
             keyboard_device: None,
             inspector: InspectorMode::Transform,
@@ -971,6 +980,11 @@ impl App {
         let recipe = InputRecipe::Manifest(manifest.clone());
         let mut app =
             Self::create_session(root, None, recipe, false, registry, Some(project.package))?;
+        app.startup_scene_rel = project
+            .descriptor
+            .startup_scene
+            .to_str()
+            .and_then(|s| SourcePath::new(s).ok());
         let setup = (|| -> Result<(), Box<dyn std::error::Error>> {
             app.install_authored_scene(
                 project.document,
@@ -1147,6 +1161,7 @@ impl App {
         if self.pending_model.is_none() && !self.restore_play_frozen() {
             self.synchronize_gpu_residency();
         }
+        self.poll_autosave();
         Ok(())
     }
 }

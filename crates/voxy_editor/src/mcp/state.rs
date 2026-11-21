@@ -23,6 +23,8 @@ pub(crate) struct ProjectSession {
     pub is_prefab_composed: bool,
     pub revision: u64,
     pub camera_override: Option<EditorCamera>,
+    pub pending_autosave: Option<crate::autosave::PendingCrashRecovery>,
+    pub autosave_error: Option<String>,
 }
 
 impl ProjectSession {

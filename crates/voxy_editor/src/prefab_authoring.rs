@@ -497,7 +497,8 @@ impl AuthoringProject {
                     .read(id, limit.min(scene_limits::DOCUMENT_BYTES))
             })
             .map_err(|error| format!("scene input: {error:?}"))?;
-        let source: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
+        let text = std::str::from_utf8(&snapshot.bytes)?;
+        let (source, _) = PrefabSceneDocument::from_json_migrated(text, &self.registry)?;
         self.expand_inputs(source, inputs)
     }
     pub(super) fn prepare(
@@ -564,7 +565,9 @@ impl AuthoringProject {
                         .read(id, limit.min(scene_limits::DOCUMENT_BYTES))
                 })
                 .map_err(|error| DocumentError::Invalid(format!("prefab input: {error:?}")))?;
-            let document: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
+            let text = std::str::from_utf8(&snapshot.bytes)
+                .map_err(|error| DocumentError::Invalid(format!("prefab UTF-8: {error}")))?;
+            let (document, _) = PrefabSceneDocument::from_json_migrated(text, &self.registry)?;
             dependencies.insert(asset.to_owned(), document.clone());
             Ok(document)
         })?;
@@ -653,6 +656,27 @@ impl AuthoringProject {
     }
     pub(super) fn prefabs(&self) -> Result<Vec<AssetId>, Box<dyn std::error::Error>> {
         self.asset_choices("prefab")
+    }
+    pub(super) fn declared_scenes(&self) -> Result<Vec<AssetId>, Box<dyn std::error::Error>> {
+        let Some(manifest) = &self.manifest else {
+            return Ok(Vec::new());
+        };
+        let input = self
+            .provider
+            .read(manifest, 65_536)
+            .map_err(|error| format!("asset manifest: {error:?}"))?;
+        let locations =
+            AssetLocations::from_json(std::str::from_utf8(&input)?, 128, 65_536, 65_536)?;
+        let mut scenes: Vec<AssetId> = locations
+            .bindings()
+            .filter(|(_, source)| source.as_str().ends_with(".scene.json"))
+            .map(|(asset, _)| asset.clone())
+            .collect();
+        if scenes.len() > 128 {
+            return Err("scene discovery capacity exceeded".into());
+        }
+        scenes.sort();
+        Ok(scenes)
     }
     pub(super) fn audio_assets(&self) -> Result<Vec<AssetId>, Box<dyn std::error::Error>> {
         self.asset_choices("wav")

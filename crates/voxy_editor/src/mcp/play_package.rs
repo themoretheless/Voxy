@@ -31,6 +31,10 @@ enum PlayCommand {
         animation_node_id: Option<String>,
         reply: mpsc::Sender<Result<Value, String>>,
     },
+    TransitionScene {
+        scene_path: String,
+        reply: mpsc::Sender<Result<Value, String>>,
+    },
     Stop {
         reply: mpsc::Sender<Result<Value, String>>,
     },
@@ -78,6 +82,7 @@ impl PlayWorker {
                 "running": true,
                 "sourceKind": if from_package { "package" } else { "project" },
                 "sourcePath": source.display().to_string(),
+                "activeScenePath": game.active_scene_path(),
                 "fixedTicks": ticks,
                 "objectCount": objects,
             });
@@ -213,6 +218,21 @@ fn run_play_actor(game: &mut HeadlessGame, source: &Path, rx: mpsc::Receiver<Pla
                     animation_node_id.as_deref(),
                 ));
             }
+            PlayCommand::TransitionScene { scene_path, reply } => {
+                let res = game
+                    .transition_scene(&scene_path)
+                    .map_err(|e| e.to_string())
+                    .and_then(|()| {
+                        let scene = game.snapshot().map_err(|e| e.to_string())?;
+                        Ok(json!({
+                            "transitioned": true,
+                            "activeScenePath": game.active_scene_path(),
+                            "fixedTicks": game.fixed_ticks(),
+                            "objectCount": scene.objects.len(),
+                        }))
+                    });
+                let _ = reply.send(res);
+            }
             PlayCommand::Stop { reply } => {
                 let _ = reply.send(Ok(
                     json!({ "stopped": true, "finalTicks": game.fixed_ticks() }),
@@ -293,6 +313,7 @@ fn capture_game_snapshot(
     };
     Ok(json!({
         "sourcePath": source.display().to_string(),
+        "activeScenePath": game.active_scene_path(),
         "fixedTicks": game.fixed_ticks(),
         "audioStats": game.audio_stats(),
         "camera": camera,
@@ -304,6 +325,12 @@ fn capture_game_snapshot(
 }
 
 pub(crate) fn tool_defs() -> Vec<ToolDef> {
+    let mut defs = play_tool_defs();
+    defs.extend(package_tool_defs());
+    defs
+}
+
+fn play_tool_defs() -> Vec<ToolDef> {
     vec![
         ToolDef::new(
             "play_start",
@@ -360,10 +387,25 @@ pub(crate) fn tool_defs() -> Vec<ToolDef> {
             }),
         ),
         ToolDef::new(
+            "play_transition_scene",
+            "Transition the active HeadlessGame Play session to another .scene.json in the project or .voxypkg package while synchronizing active background workers.",
+            json!({
+                "type": "object",
+                "properties": { "scene_path": { "type": "string" } },
+                "required": ["scene_path"],
+                "additionalProperties": false
+            }),
+        ),
+        ToolDef::new(
             "play_stop",
             "Stop the active HeadlessGame Play session and join resource workers cleanly.",
             json!({ "type": "object", "properties": {}, "additionalProperties": false }),
         ),
+    ]
+}
+
+fn package_tool_defs() -> Vec<ToolDef> {
+    vec![
         ToolDef::new(
             "package_export_project",
             "Export a validated Voxy project into a standalone immutable .voxypkg distribution.",
@@ -417,6 +459,7 @@ pub(crate) fn dispatch(
         "play_step" => play_step(state, ctx, arguments),
         "play_input" => play_input(state, arguments),
         "play_snapshot" => play_snapshot(state, arguments),
+        "play_transition_scene" => play_transition_scene(state, arguments),
         "play_stop" => play_stop(state, arguments),
         "package_export_project" => package_export_project(state, ctx, arguments),
         "package_export_game" => package_export_game(ctx, arguments),
@@ -595,6 +638,23 @@ fn play_snapshot(state: &mut EngineState, arguments: Value) -> Result<ToolOutcom
         .require_play()?
         .snapshot(args.animation_node_id.as_deref())?;
     Ok(ToolOutcome::ok(snap))
+}
+
+fn play_transition_scene(state: &mut EngineState, arguments: Value) -> Result<ToolOutcome, String> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct Args {
+        scene_path: String,
+    }
+    let args: Args = serde_json::from_value(arguments).map_err(|e| e.to_string())?;
+    let play = state.require_play()?;
+    let (tx, rx) = mpsc::channel();
+    play.send(PlayCommand::TransitionScene {
+        scene_path: args.scene_path,
+        reply: tx,
+    })?;
+    let res = rx.recv().map_err(|_| "play worker stopped".to_owned())??;
+    Ok(ToolOutcome::ok(res).with_updates(&["voxy://play/state"]))
 }
 
 fn play_stop(state: &mut EngineState, arguments: Value) -> Result<ToolOutcome, String> {

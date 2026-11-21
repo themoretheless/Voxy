@@ -590,6 +590,7 @@ impl App {
             prefab_choice: 0,
             authoring_source: None,
             next_object_id,
+            autosave: crate::autosave::AutosaveState::from_env(),
         };
         if let Some(metadata) = metadata {
             metadata.install(&mut restored_authoring);

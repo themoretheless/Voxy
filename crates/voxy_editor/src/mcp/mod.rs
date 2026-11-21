@@ -114,10 +114,15 @@ impl McpHandler for EngineMcpServer {
                 | "asset_inspect"
                 | "asset_register"
                 | "asset_remove" => projects_assets::dispatch(&mut guard, name, arguments)?,
-                "component_schemas" | "scene_get" | "scene_open_file" | "scene_apply"
-                | "scene_undo" | "scene_redo" | "scene_save" | "scene_query" => {
-                    scene_ops::dispatch(&mut guard, name, arguments)?
-                }
+                "component_schemas"
+                | "scene_get"
+                | "scene_open_file"
+                | "scene_apply"
+                | "scene_undo"
+                | "scene_redo"
+                | "scene_save"
+                | "scene_recover_autosave"
+                | "scene_query" => scene_ops::dispatch(&mut guard, name, arguments)?,
                 "prefab_scene_get"
                 | "prefab_instance_add"
                 | "prefab_instance_remove"
@@ -127,6 +132,7 @@ impl McpHandler for EngineMcpServer {
                 | "play_step"
                 | "play_input"
                 | "play_snapshot"
+                | "play_transition_scene"
                 | "play_stop"
                 | "package_export_project"
                 | "package_export_game" => {

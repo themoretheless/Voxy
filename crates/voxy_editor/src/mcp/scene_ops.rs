@@ -84,6 +84,18 @@ pub(crate) fn tool_defs() -> Vec<ToolDef> {
             rev_guard,
         ),
         ToolDef::new(
+            "scene_recover_autosave",
+            "Recover or discard a detected crash-recovery autosave journal for the active scene.",
+            json!({
+                "type": "object",
+                "properties": {
+                    "action": { "type": "string", "enum": ["recover", "discard"] }
+                },
+                "required": ["action"],
+                "additionalProperties": false
+            }),
+        ),
+        ToolDef::new(
             "scene_query",
             "Query scene objects by component schema, name substring, active status, or 3D sphere proximity with computed world positions.",
             json!({
@@ -115,6 +127,7 @@ pub(crate) fn dispatch(
         "scene_undo" => scene_undo_redo(state, arguments, true),
         "scene_redo" => scene_undo_redo(state, arguments, false),
         "scene_save" => scene_save(state, arguments),
+        "scene_recover_autosave" => scene_recover_autosave(state, arguments),
         "scene_query" => scene_query(state, arguments),
         _ => Err(format!("unknown scene tool: {name}")),
     }
@@ -156,6 +169,8 @@ pub(crate) fn scene_snapshot_outcome(state: &EngineState) -> Result<ToolOutcome,
         "dirty": session.dirty(),
         "scenePath": session.scene_rel.display().to_string(),
         "isPrefabComposed": session.is_prefab_composed,
+        "hasAutosaveRecovery": session.pending_autosave.is_some(),
+        "autosaveError": session.autosave_error,
         "sceneHash": session.scene_hash()?,
         "assets": assets,
         "scene": session.current_scene(),
@@ -287,7 +302,35 @@ fn scene_apply(state: &mut EngineState, arguments: Value) -> Result<ToolOutcome,
         .commit(candidate, &registry)
         .map_err(|e| e.to_string())?;
     session.revision += 1;
+    session.pending_autosave = None;
+    session.autosave_error = None;
+    sync_mcp_autosave(session)?;
     Ok(scene_snapshot_outcome(state)?.with_updates(&["voxy://project/scene"]))
+}
+
+fn sync_mcp_autosave(session: &super::state::ProjectSession) -> Result<(), String> {
+    if !session.dirty() {
+        let _ = crate::autosave::remove_journal(&session.scene_path);
+        return Ok(());
+    }
+    let scene_file_name = session
+        .scene_path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("scene.json")
+        .to_owned();
+    let base_scene_blake3 = Some(blake3::hash(&session.disk_bytes).to_hex().to_string());
+    let journal = crate::autosave::AutosaveJournal {
+        version: 1,
+        scene_file_name,
+        base_scene_blake3,
+        saved_at_unix_ms: crate::autosave::current_unix_ms(),
+        payload: crate::autosave::AutosavePayload::Plain {
+            document: session.current_scene().clone(),
+        },
+    };
+    crate::autosave::write_journal(&session.scene_path, &journal, MAX_DOC_BYTES)?;
+    Ok(())
 }
 
 fn find_obj<'a>(doc: &'a mut SceneDocument, id: &str) -> Result<&'a mut SceneObject, String> {
@@ -465,6 +508,7 @@ fn scene_undo_redo(
         });
     }
     session.revision += 1;
+    sync_mcp_autosave(session)?;
     Ok(scene_snapshot_outcome(state)?.with_updates(&["voxy://project/scene"]))
 }
 
@@ -498,6 +542,50 @@ fn scene_save(state: &mut EngineState, arguments: Value) -> Result<ToolOutcome, 
     .map_err(|e| e.to_string())?;
     session.disk_bytes = read_bounded(&session.scene_path, MAX_DOC_BYTES)?;
     session.saved_scene = current;
+    session.pending_autosave = None;
+    session.autosave_error = None;
+    let _ = crate::autosave::remove_journal(&session.scene_path);
+    Ok(scene_snapshot_outcome(state)?.with_updates(&["voxy://project/scene"]))
+}
+
+fn scene_recover_autosave(
+    state: &mut EngineState,
+    arguments: Value,
+) -> Result<ToolOutcome, String> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct Args {
+        action: String,
+    }
+    let args: Args = serde_json::from_value(arguments).map_err(|e| e.to_string())?;
+    let registry = state.registry.clone();
+    let session = state.require_project_mut()?;
+    match args.action.as_str() {
+        "discard" => {
+            session.pending_autosave = None;
+            session.autosave_error = None;
+            crate::autosave::remove_journal(&session.scene_path)?;
+        }
+        "recover" => {
+            let recovery = session
+                .pending_autosave
+                .take()
+                .ok_or_else(|| "no pending autosave recovery journal".to_owned())?;
+            let candidate = recovery.document().clone();
+            validate_candidate(&candidate, &registry)?;
+            session
+                .history
+                .commit(candidate, &registry)
+                .map_err(|e| e.to_string())?;
+            session.revision += 1;
+            session.autosave_error = None;
+        }
+        other => {
+            return Err(format!(
+                "expected action 'recover' or 'discard', got '{other}'"
+            ));
+        }
+    }
     Ok(scene_snapshot_outcome(state)?.with_updates(&["voxy://project/scene"]))
 }
 

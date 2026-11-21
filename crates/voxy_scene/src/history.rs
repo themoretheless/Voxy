@@ -1,6 +1,9 @@
 //! Bounded authoring-document history, independent of live simulation/resources.
-use crate::{ComponentRegistry, DocumentError, SceneDocument};
-use std::{collections::VecDeque, sync::Arc};
+use crate::{ComponentRegistry, DocumentError, ObjectId, SceneDocument, SceneObject};
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    sync::Arc,
+};
 mod checkpoint;
 pub use checkpoint::{HistoryCheckpointLimits, PreparedSceneHistory, SceneHistoryCheckpoint};
 /// Opaque process-local observation of the native history transaction epoch.
@@ -12,12 +15,241 @@ impl PartialEq for HistoryChangeToken {
     }
 }
 impl Eq for HistoryChangeToken {}
-#[derive(Debug)]
-struct Snapshot {
+#[derive(Clone, Debug)]
+pub(super) struct Snapshot {
     document: SceneDocument,
     metadata: serde_json::Value,
     auxiliary: serde_json::Value,
     bytes: usize,
+}
+#[derive(Clone, Debug)]
+pub(super) struct CompactStep {
+    doc_version: Option<u32>,
+    order: Option<Vec<ObjectId>>,
+    upserted: Vec<SceneObject>,
+    metadata: Option<serde_json::Value>,
+    auxiliary: Option<serde_json::Value>,
+    bytes: usize,
+}
+pub(super) fn scene_object_exact_eq(a: &SceneObject, b: &SceneObject) -> bool {
+    a.id == b.id
+        && a.parent == b.parent
+        && a.name == b.name
+        && a.active == b.active
+        && a.translation.map(f32::to_bits) == b.translation.map(f32::to_bits)
+        && a.precise_translation_bits == b.precise_translation_bits
+        && a.rotation.map(f32::to_bits) == b.rotation.map(f32::to_bits)
+        && a.scale.map(f32::to_bits) == b.scale.map(f32::to_bits)
+        && a.components == b.components
+}
+impl CompactStep {
+    fn raw_bytes(
+        doc_version: Option<u32>,
+        order: Option<&[ObjectId]>,
+        upserted: &[SceneObject],
+        metadata: Option<&serde_json::Value>,
+        auxiliary: Option<&serde_json::Value>,
+    ) -> Result<usize, DocumentError> {
+        let mut total = usize::from(doc_version.is_some()) * 4;
+        if let Some(ids) = order {
+            for id in ids {
+                total = total
+                    .checked_add(id.0.len().saturating_add(3))
+                    .ok_or_else(|| DocumentError::Invalid("history delta byte overflow".into()))?;
+            }
+        }
+        for object in upserted {
+            let encoded = serde_json::to_vec(object)?;
+            total = total
+                .checked_add(encoded.len())
+                .ok_or_else(|| DocumentError::Invalid("history delta byte overflow".into()))?;
+        }
+        if let Some(meta) = metadata {
+            let len = if meta.is_null() {
+                1
+            } else {
+                serde_json::to_vec(meta)?.len()
+            };
+            total = total
+                .checked_add(len)
+                .ok_or_else(|| DocumentError::Invalid("history delta byte overflow".into()))?;
+        }
+        if let Some(aux) = auxiliary {
+            let len = if aux.is_null() {
+                1
+            } else {
+                serde_json::to_vec(aux)?.len()
+            };
+            total = total
+                .checked_add(len)
+                .ok_or_else(|| DocumentError::Invalid("history delta byte overflow".into()))?;
+        }
+        Ok(total.max(1))
+    }
+
+    fn diff_parts<'a>(
+        from: &'a Snapshot,
+        to: &'a Snapshot,
+    ) -> Result<
+        (
+            Option<u32>,
+            Option<Vec<ObjectId>>,
+            Vec<SceneObject>,
+            Option<serde_json::Value>,
+            Option<serde_json::Value>,
+            usize,
+        ),
+        DocumentError,
+    > {
+        let doc_version =
+            (from.document.version != to.document.version).then_some(to.document.version);
+        let same_order = from.document.objects.len() == to.document.objects.len()
+            && from
+                .document
+                .objects
+                .iter()
+                .zip(&to.document.objects)
+                .all(|(a, b)| a.id == b.id);
+        let order = (!same_order).then(|| {
+            to.document
+                .objects
+                .iter()
+                .map(|o| o.id.clone())
+                .collect::<Vec<_>>()
+        });
+        let from_by_id: HashMap<&ObjectId, &SceneObject> =
+            from.document.objects.iter().map(|o| (&o.id, o)).collect();
+        let mut upserted = Vec::new();
+        for obj in &to.document.objects {
+            if !from_by_id
+                .get(&obj.id)
+                .is_some_and(|prev| scene_object_exact_eq(prev, obj))
+            {
+                upserted.push(obj.clone());
+            }
+        }
+        let metadata = (from.metadata != to.metadata).then(|| to.metadata.clone());
+        let auxiliary = (from.auxiliary != to.auxiliary).then(|| to.auxiliary.clone());
+        let raw = Self::raw_bytes(
+            doc_version,
+            order.as_deref(),
+            &upserted,
+            metadata.as_ref(),
+            auxiliary.as_ref(),
+        )?;
+        Ok((doc_version, order, upserted, metadata, auxiliary, raw))
+    }
+
+    pub(super) fn between(from: &Snapshot, to: &Snapshot) -> Result<Self, DocumentError> {
+        let (doc_version, order, upserted, metadata, auxiliary, forward_raw) =
+            Self::diff_parts(from, to)?;
+        let (rev_version, rev_order, rev_upserted, rev_meta, rev_aux, _) =
+            Self::diff_parts(to, from)?;
+        let reverse_raw = Self::raw_bytes(
+            rev_version,
+            rev_order.as_deref(),
+            &rev_upserted,
+            rev_meta.as_ref(),
+            rev_aux.as_ref(),
+        )?;
+        let paired = to
+            .bytes
+            .checked_add(reverse_raw)
+            .ok_or_else(|| DocumentError::Invalid("history delta byte overflow".into()))?
+            .saturating_sub(from.bytes);
+        let bytes = forward_raw.max(paired).max(1);
+        Ok(Self {
+            doc_version,
+            order,
+            upserted,
+            metadata,
+            auxiliary,
+            bytes,
+        })
+    }
+
+    pub(super) fn apply(&self, base: &Snapshot) -> Result<Snapshot, DocumentError> {
+        let version = self.doc_version.unwrap_or(base.document.version);
+        let mut base_map: HashMap<&ObjectId, &SceneObject> =
+            HashMap::with_capacity(base.document.objects.len());
+        for obj in &base.document.objects {
+            if base_map.insert(&obj.id, obj).is_some() {
+                return Err(DocumentError::Invalid(format!(
+                    "duplicate object in history base: {}",
+                    obj.id.0
+                )));
+            }
+        }
+        let mut upserted_map: HashMap<&ObjectId, &SceneObject> =
+            HashMap::with_capacity(self.upserted.len());
+        for obj in &self.upserted {
+            if upserted_map.insert(&obj.id, obj).is_some() {
+                return Err(DocumentError::Invalid(format!(
+                    "duplicate object in history delta: {}",
+                    obj.id.0
+                )));
+            }
+        }
+        let objects = if let Some(order) = &self.order {
+            let mut seen = HashSet::with_capacity(order.len());
+            let mut rebuilt = Vec::with_capacity(order.len());
+            for id in order {
+                if !seen.insert(id) {
+                    return Err(DocumentError::Invalid(format!(
+                        "duplicate object in history delta order: {}",
+                        id.0
+                    )));
+                }
+                let obj = upserted_map
+                    .get(id)
+                    .copied()
+                    .or_else(|| base_map.get(id).copied())
+                    .ok_or_else(|| {
+                        DocumentError::Invalid("missing object in history delta".into())
+                    })?;
+                rebuilt.push(obj.clone());
+            }
+            if upserted_map.keys().any(|id| !seen.contains(*id)) {
+                return Err(DocumentError::Invalid(
+                    "unused object patch in history delta".into(),
+                ));
+            }
+            rebuilt
+        } else {
+            let mut used = 0_usize;
+            let mut rebuilt = Vec::with_capacity(base.document.objects.len());
+            for obj in &base.document.objects {
+                if let Some(replacement) = upserted_map.get(&obj.id) {
+                    used += 1;
+                    rebuilt.push((*replacement).clone());
+                } else {
+                    rebuilt.push(obj.clone());
+                }
+            }
+            if used != upserted_map.len() {
+                return Err(DocumentError::Invalid(
+                    "history delta references object missing from base document".into(),
+                ));
+            }
+            rebuilt
+        };
+        let document = SceneDocument { version, objects };
+        let metadata = self
+            .metadata
+            .clone()
+            .unwrap_or_else(|| base.metadata.clone());
+        let auxiliary = self
+            .auxiliary
+            .clone()
+            .unwrap_or_else(|| base.auxiliary.clone());
+        let bytes = SceneHistory::snapshot_bytes(&document, &metadata, &auxiliary)?;
+        Ok(Snapshot {
+            document,
+            metadata,
+            auxiliary,
+            bytes,
+        })
+    }
 }
 /// Isolated multi-step authoring edit. Render `document()` for a preview; drop to
 /// cancel. Commit once to create a single undo step. No live resource ownership.
@@ -47,8 +279,8 @@ impl SceneEdit {
 pub struct SceneHistory {
     current: Snapshot,
     epoch: Arc<()>,
-    undo: VecDeque<Snapshot>,
-    redo: Vec<Snapshot>,
+    undo: VecDeque<CompactStep>,
+    redo: Vec<CompactStep>,
     max_versions: usize,
     max_bytes: usize,
     scene_capacity: usize,
@@ -60,6 +292,31 @@ impl SceneHistory {
     pub fn change_token(&self) -> HistoryChangeToken {
         HistoryChangeToken(self.epoch.clone())
     }
+    #[must_use]
+    pub fn undo_len(&self) -> usize {
+        self.undo.len()
+    }
+    #[must_use]
+    pub fn redo_len(&self) -> usize {
+        self.redo.len()
+    }
+    pub(super) fn snapshot_bytes(
+        document: &SceneDocument,
+        metadata: &serde_json::Value,
+        auxiliary: &serde_json::Value,
+    ) -> Result<usize, DocumentError> {
+        let auxiliary_bytes = if auxiliary.is_null() {
+            0
+        } else {
+            serde_json::to_vec(auxiliary)?.len()
+        };
+        document
+            .to_json()?
+            .len()
+            .checked_add(serde_json::to_vec(metadata)?.len())
+            .and_then(|bytes| bytes.checked_add(auxiliary_bytes))
+            .ok_or_else(|| DocumentError::Invalid("history byte overflow".into()))
+    }
     fn validate(
         document: SceneDocument,
         metadata: serde_json::Value,
@@ -68,17 +325,7 @@ impl SceneHistory {
         capacity: usize,
         max_bytes: usize,
     ) -> Result<Snapshot, DocumentError> {
-        let auxiliary_bytes = if auxiliary.is_null() {
-            0
-        } else {
-            serde_json::to_vec(&auxiliary)?.len()
-        };
-        let bytes = document
-            .to_json()?
-            .len()
-            .checked_add(serde_json::to_vec(&metadata)?.len())
-            .and_then(|bytes| bytes.checked_add(auxiliary_bytes))
-            .ok_or_else(|| DocumentError::Invalid("history byte overflow".into()))?;
+        let bytes = Self::snapshot_bytes(&document, &metadata, &auxiliary)?;
         if bytes > max_bytes {
             return Err(DocumentError::Invalid(
                 "history document byte limit exceeded".into(),
@@ -255,7 +502,31 @@ impl SceneHistory {
             self.scene_capacity,
             self.max_bytes,
         )?;
+        let prev_adj = self
+            .undo
+            .back()
+            .map(|step| step.apply(&self.current))
+            .transpose()?;
+        let next_adj = self
+            .redo
+            .last()
+            .map(|step| step.apply(&self.current))
+            .transpose()?;
+        let next_undo_step = prev_adj
+            .as_ref()
+            .map(|prev| CompactStep::between(&next, prev))
+            .transpose()?;
+        let next_redo_step = next_adj
+            .as_ref()
+            .map(|nxt| CompactStep::between(&next, nxt))
+            .transpose()?;
         self.current = next;
+        if let (Some(back), Some(updated)) = (self.undo.back_mut(), next_undo_step) {
+            *back = updated;
+        }
+        if let (Some(last), Some(updated)) = (self.redo.last_mut(), next_redo_step) {
+            *last = updated;
+        }
         self.epoch = Arc::new(());
         while self.retained_bytes() > self.max_bytes {
             if self.undo.pop_front().is_none() {
@@ -317,9 +588,10 @@ impl SceneHistory {
             self.scene_capacity,
             self.max_bytes,
         )?;
-        let old = std::mem::replace(&mut self.current, next);
+        let reverse_step = CompactStep::between(&next, &self.current)?;
+        self.current = next;
         self.epoch = Arc::new(());
-        self.undo.push_back(old);
+        self.undo.push_back(reverse_step);
         self.redo.clear();
         while self.undo.len() + 1 > self.max_versions || self.retained_bytes() > self.max_bytes {
             self.undo.pop_front();
@@ -347,15 +619,23 @@ impl SceneHistory {
         document: SceneDocument,
         registry: &ComponentRegistry,
     ) -> Result<bool, DocumentError> {
-        let can_coalesce = self.redo.is_empty()
-            && self.undo.back().is_some_and(|prev| {
-                prev.metadata == self.current.metadata
-                    && prev.auxiliary == self.current.auxiliary
-                    && single_modified_object_id(&prev.document, &self.current.document)
-                        .zip(single_modified_object_id(&self.current.document, &document))
-                        .is_some_and(|(a, b)| a == b)
-            });
+        let prev = if self.redo.is_empty() {
+            self.undo
+                .back()
+                .map(|step| step.apply(&self.current))
+                .transpose()?
+        } else {
+            None
+        };
+        let can_coalesce = prev.as_ref().is_some_and(|prev| {
+            prev.metadata == self.current.metadata
+                && prev.auxiliary == self.current.auxiliary
+                && single_modified_object_id(&prev.document, &self.current.document)
+                    .zip(single_modified_object_id(&self.current.document, &document))
+                    .is_some_and(|(a, b)| a == b)
+        });
         if can_coalesce {
+            let prev = prev.expect("checked in can_coalesce");
             let next = Self::validate(
                 document,
                 self.current.metadata.clone(),
@@ -364,7 +644,11 @@ impl SceneHistory {
                 self.scene_capacity,
                 self.max_bytes,
             )?;
+            let coalesced_step = CompactStep::between(&next, &prev)?;
             self.current = next;
+            if let Some(back) = self.undo.back_mut() {
+                *back = coalesced_step;
+            }
             self.epoch = Arc::new(());
             while self.undo.len() + 1 > self.max_versions || self.retained_bytes() > self.max_bytes
             {
@@ -376,24 +660,36 @@ impl SceneHistory {
         }
     }
     pub fn undo(&mut self) -> bool {
-        if let Some(previous) = self.undo.pop_back() {
-            self.epoch = Arc::new(());
-            self.redo
-                .push(std::mem::replace(&mut self.current, previous));
-            true
-        } else {
-            false
-        }
+        let Some(step) = self.undo.back() else {
+            return false;
+        };
+        let Ok(previous) = step.apply(&self.current) else {
+            return false;
+        };
+        let Ok(forward_step) = CompactStep::between(&previous, &self.current) else {
+            return false;
+        };
+        self.undo.pop_back();
+        self.epoch = Arc::new(());
+        self.current = previous;
+        self.redo.push(forward_step);
+        true
     }
     pub fn redo(&mut self) -> bool {
-        if let Some(next) = self.redo.pop() {
-            self.epoch = Arc::new(());
-            self.undo
-                .push_back(std::mem::replace(&mut self.current, next));
-            true
-        } else {
-            false
-        }
+        let Some(step) = self.redo.last() else {
+            return false;
+        };
+        let Ok(next) = step.apply(&self.current) else {
+            return false;
+        };
+        let Ok(reverse_step) = CompactStep::between(&next, &self.current) else {
+            return false;
+        };
+        self.redo.pop();
+        self.epoch = Arc::new(());
+        self.current = next;
+        self.undo.push_back(reverse_step);
+        true
     }
 }
 

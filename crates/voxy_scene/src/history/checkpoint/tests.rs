@@ -224,9 +224,11 @@ fn malformed_versions_counts_epochs_documents_and_tight_limits_reject_without_mu
     for case in 0..8 {
         let mut bad = saved.clone();
         match case {
-            0 => bad.version = 2,
+            0 => bad.version = CHECKPOINT_VERSION + 1,
             1 => bad.current.bytes += 1,
-            2 => bad.undo[0].document.objects[0].parent = Some(crate::ObjectId("missing".into())),
+            2 => {
+                bad.undo[1].upserted[0].parent = Some(crate::ObjectId("missing".into()));
+            }
             3 => bad.edits[0].epoch = 2,
             4 => bad.epoch_count = 2,
             5 => bad.max_versions = 1,
@@ -260,4 +262,72 @@ fn malformed_versions_counts_epochs_documents_and_tight_limits_reject_without_mu
             .unwrap(),
         json
     );
+}
+
+#[test]
+fn compact_history_retains_deep_steps_within_tight_byte_budget_and_roundtrips_checkpoint() {
+    let registry = registry();
+    let objects: Vec<crate::SceneObject> = (0..64)
+        .map(|i| crate::SceneObject {
+            id: crate::ObjectId(format!("obj-{i}")),
+            parent: None,
+            name: format!("Object {i}"),
+            active: true,
+            translation: [i as f32, 0.0, 0.0],
+            precise_translation_bits: None,
+            rotation: [0.0, 0.0, 0.0, 1.0],
+            scale: [1.0, 1.0, 1.0],
+            components: std::collections::BTreeMap::from([(
+                "game.health.v1".into(),
+                serde_json::json!(100 + i),
+            )]),
+        })
+        .collect();
+    let base_doc = SceneDocument {
+        version: 1,
+        objects,
+    };
+    let doc_bytes = base_doc.to_json().unwrap().len();
+    // Full snapshots for 33 versions would require > 33 * doc_bytes; compact deltas fit easily
+    // within 3 * doc_bytes!
+    let tight_budget = doc_bytes * 3;
+    let mut hist = SceneHistory::new(base_doc.clone(), &registry, 128, 64, tight_budget).unwrap();
+    for step in 0..32 {
+        hist.edit(&registry, |d| {
+            d.objects[step % 64].translation[1] = step as f32 * 0.5 + 1.0;
+            Ok(())
+        })
+        .unwrap();
+    }
+    assert_eq!(hist.undo_len(), 32);
+    assert!(hist.retained_bytes() <= tight_budget);
+    assert!(hist.retained_bytes() < doc_bytes * 2);
+
+    let limits = HistoryCheckpointLimits {
+        max_versions: 64,
+        max_history_bytes: tight_budget,
+        max_scene_capacity: 128,
+        max_archive_bytes: tight_budget * 2,
+        max_edits: 8,
+        max_draft_objects: 128,
+    };
+    let saved = hist.checkpoint(&[], limits).unwrap();
+    let encoded = saved.to_json(limits.max_archive_bytes).unwrap();
+    assert!(encoded.len() < doc_bytes * 3);
+    let mut restored = SceneHistoryCheckpoint::from_json(&encoded, limits.max_archive_bytes)
+        .unwrap()
+        .prepare(&registry, limits)
+        .unwrap()
+        .history;
+    for _ in 0..32 {
+        assert!(restored.undo());
+    }
+    assert_eq!(restored.current(), &base_doc);
+    assert!(!restored.undo());
+    assert_eq!(restored.redo_len(), 32);
+    for _ in 0..32 {
+        assert!(restored.redo());
+    }
+    assert_eq!(restored.current(), hist.current());
+    assert_eq!(restored.retained_bytes(), hist.retained_bytes());
 }

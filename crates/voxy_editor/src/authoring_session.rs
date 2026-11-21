@@ -18,6 +18,7 @@ pub(super) struct AuthoringSession {
     pub(super) prefab_choice: usize,
     pub(super) authoring_source: Option<ImportedAsset<prefab_authoring::AuthoredScene>>,
     pub(super) next_object_id: u64,
+    pub(super) autosave: crate::autosave::AutosaveState,
 }
 
 impl AuthoringSession {

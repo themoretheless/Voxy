@@ -283,6 +283,7 @@ impl App {
             }
             KeyCode::F5 => return self.save_authoring(),
             KeyCode::F9 => return self.load_authoring(),
+            KeyCode::F11 => return self.recover_autosave(),
             _ => {}
         }
         if key == KeyCode::Escape {
@@ -647,6 +648,8 @@ impl App {
             }
             panels::Action::Duplicate => self.edit_key(KeyCode::KeyD),
             panels::Action::Delete => self.edit_key(KeyCode::Delete),
+            panels::Action::RecoverAutosave => self.recover_autosave(),
+            panels::Action::DiscardAutosave => self.discard_autosave(),
             panels::Action::Resource => self.edit_key(KeyCode::KeyR),
             panels::Action::RetryModel => self.retry_selected_model(),
             panels::Action::RelinkModel => self.begin_model_relink_edit().map_err(Into::into),

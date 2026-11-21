@@ -6,7 +6,7 @@
 use crate::*;
 
 impl App {
-    fn animation_models(&self) -> BTreeMap<AssetId, Arc<voxy_model::ModelAsset>> {
+    pub(crate) fn animation_models(&self) -> BTreeMap<AssetId, Arc<voxy_model::ModelAsset>> {
         // Simulation also owns inactive/offscreen models whose GPU residency may
         // have been evicted. Prefer the displayed publication when it exists so
         // deferred uploads still animate the same accepted revision as rendering.
@@ -329,6 +329,9 @@ impl App {
         timing.total_cpu_us =
             u64::try_from(step_wall_start.elapsed().as_micros()).unwrap_or(u64::MAX);
         self.pending_step_timing.accumulate(timing);
+        if let Some(target) = self.pending_play_scene_transition.take() {
+            self.transition_play_scene(&target)?;
+        }
         Ok(())
     }
 
@@ -400,6 +403,8 @@ impl App {
             graphics.ui_focus_deferred = None;
         }
         if let Some(expected) = self.play.playing.take() {
+            self.active_play_scene = None;
+            self.pending_play_scene_transition = None;
             self.close_play_audio();
             self.close_audio_device();
             let stopped = self.play.stop(&mut self.scene);
@@ -497,6 +502,8 @@ impl App {
                 self.play.simulation_ticks = 0;
                 self.play.animations.clear();
                 self.play.simulation_time = Instant::now();
+                self.active_play_scene.clone_from(&self.startup_scene_rel);
+                self.pending_play_scene_transition = None;
                 Ok(())
             })();
             if let Err(error) = started {

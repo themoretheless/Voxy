@@ -57,6 +57,16 @@ impl BehaviorSetup {
     }
 }
 
+/// Prefix for builtin engine UI actions that request a runtime scene transition.
+pub const SCENE_LOAD_ACTION_PREFIX: &str = "voxy.scene.load:";
+
+/// Extracts the project-relative scene path from a `voxy.scene.load:<path>` UI action.
+#[must_use]
+pub fn parse_scene_load_action(action: &str) -> Option<&str> {
+    let rest = action.strip_prefix(SCENE_LOAD_ACTION_PREFIX)?.trim();
+    (!rest.is_empty()).then_some(rest)
+}
+
 /// Builtin UI callback that deactivates the owning scene node (`voxy.ui.hide` / `voxy.ui.hide.v1`).
 struct HideAction;
 
@@ -360,6 +370,45 @@ impl InMemoryPackagedProject {
             provider,
         })
     }
+
+    /// Loads and validates any secondary scene from the already-opened `.vpak` archive in memory.
+    ///
+    /// # Errors
+    /// Rejects missing scene files, invalid prefab/component schemas, or unresolved model bindings.
+    pub fn load_packaged_scene(
+        &self,
+        scene_path: &SourcePath,
+        registry: &ComponentRegistry,
+        max_scene_bytes: usize,
+    ) -> Result<(ImportedAsset<AuthoredScene>, LoadedScene), String> {
+        let mut inputs = ImportInputs::new(130, 16 * 1024 * 1024);
+        let expanded = expand_packaged_scene(scene_path, &self.assets, registry, |id| {
+            inputs
+                .read(id.clone(), |id, limit| {
+                    self.provider.read(id, limit.min(max_scene_bytes))
+                })
+                .map(|snapshot| snapshot.bytes)
+                .map_err(|error| format!("packaged scene input: {error:?}"))
+        })?;
+        let publication = inputs
+            .finish(expanded, |id, limit| self.provider.read(id, limit))
+            .map_err(|error| format!("packaged scene validation failed: {error:?}"))?;
+        let document = &publication.value().expanded;
+        for object in &document.objects {
+            if let Some(id) = object
+                .components
+                .get("editor.model.v1")
+                .and_then(serde_json::Value::as_str)
+                && self.assets.source(&AssetId(id.into())).is_none()
+            {
+                return Err(format!("unresolved model asset {id}"));
+            }
+        }
+        let loaded = document
+            .load(registry, PACKAGED_PREFAB_LIMITS.max_objects)
+            .map_err(|error| error.to_string())?;
+        Ok((publication, loaded))
+    }
 }
 
 #[cfg(test)]
@@ -367,6 +416,20 @@ mod tests {
     use super::*;
     use std::collections::BTreeMap;
     use voxy_assets::{PROJECT_LAUNCH_SOURCE, PackageLimits};
+
+    #[test]
+    fn parse_scene_load_action_extracts_non_empty_relative_path() {
+        assert_eq!(
+            parse_scene_load_action("voxy.scene.load:scenes/arena.scene.json"),
+            Some("scenes/arena.scene.json")
+        );
+        assert_eq!(
+            parse_scene_load_action("voxy.scene.load:  arena.scene.json "),
+            Some("arena.scene.json")
+        );
+        assert_eq!(parse_scene_load_action("voxy.scene.load:   "), None);
+        assert_eq!(parse_scene_load_action("voxy.ui.hide"), None);
+    }
 
     #[test]
     fn in_memory_packaged_project_opens_validates_and_runs_without_temp_dir_extraction() {
@@ -381,7 +444,7 @@ mod tests {
         );
         files.insert(
             "assets.json".into(),
-            br#"{"version":1,"assets":[{"asset":"hero","source":"models/hero.obj"}]}"#.to_vec(),
+            br#"{"version":1,"assets":[{"asset":"hero","source":"models/hero.obj"},{"asset":"arena-scene","source":"arena.scene.json"}]}"#.to_vec(),
         );
         files.insert(
             "models/hero.obj".into(),
@@ -390,6 +453,10 @@ mod tests {
         files.insert(
             "main.scene.json".into(),
             br#"{"version":1,"objects":[{"id":"obj-1","parent":null,"name":"Hero","active":true,"translation":[0.0,1.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"hero"}}]}"#.to_vec(),
+        );
+        files.insert(
+            "arena.scene.json".into(),
+            br#"{"version":1,"objects":[{"id":"arena-floor","parent":null,"name":"Arena","active":true,"translation":[0.0,0.0,0.0],"rotation":[0.0,0.0,0.0,1.0],"scale":[1.0,1.0,1.0],"components":{"editor.model.v1":"hero"}}]}"#.to_vec(),
         );
 
         let paths: Vec<SourcePath> = files
@@ -422,6 +489,19 @@ mod tests {
                 .read(&AssetId("models/hero.obj".into()), 1024)
                 .unwrap(),
             b"v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n"
+        );
+        let (arena_auth, arena_loaded) = project
+            .load_packaged_scene(
+                &SourcePath::new("arena.scene.json").unwrap(),
+                &registry,
+                DEFAULT_DOCUMENT_BYTES,
+            )
+            .unwrap();
+        assert_eq!(arena_auth.value().expanded.objects[0].id.0, "arena-floor");
+        assert!(
+            arena_loaded
+                .resolve(&ObjectId("arena-floor".into()))
+                .is_some()
         );
     }
 }

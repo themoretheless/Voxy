@@ -121,6 +121,8 @@ fn render_controls(scenario: Controls) {
             retry: !editing,
             relink: true,
             editing,
+            recovery: false,
+            discard_recovery: false,
         });
         if editing {
             panels.resource_notice.as_mut().unwrap().lines = [

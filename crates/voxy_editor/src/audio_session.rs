@@ -104,7 +104,7 @@ impl AudioSession {
             self.retired.extend(audio.close());
         }
     }
-    pub(super) fn close_audio_device(&mut self) {
+    pub(super) fn cancel_pending_audio(&mut self) {
         self.pending_play = None;
         if let Some(audio) = self.prepared.take() {
             self.retired.extend(audio.close());
@@ -112,6 +112,9 @@ impl AudioSession {
         if let Some(preparation) = self.preparation.take() {
             self.retired.push(preparation.close());
         }
+    }
+    pub(super) fn close_audio_device(&mut self) {
+        self.cancel_pending_audio();
         self.connection = None;
         if let Some(worker) = &mut self.device {
             worker.close();

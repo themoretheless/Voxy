@@ -134,6 +134,38 @@ impl Panels {
                 },
             ));
         }
+        if (notice.recovery || notice.discard_recovery) && size.y >= 108.0 {
+            let mut x = left + 8.0;
+            if notice.recovery {
+                let recover_w = width.min(180.0);
+                let rect = [x, 80.0, recover_w, 24.0];
+                Self::solid(batch, rect, size, [0.16, 0.36, 0.24, 1.0])?;
+                self.text(
+                    batch,
+                    "Recover (F11)",
+                    Vec2::new(rect[0] + 8.0, rect[1] + 17.0),
+                    rect[2] - 16.0,
+                    size,
+                )?;
+                self.regions.push((rect, Action::RecoverAutosave));
+                x += recover_w + 8.0;
+            }
+            if notice.discard_recovery {
+                let remaining = (left + 8.0 + width - x).min(140.0);
+                if remaining >= 72.0 {
+                    let rect = [x, 80.0, remaining, 24.0];
+                    Self::solid(batch, rect, size, [0.34, 0.18, 0.18, 1.0])?;
+                    self.text(
+                        batch,
+                        "Discard",
+                        Vec2::new(rect[0] + 8.0, rect[1] + 17.0),
+                        rect[2] - 16.0,
+                        size,
+                    )?;
+                    self.regions.push((rect, Action::DiscardAutosave));
+                }
+            }
+        }
         Ok(())
     }
 

@@ -102,6 +102,17 @@ impl App {
         &mut self,
         event: voxy_gameplay::UiActionEvent,
     ) -> Result<(), voxy_input::InputError> {
+        if let Some(raw_target) = voxy_player::parse_scene_load_action(&event.action) {
+            match SourcePath::new(raw_target) {
+                Ok(target) => {
+                    self.pending_play_scene_transition = Some(target);
+                }
+                Err(error) => {
+                    eprintln!("GAME UI SCENE TRANSITION REJECTED ({raw_target}): {error}");
+                }
+            }
+            return Ok(());
+        }
         if self
             .play
             .ui_actions

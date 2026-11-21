@@ -196,6 +196,16 @@ pub(crate) fn open_scene_session(
         crate::scene_limits::HISTORY_BYTES,
     )
     .map_err(|e| e.to_string())?;
+    let (pending_autosave, autosave_error) = match crate::autosave::inspect_journal(
+        &scene_path,
+        registry,
+        SCENE_CAPACITY,
+        crate::scene_limits::PREFABS,
+        MAX_DOC_BYTES,
+    ) {
+        Ok(recovery) => (recovery, None),
+        Err(error) => (None, Some(error)),
+    };
     Ok(ProjectSession {
         project,
         scene_path,
@@ -206,6 +216,8 @@ pub(crate) fn open_scene_session(
         is_prefab_composed,
         revision: 0,
         camera_override: None,
+        pending_autosave,
+        autosave_error,
     })
 }
 
@@ -370,6 +382,8 @@ pub(crate) fn project_summary(session: &ProjectSession) -> Value {
         "revision": session.revision,
         "dirty": session.dirty(),
         "isPrefabComposed": session.is_prefab_composed,
+        "hasAutosaveRecovery": session.pending_autosave.is_some(),
+        "autosaveError": session.autosave_error,
         "objectCount": session.current_scene().objects.len(),
         "assetCount": session.project.assets.bindings().count(),
     })

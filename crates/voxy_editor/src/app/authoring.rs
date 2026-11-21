@@ -260,6 +260,10 @@ impl App {
                 )?;
             self.authoring.authoring_source = Some(imported);
         }
+        self.authoring.autosave.pending_recovery = None;
+        self.authoring.autosave.recovery_error = None;
+        let _ = crate::autosave::remove_journal(path);
+        self.sync_saved_autosave_baseline();
         self.panel_cache = None;
         if let Some(window) = &self.window {
             window.set_title("Voxy — scene saved");
@@ -318,7 +322,7 @@ impl App {
         clippy::too_many_lines,
         reason = "predates the function-size ratchet (docs/PLAN.md R1)"
     )]
-    fn validate_authoring_document_policy(
+    pub(crate) fn validate_authoring_document_policy(
         &self,
         document: &SceneDocument,
         allow_unresolved_models: bool,
@@ -666,9 +670,20 @@ impl App {
         allow_unresolved_models: bool,
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.authoring.scene_path = Some(path.into());
+        self.startup_scene_rel = path
+            .canonicalize()
+            .ok()
+            .and_then(|abs| {
+                abs.strip_prefix(self.authoring.authoring_project.root())
+                    .ok()
+                    .and_then(|rel| rel.to_str().map(str::to_owned))
+            })
+            .and_then(|rel| SourcePath::new(rel).ok());
         if self.model_package.is_some() || path.try_exists()? {
             self.load_authoring_policy(allow_unresolved_models)?;
             self.reset_authoring_history()?;
+            self.sync_saved_autosave_baseline();
+            self.detect_crash_recovery_on_open();
         }
         Ok(())
     }

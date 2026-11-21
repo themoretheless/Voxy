@@ -36,6 +36,22 @@ def write_sample_project_assets(proj_dir: Path):
         ],
     }
     (proj_dir / "prop.scene.json").write_text(json.dumps(prop_scene))
+    arena_scene = {
+        "version": 1,
+        "objects": [
+            {
+                "id": "arena-floor",
+                "parent": None,
+                "name": "Arena Floor",
+                "active": True,
+                "translation": [0.0, 0.0, 0.0],
+                "rotation": [0.0, 0.0, 0.0, 1.0],
+                "scale": [1.0, 1.0, 1.0],
+                "components": {"editor.model.v1": "quad"},
+            }
+        ],
+    }
+    (proj_dir / "arena.scene.json").write_text(json.dumps(arena_scene))
 
 
 class StdioClient:
@@ -174,6 +190,7 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         client.call("asset_register", {"asset": "prop", "source": "prop.scene.json"})
         listed = client.call("asset_list")["structuredContent"]["assets"]
         assert {a["asset"] for a in listed} == {"quad", "prop"}
+        client.call("asset_register", {"asset": "arena", "source": "arena.scene.json"})
         inspected = client.call("asset_inspect", {"asset": "quad"})["structuredContent"]
         assert inspected["exists"] and inspected["model"]["vertices"] == 4 and inspected["model"]["indices"] == 6, inspected
         client.call("project_update_descriptor", {"name": "E2E Updated"})
@@ -233,6 +250,20 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         saved = client.call("scene_save", {"expected_revision": rev})["structuredContent"]
         assert saved["dirty"] is False
 
+        # Crash recovery via MCP autosave sidecar across project reopen
+        client.call("scene_apply", {
+            "expected_revision": rev,
+            "edits": [{"op": "rename", "node_id": "hero", "name": "Unsaved Hero Crash"}],
+        })
+        reopened = client.call("project_open", {"path": str(proj_dir / "project.voxy")})["structuredContent"]
+        assert reopened["hasAutosaveRecovery"] is True, reopened
+        assert client.call("scene_get")["structuredContent"]["hasAutosaveRecovery"] is True
+        recovered = client.call("scene_recover_autosave", {"action": "recover"})["structuredContent"]
+        assert any(o["name"] == "Unsaved Hero Crash" for o in recovered["scene"]["objects"]), recovered
+        rev = client.call("scene_undo", {"expected_revision": recovered["revision"]})["structuredContent"]["revision"]
+        saved = client.call("scene_save", {"expected_revision": rev})["structuredContent"]
+        assert saved["dirty"] is False and saved["hasAutosaveRecovery"] is False
+
         # 6. Non-destructive Prefabs authoring in separate prefab test scene
         (proj_dir / "prefab_host.scene.json").write_text('{"version":1,"objects":[]}')
         client.call("scene_open_file", {"scene_path": "prefab_host.scene.json"})
@@ -269,6 +300,11 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         snap = client.call("play_snapshot")["structuredContent"]
         assert 16 < snap["fixedTicks"] < 216, snap["fixedTicks"]
         assert snap["frameAttribution"]["framesRecorded"] == snap["fixedTicks"]
+        tr = client.call("play_transition_scene", {"scene_path": "arena.scene.json"})["structuredContent"]
+        assert tr["transitioned"] is True and tr["activeScenePath"] == "arena.scene.json", tr
+        snap_tr = client.call("play_snapshot")["structuredContent"]
+        assert snap_tr["activeScenePath"] == "arena.scene.json"
+        assert any(o["id"] == "arena-floor" for o in snap_tr["scene"]["objects"]), snap_tr
         client.call("play_stop")
 
         pkg_path = scratch / "demo.voxypkg"
@@ -276,6 +312,8 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         assert pkg_path.is_file() and pkg_meta["bytes"] > 0
         client.call("play_start", {"package_path": str(pkg_path)})
         client.call("play_step", {"ticks": 4})
+        tr_pkg = client.call("play_transition_scene", {"scene_path": "arena.scene.json"})["structuredContent"]
+        assert tr_pkg["transitioned"] is True and tr_pkg["activeScenePath"] == "arena.scene.json", tr_pkg
         client.call("play_stop")
 
         # 8. Bidirectional server->client probes (roots, sampling, elicitation, ping)

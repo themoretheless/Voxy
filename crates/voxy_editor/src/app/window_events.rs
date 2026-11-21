@@ -377,6 +377,14 @@ impl ApplicationHandler for App {
         }
         let result = match event {
             WindowEvent::CloseRequested => {
+                if !self.standalone
+                    && self.error.is_none()
+                    && self.authoring.autosave.pending_recovery.is_none()
+                    && self.authoring.autosave.recovery_error.is_none()
+                    && let Some(path) = &self.authoring.scene_path
+                {
+                    let _ = crate::autosave::remove_journal(path);
+                }
                 events.exit();
                 Ok(())
             }
@@ -638,6 +646,7 @@ impl ApplicationHandler for App {
                                     key,
                                     KeyCode::F5
                                         | KeyCode::F10
+                                        | KeyCode::F11
                                         | KeyCode::F9
                                         | KeyCode::KeyP
                                         | KeyCode::F6
@@ -661,6 +670,7 @@ impl ApplicationHandler for App {
             _ => Ok(()),
         };
         if let Err(error) = result {
+            let _ = self.flush_autosave_now();
             self.error = Some(error.to_string());
             events.exit();
         }

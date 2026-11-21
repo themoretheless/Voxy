@@ -124,12 +124,114 @@ impl From<&Snapshot> for SavedSnapshot {
         }
     }
 }
+fn deserialize_present_value<'de, D>(deserializer: D) -> Result<Option<serde_json::Value>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    serde_json::Value::deserialize(deserializer).map(Some)
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SavedStep {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    doc_version: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    order: Option<Vec<crate::ObjectId>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    upserted: Vec<Object>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_present_value"
+    )]
+    metadata: Option<serde_json::Value>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_present_value"
+    )]
+    auxiliary: Option<serde_json::Value>,
+    bytes: usize,
+}
+fn capture_object(value: &crate::SceneObject) -> Object {
+    let crate::SceneObject {
+        id,
+        parent,
+        name,
+        active,
+        translation,
+        precise_translation_bits,
+        rotation,
+        scale,
+        components,
+    } = value;
+    Object {
+        id: id.clone(),
+        parent: parent.clone(),
+        name: name.clone(),
+        active: *active,
+        translation: translation.map(f32::to_bits),
+        precise_translation_bits: *precise_translation_bits,
+        rotation: rotation.map(f32::to_bits),
+        scale: scale.map(f32::to_bits),
+        components: components.clone(),
+    }
+}
+fn restore_object(value: &Object) -> crate::SceneObject {
+    let Object {
+        id,
+        parent,
+        name,
+        active,
+        translation,
+        precise_translation_bits,
+        rotation,
+        scale,
+        components,
+    } = value;
+    crate::SceneObject {
+        id: id.clone(),
+        parent: parent.clone(),
+        name: name.clone(),
+        active: *active,
+        translation: translation.map(f32::from_bits),
+        precise_translation_bits: *precise_translation_bits,
+        rotation: rotation.map(f32::from_bits),
+        scale: scale.map(f32::from_bits),
+        components: components.clone(),
+    }
+}
+impl From<&CompactStep> for SavedStep {
+    fn from(value: &CompactStep) -> Self {
+        Self {
+            doc_version: value.doc_version,
+            order: value.order.clone(),
+            upserted: value.upserted.iter().map(capture_object).collect(),
+            metadata: value.metadata.clone(),
+            auxiliary: value.auxiliary.clone(),
+            bytes: value.bytes,
+        }
+    }
+}
+impl From<&SavedStep> for CompactStep {
+    fn from(value: &SavedStep) -> Self {
+        Self {
+            doc_version: value.doc_version,
+            order: value.order.clone(),
+            upserted: value.upserted.iter().map(restore_object).collect(),
+            metadata: value.metadata.clone(),
+            auxiliary: value.auxiliary.clone(),
+            bytes: value.bytes,
+        }
+    }
+}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Edit {
     document: Document,
     epoch: usize,
 }
+const CHECKPOINT_VERSION: u32 = 2;
 /// Epoch zero is current. Other IDs intern actual detached Arc allocations, not
 /// equal documents; a stale edit stays stale even after undo returns equal data.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -140,8 +242,8 @@ pub struct SceneHistoryCheckpoint {
     max_bytes: usize,
     scene_capacity: usize,
     current: SavedSnapshot,
-    undo: Vec<SavedSnapshot>,
-    redo: Vec<SavedSnapshot>,
+    undo: Vec<SavedStep>,
+    redo: Vec<SavedStep>,
     epoch_count: usize,
     edits: Vec<Edit>,
 }
@@ -197,7 +299,7 @@ impl SceneHistory {
             })
             .collect();
         let saved = SceneHistoryCheckpoint {
-            version: 1,
+            version: CHECKPOINT_VERSION,
             max_versions: *max_versions,
             max_bytes: *max_bytes,
             scene_capacity: *scene_capacity,
@@ -228,7 +330,7 @@ impl SceneHistoryCheckpoint {
                 total.checked_add(saved.bytes)
             })
             .ok_or_else(|| invalid("history byte overflow"))?;
-        if self.version != 1
+        if self.version != CHECKPOINT_VERSION
             || self.max_versions == 0
             || self.max_versions > limits.max_versions
             || versions > self.max_versions
@@ -295,31 +397,19 @@ impl SceneHistoryCheckpoint {
     ) -> Result<PreparedSceneHistory, DocumentError> {
         self.admit(limits)?;
         self.to_json(limits.max_archive_bytes)?;
-        let decode = |saved: &SavedSnapshot| {
-            let snapshot = SceneHistory::validate(
-                saved.document.clone().into(),
-                saved.metadata.clone(),
-                saved.auxiliary.clone(),
-                registry,
-                self.scene_capacity,
-                self.max_bytes,
-            )?;
-            if snapshot.bytes != saved.bytes {
-                return Err(invalid("history retained byte count differs"));
-            }
-            Ok(snapshot)
-        };
-        let current = decode(&self.current)?;
-        let undo = self
-            .undo
-            .iter()
-            .map(decode)
-            .collect::<Result<VecDeque<_>, _>>()?;
-        let redo = self
-            .redo
-            .iter()
-            .map(decode)
-            .collect::<Result<Vec<_>, _>>()?;
+        let current = SceneHistory::validate(
+            self.current.document.clone().into(),
+            self.current.metadata.clone(),
+            self.current.auxiliary.clone(),
+            registry,
+            self.scene_capacity,
+            self.max_bytes,
+        )?;
+        if current.bytes != self.current.bytes {
+            return Err(invalid("history retained byte count differs"));
+        }
+        let undo: VecDeque<_> = self.decode_chain(&self.undo, &current, registry)?.into();
+        let redo = self.decode_chain(&self.redo, &current, registry)?;
         let epochs: Vec<_> = (0..self.epoch_count).map(|_| Arc::new(())).collect();
         let edits = self
             .edits
@@ -342,6 +432,36 @@ impl SceneHistoryCheckpoint {
             },
             edits,
         })
+    }
+
+    fn decode_chain(
+        &self,
+        chain: &[SavedStep],
+        start: &Snapshot,
+        registry: &ComponentRegistry,
+    ) -> Result<Vec<CompactStep>, DocumentError> {
+        let mut cursor = start.clone();
+        let mut steps_rev = Vec::with_capacity(chain.len());
+        for saved in chain.iter().rev() {
+            let step = CompactStep::from(saved);
+            let next = step.apply(&cursor)?;
+            let validated = SceneHistory::validate(
+                next.document,
+                next.metadata,
+                next.auxiliary,
+                registry,
+                self.scene_capacity,
+                self.max_bytes,
+            )?;
+            let recomputed = CompactStep::between(&cursor, &validated)?;
+            if recomputed.bytes != saved.bytes {
+                return Err(invalid("history step byte count differs"));
+            }
+            cursor = validated;
+            steps_rev.push(step);
+        }
+        steps_rev.reverse();
+        Ok(steps_rev)
     }
 }
 

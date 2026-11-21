@@ -12,6 +12,9 @@ impl App {
         if let Some(notice) = self.snapshot_failure_notice() {
             return Some(notice);
         }
+        if let Some(notice) = self.autosave_notice() {
+            return Some(notice);
+        }
         let node = *self.instances.get(self.selected)?;
         let model = self.scene.component::<ModelInstance>(node).ok()??;
         let retained = self.catalog.snapshot(&model.asset).is_some();
@@ -52,6 +55,8 @@ impl App {
                 retry: false,
                 relink,
                 editing: true,
+                recovery: false,
+                discard_recovery: false,
             });
         }
         if self
@@ -68,6 +73,8 @@ impl App {
                 retry: false,
                 relink: false,
                 editing: false,
+                recovery: false,
+                discard_recovery: false,
             });
         }
         if let Some((_, error)) = self
@@ -84,6 +91,8 @@ impl App {
                 retry: false,
                 relink,
                 editing: false,
+                recovery: false,
+                discard_recovery: false,
             });
         }
         let (title, detail, help) = if !self.available.contains(&model.asset) {
@@ -117,6 +126,8 @@ impl App {
             retry: self.can_retry_selected_model(),
             relink,
             editing: false,
+            recovery: false,
+            discard_recovery: false,
         })
     }
 }

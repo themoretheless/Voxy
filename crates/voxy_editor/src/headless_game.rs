@@ -476,6 +476,33 @@ impl HeadlessGame {
     pub fn fixed_ticks(&self) -> u64 {
         self.app.play.simulation_ticks
     }
+    /// Returns the project-relative scene path currently active in this runtime session.
+    #[must_use]
+    pub fn active_scene_path(&self) -> Option<&str> {
+        self.app
+            .active_play_scene
+            .as_ref()
+            .map(voxy_assets::SourcePath::as_str)
+    }
+
+    /// Transitions the active runtime session to another `.scene.json` in the project or package,
+    /// coordinating safely with any in-flight background asset/UI/audio workers.
+    ///
+    /// # Errors
+    /// Rejects invalid scene paths, missing assets, or invalid target scenes without corrupting
+    /// the currently running scene if validation fails.
+    pub fn transition_scene(
+        &mut self,
+        scene_path: impl AsRef<Path>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let raw = scene_path
+            .as_ref()
+            .to_str()
+            .ok_or("scene path must be UTF-8")?;
+        let target = voxy_assets::SourcePath::new(raw)?;
+        self.app.transition_play_scene(&target)
+    }
+
     /// Rolling per-domain CPU timing summary recorded across completed `advance` steps.
     #[must_use]
     pub fn frame_attribution(&self) -> crate::FrameDomainAttribution {

@@ -67,6 +67,8 @@ pub(crate) enum Action {
     CollectionDeletedPage,
     Duplicate,
     Delete,
+    RecoverAutosave,
+    DiscardAutosave,
     Resource,
     RetryModel,
     RelinkModel,
@@ -115,6 +117,8 @@ pub(crate) struct ResourceNotice {
     pub retry: bool,
     pub relink: bool,
     pub editing: bool,
+    pub recovery: bool,
+    pub discard_recovery: bool,
 }
 
 pub(crate) struct Panels {

@@ -21,7 +21,13 @@ pub(super) fn declared_sources(
         let accepted = decode_model(app, &provider, asset, drop)?;
         captured.retain(accepted.inputs())?;
     }
-    for asset in app.authoring.authoring_project.prefabs()? {
+    for asset in app
+        .authoring
+        .authoring_project
+        .prefabs()?
+        .into_iter()
+        .chain(app.authoring.authoring_project.declared_scenes()?)
+    {
         let imported = app
             .authoring
             .authoring_project
