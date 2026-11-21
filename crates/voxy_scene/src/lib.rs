@@ -50,6 +50,9 @@ pub use table::{ComponentTable, TableBuildError};
 mod associated;
 pub use associated::AssociatedData;
 
+mod clipboard;
+pub use clipboard::{ClipboardPaste, SceneClipboard};
+
 mod migration;
 pub use migration::{DocumentMigrationChain, DocumentMigrationStep, SceneMigrationReport};
 

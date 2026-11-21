@@ -51,8 +51,16 @@ impl App {
         if self.restore_play_frozen() {
             return Ok(());
         }
+        let step_wall_start = Instant::now();
+        let mut timing = frame_attribution::DomainTimingUs::default();
+        let anim_start = Instant::now();
         let models = self.animation_models();
         self.play.animations.synchronize(&self.scene)?;
+        let mut sim_animation_ns =
+            u64::try_from(anim_start.elapsed().as_nanos()).unwrap_or(u64::MAX);
+        let mut sim_physics_ns = 0_u64;
+        let mut sim_triggers_ns = 0_u64;
+        let mut audio_ns = 0_u64;
         if let Some(simulation) = &mut self.play.simulation {
             if let Some(actions) = &mut self.play.ui_actions {
                 for result in actions.dispatch(&self.scene, simulation.commands())? {
@@ -62,9 +70,14 @@ impl App {
                 }
             }
             if let Some(physics) = &mut self.play.physics {
+                let sync_start = Instant::now();
                 physics.synchronize(&self.scene)?;
+                sim_physics_ns = sim_physics_ns.saturating_add(
+                    u64::try_from(sync_start.elapsed().as_nanos()).unwrap_or(u64::MAX),
+                );
             }
             let schedule = animation_runtime::schedule()?;
+            let sim_wall_start = Instant::now();
             let frame_result = simulation.advance_with_delivery(
                 &mut self.scene,
                 elapsed,
@@ -72,6 +85,7 @@ impl App {
                     let mut animation_events = Vec::new();
                     let mut platform_motion = voxy_gameplay::PlatformMotion::default();
                     let result = schedule.run_scene(scene, |system, mut access| {
+                        let sys_start = Instant::now();
                         if system == "angular.step" {
                             if let Some(motion) = &mut self.play.angular_motion {
                                 motion.fixed_scoped(access, dt).map_err(|e| {
@@ -215,8 +229,20 @@ impl App {
                                 .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                         }
                         animation_events.extend(self.play.animations.take_events());
+                        let sys_ns =
+                            u64::try_from(sys_start.elapsed().as_nanos()).unwrap_or(u64::MAX);
+                        if matches!(
+                            system,
+                            "angular.step" | "kinematic.step" | "joint.step" | "character.step"
+                        ) || self.play.physics.is_some()
+                        {
+                            sim_physics_ns = sim_physics_ns.saturating_add(sys_ns);
+                        } else {
+                            sim_animation_ns = sim_animation_ns.saturating_add(sys_ns);
+                        }
                         Ok::<_, voxy_gameplay::GameplayFixedError>(())
                     });
+                    let trig_start = Instant::now();
                     let triggers = result.and_then(|()| {
                         let mut sample = || {
                             if self.play.triggers.is_none() {
@@ -237,6 +263,9 @@ impl App {
                             error: voxy_gameplay::GameplayFixedError::Physics(error),
                         })
                     });
+                    sim_triggers_ns = sim_triggers_ns.saturating_add(
+                        u64::try_from(trig_start.elapsed().as_nanos()).unwrap_or(u64::MAX),
+                    );
                     for (owner, event) in animation_events {
                         behaviors.animation_event(scene, owner, &event.name, event.phase);
                     }
@@ -256,23 +285,50 @@ impl App {
                     .saturating_add(u64::try_from(*completed_steps)?);
             }
             let frame = frame_result?;
+            let sim_wall_ns =
+                u64::try_from(sim_wall_start.elapsed().as_nanos()).unwrap_or(u64::MAX);
             if let Some(audio) = self.audio.play_mut() {
+                let audio_start = Instant::now();
                 audio_play::schedule()?.run_scene(&mut self.scene, |_, access| {
                     audio.advance_scoped(access, frame.time.steps)
                 })?;
+                audio_ns = u64::try_from(audio_start.elapsed().as_nanos()).unwrap_or(u64::MAX);
             }
             self.play.simulation_ticks = self
                 .play
                 .simulation_ticks
                 .saturating_add(u64::try_from(frame.time.steps)?);
+            let cmd_start = Instant::now();
             for result in frame.commands {
                 result?;
             }
+            let cmd_ns = u64::try_from(cmd_start.elapsed().as_nanos()).unwrap_or(u64::MAX);
             if let Some(physics) = &mut self.play.physics {
+                let sync_start = Instant::now();
                 physics.synchronize(&self.scene)?;
+                sim_physics_ns = sim_physics_ns.saturating_add(
+                    u64::try_from(sync_start.elapsed().as_nanos()).unwrap_or(u64::MAX),
+                );
             }
+            let consumed_ns = sim_physics_ns
+                .saturating_add(sim_triggers_ns)
+                .saturating_add(cmd_ns);
+            let behaviors_ns = sim_wall_ns
+                .saturating_sub(consumed_ns)
+                .saturating_add(sim_triggers_ns)
+                .saturating_add(cmd_ns);
+            timing.triggers_behaviors_us = behaviors_ns / 1_000;
         }
+        let follow_start = Instant::now();
         self.update_follow_camera(elapsed)?;
+        sim_physics_ns = sim_physics_ns
+            .saturating_add(u64::try_from(follow_start.elapsed().as_nanos()).unwrap_or(u64::MAX));
+        timing.physics_motion_us = sim_physics_ns / 1_000;
+        timing.animation_us = sim_animation_ns / 1_000;
+        timing.audio_us = audio_ns / 1_000;
+        timing.total_cpu_us =
+            u64::try_from(step_wall_start.elapsed().as_micros()).unwrap_or(u64::MAX);
+        self.pending_step_timing.accumulate(timing);
         Ok(())
     }
 

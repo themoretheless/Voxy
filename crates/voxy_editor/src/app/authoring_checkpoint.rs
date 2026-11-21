@@ -8,6 +8,22 @@ use voxy_scene::{HistoryCheckpointLimits, SceneCheckpointView, SceneHistoryCheck
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct CompanionDrag {
+    node: ObjectId,
+    translation: [u32; 3],
+    rotation: [u32; 4],
+    scale: [u32; 3],
+    world_origin: [u32; 3],
+}
+#[allow(
+    clippy::trivially_copy_pass_by_ref,
+    reason = "serde skip_serializing_if requires predicate taking &T"
+)]
+fn is_default_gizmo_mode(mode: &gizmo::GizmoMode) -> bool {
+    *mode == gizmo::GizmoMode::Translate
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct Drag {
     node: ObjectId,
     origin: [u32; 2],
@@ -18,6 +34,10 @@ struct Drag {
     scale: [u32; 3],
     world_origin: [u32; 3],
     axis: u8,
+    #[serde(default, skip_serializing_if = "is_default_gizmo_mode")]
+    mode: gizmo::GizmoMode,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    companions: Vec<CompanionDrag>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -28,6 +48,8 @@ pub(crate) struct AuthoringHistoryCheckpoint {
     history: Option<SceneHistoryCheckpoint>,
     order: Vec<ObjectId>,
     selected: usize,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    extra_selected: Vec<usize>,
     next_object_id: u64,
     drag: Option<Drag>,
 }
@@ -39,6 +61,7 @@ pub(crate) struct PreparedAuthoringHistory {
     pub(crate) object_ids: Vec<ObjectId>,
     pub(crate) instances: Vec<NodeId>,
     pub(crate) selected: usize,
+    pub(crate) extra_selected: BTreeSet<usize>,
     pub(crate) next_object_id: u64,
     pub(crate) drag: Option<ModelDrag>,
 }
@@ -70,6 +93,8 @@ impl App {
                     original,
                     world_origin,
                     axis,
+                    mode,
+                    companions,
                     edit: _,
                 } = drag;
                 let Transform {
@@ -77,6 +102,21 @@ impl App {
                     rotation,
                     scale,
                 } = original;
+                let encoded_companions = companions
+                    .iter()
+                    .map(|(comp_node, comp_tr, comp_world)| {
+                        Ok::<_, EditorError>(CompanionDrag {
+                            node: view
+                                .reserved_identity(*comp_node)
+                                .cloned()
+                                .ok_or("unidentified drag companion")?,
+                            translation: comp_tr.translation.to_array().map(f32::to_bits),
+                            rotation: comp_tr.rotation.to_array().map(f32::to_bits),
+                            scale: comp_tr.scale.to_array().map(f32::to_bits),
+                            world_origin: comp_world.to_array().map(f32::to_bits),
+                        })
+                    })
+                    .collect::<Result<Vec<_>, EditorError>>()?;
                 Ok::<_, EditorError>(Drag {
                     node: view
                         .reserved_identity(*node)
@@ -95,6 +135,8 @@ impl App {
                         DragAxis::Y => 2,
                         DragAxis::Z => 3,
                     },
+                    mode: *mode,
+                    companions: encoded_companions,
                 })
             })
             .transpose()?;
@@ -117,6 +159,7 @@ impl App {
                 .transpose()?,
             order: self.object_ids.clone(),
             selected: self.selected,
+            extra_selected: self.extra_selected.iter().copied().collect(),
             next_object_id: self.authoring.next_object_id,
             drag,
         };
@@ -178,50 +221,16 @@ impl AuthoringHistoryCheckpoint {
         if edits.len() != usize::from(self.drag.is_some()) {
             return Err("authoring detached edit count differs".into());
         }
+        let mut extra_selected = BTreeSet::new();
+        for &idx in &self.extra_selected {
+            if idx >= self.order.len() || idx == self.selected || !extra_selected.insert(idx) {
+                return Err("invalid authoring extra selection".into());
+            }
+        }
         let drag = self
             .drag
             .as_ref()
-            .map(|saved| {
-                let original = Transform {
-                    translation: Vec3::from_array(saved.translation.map(f32::from_bits)),
-                    rotation: glam::Quat::from_array(saved.rotation.map(f32::from_bits)),
-                    scale: Vec3::from_array(saved.scale.map(f32::from_bits)),
-                };
-                original.matrix()?;
-                let origin = Vec2::from_array(saved.origin.map(f32::from_bits));
-                let viewport = Vec2::from_array(saved.viewport.map(f32::from_bits));
-                let viewport_origin = Vec2::from_array(saved.viewport_origin.map(f32::from_bits));
-                let world_origin = Vec3::from_array(saved.world_origin.map(f32::from_bits));
-                if !origin.is_finite()
-                    || !viewport.is_finite()
-                    || viewport.min_element() <= 0.
-                    || !viewport_origin.is_finite()
-                    || !world_origin.is_finite()
-                {
-                    return Err("invalid saved drag coordinates".into());
-                }
-                let axis = match saved.axis {
-                    0 => DragAxis::Plane,
-                    1 => DragAxis::X,
-                    2 => DragAxis::Y,
-                    3 => DragAxis::Z,
-                    _ => return Err("unknown drag axis".into()),
-                };
-                let node = view
-                    .reserved_node(&saved.node)
-                    .ok_or("missing drag owner")?;
-                let edit = edits.pop().ok_or("missing detached drag edit")?;
-                Ok::<_, EditorError>(ModelDrag {
-                    node,
-                    origin,
-                    viewport,
-                    viewport_origin,
-                    original,
-                    world_origin,
-                    axis,
-                    edit,
-                })
-            })
+            .map(|saved| Self::prepare_drag(saved, view, edits.pop()))
             .transpose()?;
         Ok(PreparedAuthoringHistory {
             scene_id: view.graph.identity(),
@@ -234,8 +243,77 @@ impl AuthoringHistoryCheckpoint {
             object_ids: self.order.clone(),
             instances,
             selected: self.selected,
+            extra_selected,
             next_object_id: self.next_object_id,
             drag,
+        })
+    }
+
+    fn prepare_drag(
+        saved: &Drag,
+        view: &SceneCheckpointView<'_>,
+        edit: Option<SceneEdit>,
+    ) -> Result<ModelDrag, EditorError> {
+        let original = Transform {
+            translation: Vec3::from_array(saved.translation.map(f32::from_bits)),
+            rotation: glam::Quat::from_array(saved.rotation.map(f32::from_bits)),
+            scale: Vec3::from_array(saved.scale.map(f32::from_bits)),
+        };
+        original.matrix()?;
+        let origin = Vec2::from_array(saved.origin.map(f32::from_bits));
+        let viewport = Vec2::from_array(saved.viewport.map(f32::from_bits));
+        let viewport_origin = Vec2::from_array(saved.viewport_origin.map(f32::from_bits));
+        let world_origin = Vec3::from_array(saved.world_origin.map(f32::from_bits));
+        if !origin.is_finite()
+            || !viewport.is_finite()
+            || viewport.min_element() <= 0.
+            || !viewport_origin.is_finite()
+            || !world_origin.is_finite()
+        {
+            return Err("invalid saved drag coordinates".into());
+        }
+        let axis = match saved.axis {
+            0 => DragAxis::Plane,
+            1 => DragAxis::X,
+            2 => DragAxis::Y,
+            3 => DragAxis::Z,
+            _ => return Err("unknown drag axis".into()),
+        };
+        let node = view
+            .reserved_node(&saved.node)
+            .ok_or("missing drag owner")?;
+        let companions = saved
+            .companions
+            .iter()
+            .map(|c| {
+                let comp_tr = Transform {
+                    translation: Vec3::from_array(c.translation.map(f32::from_bits)),
+                    rotation: glam::Quat::from_array(c.rotation.map(f32::from_bits)),
+                    scale: Vec3::from_array(c.scale.map(f32::from_bits)),
+                };
+                comp_tr.matrix()?;
+                let comp_world = Vec3::from_array(c.world_origin.map(f32::from_bits));
+                if !comp_world.is_finite() {
+                    return Err("invalid saved companion drag world origin".into());
+                }
+                let comp_node = view
+                    .reserved_node(&c.node)
+                    .ok_or("missing drag companion")?;
+                Ok((comp_node, comp_tr, comp_world))
+            })
+            .collect::<Result<Vec<_>, EditorError>>()?;
+        let edit = edit.ok_or("missing detached drag edit")?;
+        Ok(ModelDrag {
+            node,
+            origin,
+            viewport,
+            viewport_origin,
+            original,
+            world_origin,
+            axis,
+            mode: saved.mode,
+            companions,
+            edit,
         })
     }
 }

@@ -251,6 +251,7 @@ fn step_game(
         "stepped": executed,
         "fixedTicks": game.fixed_ticks(),
         "audioStats": game.audio_stats(),
+        "frameAttribution": game.frame_attribution(),
     }))
 }
 
@@ -297,6 +298,7 @@ fn capture_game_snapshot(
         "camera": camera,
         "hasCharacterPhysics": char_rep.as_ref().is_some_and(|c| c.physics.is_some()),
         "animation": animation,
+        "frameAttribution": game.frame_attribution(),
         "scene": scene,
     }))
 }

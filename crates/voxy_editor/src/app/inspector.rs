@@ -271,6 +271,9 @@ impl App {
         if self.play.playing.is_some() {
             return Ok(());
         }
+        if self.handle_selection_and_gizmo_shortcut(key)? {
+            return Ok(());
+        }
         match key {
             KeyCode::F5 if self.inspector == InspectorMode::ImportSettings => {
                 return self.save_audio_settings();
@@ -393,9 +396,7 @@ impl App {
             }
             KeyCode::KeyP => return self.panel_action(panels::Action::Parent),
             KeyCode::KeyA => {
-                let node = node.ok_or("missing selected node")?;
-                self.scene
-                    .set_active(node, !self.scene.active_self(node)?)?;
+                self.toggle_selected_active()?;
             }
             KeyCode::KeyR => {
                 if let Some(node) = node {
@@ -428,6 +429,9 @@ impl App {
                 }
             }
             KeyCode::KeyD => {
+                if !self.instances.is_empty() && self.selected_subtree_duplicate_needed()? {
+                    return self.duplicate_selected_subtrees();
+                }
                 if self.instances.len() >= scene_limits::OBJECTS {
                     return Ok(());
                 }
@@ -482,37 +486,16 @@ impl App {
                     self.authoring.next_object_id
                 )));
                 self.authoring.next_object_id = next;
-                self.selected = self.instances.len() - 1;
+                self.select_only(self.instances.len() - 1);
             }
             KeyCode::Delete | KeyCode::Backspace => {
-                let root = self
-                    .object_ids
-                    .get(self.selected)
-                    .cloned()
-                    .ok_or("missing selected object")?;
-                return self.delete_authoring_subtree(&root);
+                return self.delete_selected_subtrees();
             }
-            KeyCode::Tab => self.selected = (self.selected + 1) % self.instances.len(),
-            KeyCode::ArrowLeft => {
-                local.translation.x -= 0.05;
-                self.scene
-                    .set_local(node.ok_or("missing selected node")?, local)?;
-            }
-            KeyCode::ArrowRight => {
-                local.translation.x += 0.05;
-                self.scene
-                    .set_local(node.ok_or("missing selected node")?, local)?;
-            }
-            KeyCode::ArrowUp => {
-                local.translation.y += 0.05;
-                self.scene
-                    .set_local(node.ok_or("missing selected node")?, local)?;
-            }
-            KeyCode::ArrowDown => {
-                local.translation.y -= 0.05;
-                self.scene
-                    .set_local(node.ok_or("missing selected node")?, local)?;
-            }
+            KeyCode::Tab => self.select_only((self.selected + 1) % self.instances.len()),
+            KeyCode::ArrowLeft => self.nudge_selected_roots(Vec3::new(-0.05, 0.0, 0.0))?,
+            KeyCode::ArrowRight => self.nudge_selected_roots(Vec3::new(0.05, 0.0, 0.0))?,
+            KeyCode::ArrowUp => self.nudge_selected_roots(Vec3::new(0.0, 0.05, 0.0))?,
+            KeyCode::ArrowDown => self.nudge_selected_roots(Vec3::new(0.0, -0.05, 0.0))?,
             _ => return Ok(()),
         }
         if key != KeyCode::Tab {
@@ -622,8 +605,12 @@ impl App {
                     if let Some(node) = self.parenting.take() {
                         self.scene.reparent(node, Some(self.instances[index]))?;
                         self.commit_authoring()?;
+                    } else if self.modifiers.shift_key() {
+                        self.select_hierarchy_range(index);
+                    } else if self.modifiers.super_key() || self.modifiers.control_key() {
+                        self.toggle_selected_index(index);
                     } else {
-                        self.selected = index;
+                        self.select_only(index);
                     }
                     self.update_edit_title();
                 }

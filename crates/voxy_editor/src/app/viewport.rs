@@ -19,7 +19,13 @@ impl App {
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let is_window = offscreen.is_none();
-        self.draw_frame_inner(offscreen)?;
+        let frame_start = Instant::now();
+        let mut frame_timing = frame_attribution::DomainTimingUs::default();
+        self.draw_frame_inner(offscreen, &mut frame_timing)?;
+        frame_timing.accumulate(std::mem::take(&mut self.pending_step_timing));
+        frame_timing.total_cpu_us =
+            u64::try_from(frame_start.elapsed().as_micros()).unwrap_or(u64::MAX);
+        self.frame_attribution.record(frame_timing);
         // Every successful path, including offscreen and skipped presentation,
         // completes source adoption before advancing the detached load command.
         self.poll_snapshot_load_command();
@@ -35,6 +41,7 @@ impl App {
     fn draw_frame_inner(
         &mut self,
         offscreen: Option<voxy_render::SceneViewTargets<'_>>,
+        frame_timing: &mut frame_attribution::DomainTimingUs,
     ) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(targets) = &offscreen
             && targets.resolve.is_some() != self.msaa4
@@ -48,7 +55,10 @@ impl App {
             .then(Instant::now);
         let reload_trace_start =
             (offscreen.is_none() && self.reload_frame_sample.is_some()).then(Instant::now);
+        let tick_start = Instant::now();
         self.tick()?;
+        frame_timing.asset_io_poll_us =
+            u64::try_from(tick_start.elapsed().as_micros()).unwrap_or(u64::MAX);
         let reload_trace_after_tick = reload_trace_start.map(|_| Instant::now());
         self.poll_project_build();
         self.poll_built_game();
@@ -72,6 +82,7 @@ impl App {
             self.advance_game(elapsed)?;
         }
         // Interpolated ancestor matrices are shared across the instances of one frame.
+        let extraction_start = Instant::now();
         let render_world_cache = std::cell::RefCell::new(voxy_scene::RenderWorldCache::default());
         voxy_scene::extraction_schedule()?.run_scene(&mut self.scene, |_, access| {
             let render_world = |scene: &voxy_scene::SceneGraph, owner| {
@@ -96,8 +107,11 @@ impl App {
             self.frame_styles = Some(styles);
             Ok::<(), EditorError>(())
         })?;
+        frame_timing.scene_extraction_us =
+            u64::try_from(extraction_start.elapsed().as_micros()).unwrap_or(u64::MAX);
         // The staged restore accounts for retained geometry, including the
         // editor panel. Keep its last mesh alive while GPU/audio admission runs.
+        let ui_start = Instant::now();
         if !self.editor_load_holds_gpu_inventory() {
             self.update_editor_panels_for_frame()?;
         }
@@ -138,8 +152,10 @@ impl App {
                 .collect();
             self.poll_restore_barrier(|node| identities.get(&node).cloned())?;
         }
-        self.poll_snapshot_save_command();
         self.update_ui_focus_ring()?;
+        frame_timing.ui_layout_us =
+            u64::try_from(ui_start.elapsed().as_micros()).unwrap_or(u64::MAX);
+        self.poll_snapshot_save_command();
         let styles = self
             .frame_styles
             .as_ref()
@@ -191,6 +207,11 @@ impl App {
         } else {
             None
         };
+        let selected_owners: BTreeSet<NodeId> = self
+            .selected_indices()
+            .into_iter()
+            .filter_map(|idx| self.instances.get(idx).copied())
+            .collect();
         if let Some(graphics) = &mut self.graphics {
             if selected_trigger.is_none()
                 || (graphics.trigger_outline.is_some()
@@ -278,7 +299,7 @@ impl App {
             } else {
                 graphics.optical_liquids.clear();
             }
-            let animation_start = profile_start.map(|_| Instant::now());
+            let animation_start = Instant::now();
             let other_live = graphics
                 .geometry_bytes()
                 .saturating_sub(graphics.animated_models.allocation_bytes());
@@ -295,8 +316,12 @@ impl App {
                     eprintln!("MODEL ANIMATION retained previous frame for {owner:?}: {error}");
                 }
             }
-            let animation_us =
-                animation_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
+            let anim_sync_elapsed = animation_start.elapsed();
+            frame_timing.animation_us = frame_timing
+                .animation_us
+                .saturating_add(u64::try_from(anim_sync_elapsed.as_micros()).unwrap_or(u64::MAX));
+            let animation_us = anim_sync_elapsed.as_secs_f64() * 1e6;
+            let render_prep_start = Instant::now();
             graphics.transforms.retain(|(view, owner), _| {
                 views.iter().any(|v| v.0 == *view) && styles.materials.contains_key(owner)
             });
@@ -312,6 +337,47 @@ impl App {
                     .iter()
                     .find(|instance| instance.owner == *node)
             });
+            let gizmo_origin = if self.play.playing.is_none()
+                && !self.standalone
+                && let Some(&owner) = self.instances.get(self.selected)
+                && self.scene.active_in_hierarchy(owner)?
+                && (selected
+                    .is_some_and(|inst| graphics.models.contains_key(&inst.component.asset))
+                    || self.panels.is_some())
+            {
+                Some(selected.map_or_else(
+                    || self.scene.world_matrix(owner).map(|m| m.w_axis.truncate()),
+                    |inst| Ok(inst.world.w_axis.truncate()),
+                )?)
+            } else {
+                None
+            };
+            if gizmo_origin.is_some() {
+                match self.gizmo_mode {
+                    gizmo::GizmoMode::Translate => {}
+                    gizmo::GizmoMode::Rotate if graphics.rotate_gizmo_geometry.is_none() => {
+                        let mesh = gizmo::rotation_gizmo()?;
+                        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+                        if graphics.geometry_bytes().saturating_add(bytes)
+                            <= graphics.residency_cache.geometry_budget
+                        {
+                            graphics.rotate_gizmo_geometry =
+                                Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
+                        }
+                    }
+                    gizmo::GizmoMode::Scale if graphics.scale_gizmo_geometry.is_none() => {
+                        let mesh = gizmo::scale_gizmo()?;
+                        let bytes = SceneRenderer::mesh_allocation_bytes(&mesh);
+                        if graphics.geometry_bytes().saturating_add(bytes)
+                            <= graphics.residency_cache.geometry_budget
+                        {
+                            graphics.scale_gizmo_geometry =
+                                Some(graphics.renderer.upload_mesh(&graphics.device, &mesh)?);
+                        }
+                    }
+                    _ => {}
+                }
+            }
             let mut lod_views = [0u8; 2];
             let mut lod_view_count = 0;
             for view in &views {
@@ -420,7 +486,7 @@ impl App {
                     };
                     transform.update(&graphics.queue, view_projection * world)?;
                 }
-                if let Some(instance) = selected {
+                if let Some(origin) = gizmo_origin {
                     let transform = match graphics.gizmo_transforms.entry(view) {
                         std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
                         std::collections::btree_map::Entry::Vacant(entry) => entry.insert(
@@ -431,7 +497,7 @@ impl App {
                     };
                     transform.update(
                         &graphics.queue,
-                        view_projection * Mat4::from_translation(instance.world.w_axis.truncate()),
+                        view_projection * Mat4::from_translation(origin),
                     )?;
                 }
             }
@@ -565,31 +631,46 @@ impl App {
                         });
                     }
                 }
-                if !self.standalone
-                    && let Some(instance) = selected
-                    && graphics
-                        .animated_models
-                        .geometries(instance.owner)
-                        .is_none()
-                    && let Some(model) = graphics.models.get(&instance.component.asset)
-                    && let Some((_, Some(outline), _)) =
-                        model.part(styles.parts.get(&instance.owner).copied())
-                    && let Some(transform) = graphics.transforms.get(&(view, instance.owner))
-                {
-                    draws.push(SceneDraw {
-                        geometry: outline,
-                        texture: &graphics.texture,
-                        transform,
-                        overlay: true,
-                    });
+                if !self.standalone {
+                    for instance in self.extraction.instances() {
+                        if !selected_owners.contains(&instance.owner) {
+                            continue;
+                        }
+                        if graphics
+                            .animated_models
+                            .geometries(instance.owner)
+                            .is_none()
+                            && let Some(model) = graphics.models.get(&instance.component.asset)
+                            && let Some((_, Some(outline), _)) =
+                                model.part(styles.parts.get(&instance.owner).copied())
+                            && let Some(transform) =
+                                graphics.transforms.get(&(view, instance.owner))
+                        {
+                            draws.push(SceneDraw {
+                                geometry: outline,
+                                texture: &graphics.texture,
+                                transform,
+                                overlay: true,
+                            });
+                        }
+                    }
                 }
-                if self.play.playing.is_none()
-                    && let Some(instance) = selected
-                    && graphics.models.contains_key(&instance.component.asset)
+                if gizmo_origin.is_some()
                     && let Some(transform) = graphics.gizmo_transforms.get(&view)
                 {
+                    let geometry = match self.gizmo_mode {
+                        gizmo::GizmoMode::Translate => &graphics.gizmo_geometry,
+                        gizmo::GizmoMode::Rotate => graphics
+                            .rotate_gizmo_geometry
+                            .as_ref()
+                            .unwrap_or(&graphics.gizmo_geometry),
+                        gizmo::GizmoMode::Scale => graphics
+                            .scale_gizmo_geometry
+                            .as_ref()
+                            .unwrap_or(&graphics.gizmo_geometry),
+                    };
                     draws.push(SceneDraw {
-                        geometry: &graphics.gizmo_geometry,
+                        geometry,
                         texture: &graphics.texture,
                         transform,
                         overlay: true,
@@ -690,6 +771,8 @@ impl App {
                     )?;
                 }
                 graphics.queue.submit([encoder.finish()]);
+                frame_timing.render_submit_us =
+                    u64::try_from(render_prep_start.elapsed().as_micros()).unwrap_or(u64::MAX);
                 return Ok(());
             }
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
@@ -802,6 +885,8 @@ impl App {
                     }
                     graphics.queue.submit([encoder.finish()]);
                     fog.submitted(&graphics.queue);
+                    frame_timing.render_submit_us =
+                        u64::try_from(render_prep_start.elapsed().as_micros()).unwrap_or(u64::MAX);
                     return Ok(());
                 }
                 let result = graphics
@@ -891,6 +976,17 @@ impl App {
                         )?
                 }
             };
+            let acquire_us_recorded = graphics
+                .host
+                .as_ref()
+                .and_then(SceneSurface::surface_acquire_duration)
+                .map_or(0, |elapsed| {
+                    u64::try_from(elapsed.as_micros()).unwrap_or(u64::MAX)
+                });
+            frame_timing.surface_acquire_us = acquire_us_recorded;
+            frame_timing.render_submit_us = u64::try_from(render_prep_start.elapsed().as_micros())
+                .unwrap_or(u64::MAX)
+                .saturating_sub(acquire_us_recorded);
             if let Some(start) = profile_start {
                 println!(
                     "ANIMATION FRAME PROFILE frame={} playing={} views={} draws={} animation_us={animation_us:.3} lod_us={lod_us:.3} submit_present_us={:.3} total_cpu_us={:.3} outcome={outcome:?}",
@@ -1098,6 +1194,7 @@ impl App {
             deleted_page,
             focused,
             selected: self.selected,
+            extra_selected: self.extra_selected.clone(),
             size_bits: [size.width.to_bits(), size.height.to_bits()],
             playing: self.play.playing.is_some(),
             inspector: self.inspector,
@@ -1146,6 +1243,7 @@ impl App {
             panels.collection_order_resets = order_resets;
             panels.collection_resets = collection_resets;
             panels.overridden_fields = overrides;
+            panels.extra_selected.clone_from(&key.extra_selected);
             panels.follow_pick = key.follow_pick;
             if let Some(pick) = &self.follow_pick {
                 panels.pick_title = pick.purpose.title();

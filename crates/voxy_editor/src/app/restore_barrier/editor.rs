@@ -572,6 +572,7 @@ impl App {
             object_ids,
             instances,
             selected,
+            extra_selected,
             next_object_id,
             drag,
         } = authoring;
@@ -579,6 +580,8 @@ impl App {
             preview_seek: None,
             animation_preview: resources.preview.take(),
             history,
+            clipboard: None,
+            paste_serial: 0,
             settings_written: BTreeMap::new(),
             scene_path: None,
             scene_revision: None,
@@ -601,6 +604,7 @@ impl App {
         self.object_ids = object_ids;
         self.instances = instances;
         self.selected = selected;
+        self.extra_selected = extra_selected;
         self.drag = drag;
         self.catalog = resources.resources.catalog;
         self.sources = resources.resources.sources;

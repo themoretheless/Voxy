@@ -82,6 +82,14 @@ fn replay(
     assert!(max_height > 0.3, "jump was not delivered");
     assert!(!object(&snapshot, "dismiss").active);
     assert_eq!(game.fixed_ticks(), 180);
+    let attribution = game.frame_attribution();
+    assert_eq!(attribution.frames_recorded, 180);
+    assert_ne!(attribution.dominant_domain, "idle");
+    assert!(attribution.max.total_cpu_us >= attribution.p99.total_cpu_us);
+    assert!(attribution.p99.total_cpu_us >= attribution.mean.total_cpu_us);
+    let encoded_attr = serde_json::to_string(&attribution)?;
+    let decoded_attr: crate::FrameDomainAttribution = serde_json::from_str(&encoded_attr)?;
+    assert_eq!(decoded_attr, attribution);
     let audio = game.audio_stats().ok_or("audio missing")?;
     assert_eq!(audio.0, 144_000);
     assert!(audio.1 > 0.);

@@ -9,7 +9,7 @@ use voxy_scene::{ObjectId, SceneDocument};
 use super::{Action, Panels};
 use crate::InspectorMode;
 
-fn hierarchy_order(document: &SceneDocument) -> Vec<(usize, u16)> {
+pub(crate) fn hierarchy_order(document: &SceneDocument) -> Vec<(usize, u16)> {
     fn visit(
         document: &SceneDocument,
         children: &HashMap<Option<&ObjectId>, Vec<usize>>,
@@ -181,12 +181,16 @@ impl Panels {
             let object = &document.objects[index];
             let y = 38.0 + row as f32 * 24.0;
             let x = 8.0 + (f32::from(depth) * 8.0).min(40.0);
-            if index == selected {
+            if index == selected || self.extra_selected.contains(&index) {
                 Self::solid(
                     batch,
                     [4.0, y, left - 8.0, 23.0],
                     size,
-                    [0.16, 0.28, 0.42, 1.0],
+                    if index == selected {
+                        [0.16, 0.28, 0.42, 1.0]
+                    } else {
+                        [0.11, 0.21, 0.32, 1.0]
+                    },
                 )?;
             }
             self.text(

@@ -5,7 +5,8 @@ mod project_prefab_tests;
 mod app {
     mod audio_control;
     mod authoring;
-    mod authoring_checkpoint;
+    pub(crate) mod authoring_checkpoint;
+    mod focus_bounds;
     mod game_ui;
     mod inspector;
     mod model_notice;
@@ -17,6 +18,7 @@ mod app {
     pub(crate) mod resource_checkpoint;
     pub(crate) mod restore_barrier;
     pub(crate) mod restore_guard;
+    mod selection_clipboard;
     pub(crate) mod snapshot_commands;
     mod viewport;
     pub(crate) mod window_events;
@@ -47,6 +49,8 @@ mod fog_draw;
 mod follow_camera;
 #[cfg(test)]
 mod follow_camera_tests;
+mod frame_attribution;
+pub use frame_attribution::{DomainTimingUs, FrameAttributionWindow, FrameDomainAttribution};
 mod frame_pacing;
 mod frame_styles;
 mod game_host;
@@ -120,6 +124,8 @@ mod material;
 mod scene3d_smoke;
 #[cfg(test)]
 mod scene3d_tests;
+#[cfg(test)]
+mod selection_focus_tests;
 mod shadow_authoring;
 pub use material::{DirectionalLight, SceneMaterial};
 pub use shadow_authoring::{DirectionalShadow, DirectionalShadowFilter, OpaqueShadowCaster};
@@ -131,7 +137,10 @@ mod ui_live;
 mod ui_text;
 pub use follow_camera::follow_camera_spring_step;
 use gizmo::DragAxis;
-pub use gizmo::{snap_angle_radians, snap_translation_to_grid, translation_gizmo};
+pub use gizmo::{
+    GizmoMode, GizmoSnapConfig, GizmoSnapSpace, rotation_gizmo, scale_gizmo, snap_angle_radians,
+    snap_scale_factor, snap_translation_to_grid, translation_gizmo,
+};
 mod picking;
 mod selection;
 pub use selection::selection_outline;
@@ -239,6 +248,8 @@ struct Graphics {
     liquid_geometry: Option<SceneGeometry>,
     liquid_transforms: BTreeMap<u8, SceneTransform>,
     gizmo_geometry: SceneGeometry,
+    rotate_gizmo_geometry: Option<SceneGeometry>,
+    scale_gizmo_geometry: Option<SceneGeometry>,
     gizmo_transforms: BTreeMap<u8, SceneTransform>,
     trigger_outline: Option<SceneGeometry>,
     trigger_transforms: BTreeMap<u8, SceneTransform>,
@@ -288,6 +299,8 @@ impl Graphics {
             liquid_geometry: None,
             liquid_transforms: BTreeMap::new(),
             gizmo_geometry,
+            rotate_gizmo_geometry: None,
+            scale_gizmo_geometry: None,
             gizmo_transforms: BTreeMap::from([(0, gizmo_transform)]),
             trigger_outline: None,
             trigger_transforms: BTreeMap::new(),
@@ -318,6 +331,14 @@ impl Graphics {
                 .as_ref()
                 .map_or(0, fog_draw::FogDraw::allocation_bytes)
             + self.gizmo_geometry.allocation_bytes()
+            + self
+                .rotate_gizmo_geometry
+                .as_ref()
+                .map_or(0, SceneGeometry::allocation_bytes)
+            + self
+                .scale_gizmo_geometry
+                .as_ref()
+                .map_or(0, SceneGeometry::allocation_bytes)
             + self
                 .trigger_outline
                 .as_ref()
@@ -465,6 +486,8 @@ struct ModelDrag {
     original: Transform,
     world_origin: Vec3,
     axis: DragAxis,
+    mode: gizmo::GizmoMode,
+    companions: Vec<(NodeId, Transform, Vec3)>,
     edit: SceneEdit,
 }
 #[derive(Debug)]
@@ -497,6 +520,7 @@ struct PanelRevisionKey {
     deleted_page: usize,
     focused: Option<voxy_ui::WidgetId>,
     selected: usize,
+    extra_selected: BTreeSet<usize>,
     size_bits: [u32; 2],
     playing: bool,
     inspector: InspectorMode,
@@ -526,12 +550,15 @@ struct App {
     object_ids: Vec<ObjectId>,
     instances: Vec<NodeId>,
     selected: usize,
+    extra_selected: BTreeSet<usize>,
     cursor: Option<Vec2>,
     camera: camera::ViewportCamera,
     secondary_camera: Option<camera::ViewportCamera>,
     active_view: u8,
     msaa4: bool,
     camera_drag: Option<(MouseButton, Vec2)>,
+    gizmo_mode: gizmo::GizmoMode,
+    gizmo_snap: gizmo::GizmoSnapConfig,
     drag: Option<ModelDrag>,
     ui_live: ui_live::UiLive,
     game_ui_input: game_ui_input::GameUiInput,
@@ -586,6 +613,8 @@ struct App {
     window_occluded: bool,
     live_bridge: live_bridge::LiveBridge,
     presentation: frame_pacing::Presentation,
+    frame_attribution: frame_attribution::FrameAttributionWindow,
+    pending_step_timing: frame_attribution::DomainTimingUs,
     graphics: Option<Graphics>,
     reload: BTreeSet<AssetId>,
     available: BTreeSet<AssetId>,
@@ -720,6 +749,8 @@ impl App {
                 preview_seek: None,
                 animation_preview: None,
                 history: None,
+                clipboard: None,
+                paste_serial: 0,
                 settings_written: BTreeMap::new(),
                 scene_path: None,
                 scene_revision: None,
@@ -750,12 +781,15 @@ impl App {
             object_ids,
             instances,
             selected: 0,
+            extra_selected: BTreeSet::new(),
             cursor: None,
             camera: camera::ViewportCamera::default(),
             secondary_camera: None,
             active_view: 0,
             msaa4: false,
             camera_drag: None,
+            gizmo_mode: gizmo::GizmoMode::default(),
+            gizmo_snap: gizmo::GizmoSnapConfig::default(),
             drag: None,
             audio: audio_session::AudioSession::default(),
             ui_live: ui_live::UiLive::default(),
@@ -811,6 +845,8 @@ impl App {
             window_occluded: false,
             live_bridge: live_bridge::LiveBridge::default(),
             presentation: frame_pacing::Presentation::from_environment()?,
+            frame_attribution: frame_attribution::FrameAttributionWindow::default(),
+            pending_step_timing: frame_attribution::DomainTimingUs::default(),
             graphics: None,
             reload,
             available,

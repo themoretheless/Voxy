@@ -366,7 +366,10 @@ impl HeadlessGame {
     /// # Errors
     /// Rejects invalid elapsed time and reports simulation/import/runtime failures.
     pub fn advance(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
-        self.app.advance_game(elapsed)
+        self.app.advance_game(elapsed)?;
+        let timing = std::mem::take(&mut self.app.pending_step_timing);
+        self.app.frame_attribution.record(timing);
+        Ok(())
     }
     /// Capture the current registered components and transforms using durable IDs.
     /// # Errors
@@ -472,6 +475,11 @@ impl HeadlessGame {
     #[must_use]
     pub fn fixed_ticks(&self) -> u64 {
         self.app.play.simulation_ticks
+    }
+    /// Rolling per-domain CPU timing summary recorded across completed `advance` steps.
+    #[must_use]
+    pub fn frame_attribution(&self) -> crate::FrameDomainAttribution {
+        self.app.frame_attribution.snapshot()
     }
     /// Offline mixed frame count and peak, when the scene has an audio session.
     #[must_use]

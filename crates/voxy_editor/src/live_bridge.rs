@@ -32,6 +32,8 @@ pub struct LiveEditorStatus {
     pub scene_path: Option<String>,
     pub selected_object_id: Option<String>,
     pub camera: crate::EditorCamera,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub frame_attribution: Option<crate::FrameDomainAttribution>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -159,6 +161,7 @@ impl App {
                 .map(|p| p.display().to_string()),
             selected_object_id,
             camera: self.camera.clone(),
+            frame_attribution: Some(self.frame_attribution.snapshot()),
         };
         let status_path = dir.join("status.json");
         let encoded = serde_json::to_vec(&status)?;

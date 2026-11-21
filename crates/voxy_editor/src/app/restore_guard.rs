@@ -8,6 +8,8 @@ struct DragGuard {
     original: ([u32; 3], [u32; 4], [u32; 3]),
     world: [u32; 3],
     axis: u8,
+    mode: u8,
+    companions: Vec<(NodeId, ([u32; 3], [u32; 4], [u32; 3]), [u32; 3])>,
     edit: voxy_scene::HistoryChangeToken,
 }
 struct ProjectGuard {
@@ -29,6 +31,7 @@ pub(crate) struct SceneAuthoringGuard {
     objects: Vec<ObjectId>,
     instances: Vec<NodeId>,
     selected: usize,
+    extra_selected: BTreeSet<usize>,
     next_object_id: u64,
     settings_written: BTreeMap<String, [u8; 32]>,
     scene_path: Option<std::path::PathBuf>,
@@ -75,11 +78,32 @@ impl SceneAuthoringGuard {
                     DragAxis::Y => 2,
                     DragAxis::Z => 3,
                 },
+                mode: match drag.mode {
+                    gizmo::GizmoMode::Translate => 0,
+                    gizmo::GizmoMode::Rotate => 1,
+                    gizmo::GizmoMode::Scale => 2,
+                },
+                companions: drag
+                    .companions
+                    .iter()
+                    .map(|&(node, tr, world)| {
+                        (
+                            node,
+                            (
+                                tr.translation.to_array().map(f32::to_bits),
+                                tr.rotation.to_array().map(f32::to_bits),
+                                tr.scale.to_array().map(f32::to_bits),
+                            ),
+                            world.to_array().map(f32::to_bits),
+                        )
+                    })
+                    .collect(),
                 edit: drag.edit.change_token(),
             }),
             objects: app.object_ids.clone(),
             instances: app.instances.clone(),
             selected: app.selected,
+            extra_selected: app.extra_selected.clone(),
             next_object_id: app.authoring.next_object_id,
             settings_written: app.authoring.settings_written.clone(),
             scene_path: app.authoring.scene_path.clone(),
@@ -260,6 +284,8 @@ mod tests {
             original: Transform::default(),
             world_origin: Vec3::ZERO,
             axis: DragAxis::Plane,
+            mode: gizmo::GizmoMode::Translate,
+            companions: Vec::new(),
             edit: app.authoring.history.as_ref().unwrap().begin_edit(),
         });
         let guard = SceneAuthoringGuard::capture(&app);

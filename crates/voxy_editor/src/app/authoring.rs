@@ -158,6 +158,7 @@ impl App {
         self.scene = loaded.graph;
         self.instances = instances;
         self.selected = self.selected.min(self.instances.len().saturating_sub(1));
+        self.sanitize_selection();
         self.panel_cache = None;
         if let Some(graphics) = &mut self.graphics {
             graphics.transforms.clear();

@@ -57,7 +57,7 @@ pub(crate) fn tool_defs() -> Vec<ToolDef> {
         ),
         ToolDef::new(
             "scene_apply",
-            "Atomically apply 1..128 hierarchy, transform, and component edits (component_set, component_patch, component_remove, create, remove, reparent, rename, active, transform, material, camera, light).",
+            "Atomically apply 1..128 hierarchy, transform, duplicate, and component edits (component_set, component_patch, component_remove, create, duplicate, remove, reparent, rename, active, transform, material, camera, light).",
             json!({
                 "type": "object",
                 "properties": {
@@ -212,6 +212,10 @@ enum SceneEditOp {
     Create {
         object: SceneObject,
     },
+    Duplicate {
+        node_ids: Vec<String>,
+        offset: Option<[f32; 3]>,
+    },
     Remove {
         node_id: String,
     },
@@ -275,7 +279,7 @@ fn scene_apply(state: &mut EngineState, arguments: Value) -> Result<ToolOutcome,
     }
     let mut candidate = session.current_scene().clone();
     for op in args.edits {
-        apply_single_op(&mut candidate, op)?;
+        apply_single_op(&mut candidate, op, &registry)?;
     }
     validate_candidate(&candidate, &registry)?;
     session
@@ -293,7 +297,53 @@ fn find_obj<'a>(doc: &'a mut SceneDocument, id: &str) -> Result<&'a mut SceneObj
         .ok_or_else(|| format!("unknown node: {id}"))
 }
 
-fn apply_single_op(doc: &mut SceneDocument, op: SceneEditOp) -> Result<(), String> {
+fn duplicate_op(
+    doc: &mut SceneDocument,
+    node_ids: Vec<String>,
+    offset: Option<[f32; 3]>,
+    registry: &ComponentRegistry,
+) -> Result<(), String> {
+    let selected_ids: Vec<voxy_scene::ObjectId> =
+        node_ids.into_iter().map(voxy_scene::ObjectId).collect();
+    let clip =
+        voxy_scene::SceneClipboard::capture(doc, &selected_ids).map_err(|e| e.to_string())?;
+    let mut next_id = 1_u64;
+    let pasted = clip
+        .paste(
+            doc,
+            registry,
+            SCENE_CAPACITY,
+            offset.unwrap_or([0.0; 3]),
+            &mut next_id,
+        )
+        .map_err(|e| e.to_string())?;
+    *doc = pasted.document;
+    Ok(())
+}
+
+fn remove_subtree_op(doc: &mut SceneDocument, node_id: String) -> Result<(), String> {
+    let _ = find_obj(doc, &node_id)?;
+    let mut doomed = vec![node_id];
+    let mut cursor = 0;
+    while cursor < doomed.len() {
+        let parent_id = doomed[cursor].clone();
+        for obj in &doc.objects {
+            if obj.parent.as_ref().is_some_and(|p| p.0 == parent_id) && !doomed.contains(&obj.id.0)
+            {
+                doomed.push(obj.id.0.clone());
+            }
+        }
+        cursor += 1;
+    }
+    doc.objects.retain(|o| !doomed.contains(&o.id.0));
+    Ok(())
+}
+
+fn apply_single_op(
+    doc: &mut SceneDocument,
+    op: SceneEditOp,
+    registry: &ComponentRegistry,
+) -> Result<(), String> {
     match op {
         SceneEditOp::Transform {
             node_id,
@@ -315,23 +365,10 @@ fn apply_single_op(doc: &mut SceneDocument, op: SceneEditOp) -> Result<(), Strin
         SceneEditOp::Rename { node_id, name } => find_obj(doc, &node_id)?.name = name,
         SceneEditOp::Active { node_id, active } => find_obj(doc, &node_id)?.active = active,
         SceneEditOp::Create { object } => doc.objects.push(object),
-        SceneEditOp::Remove { node_id } => {
-            let _ = find_obj(doc, &node_id)?;
-            let mut doomed = vec![node_id];
-            let mut cursor = 0;
-            while cursor < doomed.len() {
-                let parent_id = doomed[cursor].clone();
-                for obj in &doc.objects {
-                    if obj.parent.as_ref().is_some_and(|p| p.0 == parent_id)
-                        && !doomed.contains(&obj.id.0)
-                    {
-                        doomed.push(obj.id.0.clone());
-                    }
-                }
-                cursor += 1;
-            }
-            doc.objects.retain(|o| !doomed.contains(&o.id.0));
+        SceneEditOp::Duplicate { node_ids, offset } => {
+            duplicate_op(doc, node_ids, offset, registry)?;
         }
+        SceneEditOp::Remove { node_id } => remove_subtree_op(doc, node_id)?,
         SceneEditOp::Reparent { node_id, parent } => {
             find_obj(doc, &node_id)?.parent = parent.map(voxy_scene::ObjectId);
         }

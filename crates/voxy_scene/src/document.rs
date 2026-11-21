@@ -459,6 +459,10 @@ impl ComponentRegistry {
         Ok(())
     }
 
+    pub(crate) fn contains_schema(&self, name: &str) -> bool {
+        self.codecs.contains_key(name)
+    }
+
     pub(crate) fn remap_value(
         &self,
         name: &str,

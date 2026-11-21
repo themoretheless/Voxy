@@ -223,6 +223,13 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         assert queried["count"] == 1 and queried["objects"][0]["id"] == "hero"
         rev = client.call("scene_undo", {"expected_revision": rev + 1})["structuredContent"]["revision"]
         rev = client.call("scene_redo", {"expected_revision": rev})["structuredContent"]["revision"]
+        dup_res = client.call("scene_apply", {
+            "expected_revision": rev,
+            "edits": [{"op": "duplicate", "node_ids": ["hero"], "offset": [2.0, 0.0, 0.0]}],
+        })["structuredContent"]
+        rev = dup_res["revision"]
+        assert any(o["translation"] == [2.0, 0.0, 0.0] and o["id"] != "hero" for o in dup_res["scene"]["objects"]), dup_res
+        rev = client.call("scene_undo", {"expected_revision": rev})["structuredContent"]["revision"]
         saved = client.call("scene_save", {"expected_revision": rev})["structuredContent"]
         assert saved["dirty"] is False
 
@@ -245,6 +252,7 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         client.notifications.clear()
         stepped = client.call("play_step", {"ticks": 16}, meta={"progressToken": "p-step"})["structuredContent"]
         assert stepped["stepped"] == 16 and stepped["fixedTicks"] == 16
+        assert stepped["frameAttribution"]["framesRecorded"] >= 16 and stepped["frameAttribution"]["dominantDomain"] != "idle"
         assert any(n["method"] == "notifications/progress" and n["params"]["progressToken"] == "p-step" for n in client.notifications)
 
         # Cancel a slow multi-tick step mid-flight
@@ -260,6 +268,7 @@ def test_stdio_full_suite(binary: Path, scratch: Path):
         assert client.request("ping")["result"] == {}
         snap = client.call("play_snapshot")["structuredContent"]
         assert 16 < snap["fixedTicks"] < 216, snap["fixedTicks"]
+        assert snap["frameAttribution"]["framesRecorded"] == snap["fixedTicks"]
         client.call("play_stop")
 
         pkg_path = scratch / "demo.voxypkg"

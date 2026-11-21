@@ -88,9 +88,14 @@ impl App {
                 return;
             }
             window.set_title(&format!(
-                "Voxy model viewport — instance {}/{} | view {}/{} | F4 split, F10 smoothing, D duplicate, R model, P parent, A active, F6 play/stop, Z undo, Y redo; Ctrl/Cmd+Shift+S/O snapshot save/open",
+                "Voxy model viewport — instance {}/{}{} | view {}/{} | F4 split, F10 smoothing, D duplicate, R model, P parent, A active, F6 play/stop, Z undo, Y redo; Ctrl/Cmd+Shift+S/O snapshot save/open",
                 if self.instances.is_empty() { 0 } else { self.selected + 1 },
                 self.instances.len(),
+                if self.extra_selected.is_empty() {
+                    String::new()
+                } else {
+                    format!(" (+{} selected)", self.extra_selected.len())
+                },
                 if self.split_views() { self.active_view + 1 } else { 1 },
                 if self.split_views() { 2 } else { 1 },
             ));
@@ -543,10 +548,7 @@ impl ApplicationHandler for App {
                 let was_snapping = self.modifiers.shift_key();
                 self.modifiers = modifiers.state();
                 if was_snapping != self.modifiers.shift_key()
-                    && self
-                        .drag
-                        .as_ref()
-                        .is_some_and(|drag| !matches!(drag.axis, DragAxis::Plane))
+                    && self.drag.is_some()
                     && let Some(cursor) = self.cursor
                 {
                     self.preview_drag(cursor)

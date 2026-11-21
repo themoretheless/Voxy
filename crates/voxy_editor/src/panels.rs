@@ -1,7 +1,7 @@
 //! Small native editor panels rendered through the existing scene renderer.
 // Glyph metrics are bounded to a 512x128 atlas, UI rows to 128 scene objects.
 
-mod hierarchy;
+pub(crate) mod hierarchy;
 mod inspector_components;
 mod inspector_modes;
 
@@ -135,6 +135,7 @@ pub(crate) struct Panels {
     pub hierarchy_search: Option<String>,
     pub bone_picker: Option<(Vec<String>, usize)>,
     pub overridden_fields: std::collections::BTreeSet<usize>,
+    pub extra_selected: std::collections::BTreeSet<usize>,
     glyphs: BTreeMap<char, (voxy_text::GlyphBitmap, Option<GlyphRegion>)>,
     pub rgba: Vec<u8>,
     pub regions: Vec<([f32; 4], Action)>,
@@ -205,6 +206,7 @@ impl Panels {
             deleted_page: 0,
             registry,
             overridden_fields: std::collections::BTreeSet::new(),
+            extra_selected: std::collections::BTreeSet::new(),
             glyphs,
             rgba: {
                 let mut rgba: Vec<u8> = atlas
